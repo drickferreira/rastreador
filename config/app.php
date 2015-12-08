@@ -52,7 +52,7 @@ return [
     |
     */
 
-    'locale' => 'en',
+    'locale' => 'pt-BR',
 
     /*
     |--------------------------------------------------------------------------
@@ -148,10 +148,8 @@ return [
         /**
          * Adicional Providers
          */
-        Collective\Html\HtmlServiceProvider::class,
-        Watson\BootstrapForm\BootstrapFormServiceProvider::class,
-        GoogleMaps\ServiceProvider\GoogleMapsServiceProvider::class,
-
+        Pingpong\Modules\ModulesServiceProvider::class,
+        Manavo\BootstrapForms\BootstrapFormsServiceProvider::class,
     ],
 
     /*
@@ -199,11 +197,10 @@ return [
         'URL'       => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View'      => Illuminate\Support\Facades\View::class,
-        'GoogleMaps' => GoogleMaps\Facade\GoogleMapsFacade::class,
-        'Form'     => Collective\Html\FormFacade::class,
-        'HTML'     => Collective\Html\HtmlFacade::class,
-        'BootForm' => Watson\BootstrapForm\Facades\BootstrapForm::class,
-
+        'Module'    => Pingpong\Modules\Facades\Module::class,
+        'Form'      => Collective\Html\FormFacade::class,
+        'Html'      => Collective\Html\HtmlFacade::class,
+        'Uuid'      => Webpatser\Uuid\Uuid::class,
     ],
 
 ];
