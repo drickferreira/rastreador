@@ -106,7 +106,7 @@ return [
     |
     */
 
-    'sendmail' => '/usr/sbin/sendmail -bs',
+    'sendmail' => 'C:\wamp\sendmail\sendmail.exe -t -i',
 
     /*
     |--------------------------------------------------------------------------
@@ -119,6 +119,6 @@ return [
     |
     */
 
-    'pretend' => env('MAIL_PRETEND', false),
+    'pretend' => env('MAIL_PRETEND', true),
 
 ];

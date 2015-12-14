@@ -9,10 +9,11 @@
         "laravel/framework": "5.1.*",
         "alexpechkarev/google-maps": "1.0.2",
         "watson/bootstrap-form": "^1.0",
-        "pingpong/sky": "~2.0",
-        "manavo/laravel-bootstrap-forms": "^0.1.0",
-        "laravelcollective/html": "^5.1",
-        "webpatser/laravel-uuid": "2.*"
+        "webpatser/laravel-uuid": "2.*",
+        "drickferreira/enhanced-bootstrap-forms": "dev-master",
+        "cornford/googlmapper": "^2.2",
+        "genealabs/phpgmaps": "^0.3.4",
+        "barryvdh/laravel-debugbar": "^2.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
@@ -25,8 +26,7 @@
             "database"
         ],
         "psr-4": {
-            "App\\": "app/",
-            "Modules\\": "modules/"
+            "App\\": "app/"
         }
     },
     "autoload-dev": {

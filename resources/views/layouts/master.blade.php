@@ -8,6 +8,7 @@
 	<title>Rastreamento WEB 1.0</title>
 	{!! Html::style('assets/css/bootstrap.css') !!}
 	{!! Html::style('assets/css/bootstrap-theme.css') !!}
+	{!! Html::style('assets/css/style.css') !!}
 	@yield('custom-css')
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -17,9 +18,7 @@
     <![endif]-->
 </head>
 <body>
-	<div class="container-fluid">
-		@yield('content')
-	</div>
+	@yield('content')
 {!! Html::script('/assets/js/jquery.min.js') !!}
 {!! Html::script('/assets/js/bootstrap.min.js') !!}
 @yield('custom-js')

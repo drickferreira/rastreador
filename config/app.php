@@ -148,8 +148,9 @@ return [
         /**
          * Adicional Providers
          */
-        Pingpong\Modules\ModulesServiceProvider::class,
-        Manavo\BootstrapForms\BootstrapFormsServiceProvider::class,
+        Drickferreira\BootstrapForms\BootstrapFormsServiceProvider::class,
+        GeneaLabs\Phpgmaps\PhpgmapsServiceProvider::class,
+        Barryvdh\Debugbar\ServiceProvider::class,
     ],
 
     /*
@@ -197,10 +198,11 @@ return [
         'URL'       => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View'      => Illuminate\Support\Facades\View::class,
-        'Module'    => Pingpong\Modules\Facades\Module::class,
         'Form'      => Collective\Html\FormFacade::class,
         'Html'      => Collective\Html\HtmlFacade::class,
         'Uuid'      => Webpatser\Uuid\Uuid::class,
+        'Gmaps'     => GeneaLabs\Phpgmaps\Facades\PhpgmapsFacade::class,
+        'Debugbar'  => Barryvdh\Debugbar\Facade::class,
     ],
 
 ];

@@ -1,31 +1,35 @@
 @extends('layouts.master')
 
-@section('custom-css')
-    {!! Html::style('/assets/css/login.css') !!}
-@endsection
-
 @section('content')
-    {!! Form::open([ 'action' => 'Auth\AuthController@postLogin', 'class' => 'form-signin' ]) !!}
-    
-    <h2 class="form-signin-heading">Login</h2>
 
-    {!! Form::openGroup('username') !!}
-        {!! Form::text('username', old('username'), ['placeholder' => 'Usuário']) !!}
-    {!! Form::closeGroup() !!}
+<div class="container">
 
-    {!! Form::openGroup('password') !!}
-        {!! Form::password('password', ['placeholder' => 'Senha']) !!}
-    {!! Form::closeGroup() !!}
+    <div class="form-signin form-login">
 
-    {!! Form::openGroup('remember')!!}
-        {!! Form::checkbox('remember')!!}
-        {!! Form::label('remember','Lembrar-me')!!}
-    {!! Form::closeGroup()!!}
+        <h2 class="form-signin-heading">Login</h2>
 
-    {!! Form::openGroup('remember') !!}
-        {!! Form::submit('Login', [ 'class' => 'btn btn-lg btn-primary btn-block' ]) !!}
-    {!! Form::closeGroup() !!}
+        {!! Form::loadConfig('horizontal') !!}
+        
+        {!! Form::open(['action' => 'Auth\AuthController@postLogin']) !!}
 
+        {!! Form::openGroup('username') !!}
+            {!! Form::text('username', old('username'), ['label' => 'Usuário', 'placeholder' => 'Usuário']) !!}
+        {!! Form::closeGroup() !!}
 
-    {!! Form::close() !!}
+        {!! Form::openGroup('password') !!}
+            {!! Form::password('password', ['label' => 'Senha', 'placeholder' => 'Senha']) !!}
+        {!! Form::closeGroup() !!}
+
+        {!! Form::openGroup('remember')!!}
+            {!! Form::checkbox('remember', 1, null, ['label' => 'Lembrar', 'offset' => 2]) !!}
+        {!! Form::closeGroup()!!}
+
+        {!! Form::openGroup('login') !!}
+            {!! Form::submit('Login', [ 'class' => 'btn btn-lg btn-primary btn-block', 'offset' => 2 ]) !!}
+        {!! Form::closeGroup() !!}
+
+        {!! Form::close() !!}
+
+    </div>
+</div>
 @endsection
