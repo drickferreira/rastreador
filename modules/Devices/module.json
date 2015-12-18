@@ -1,0 +1,15 @@
+{
+    "name": "Devices",
+    "alias": "devices",
+    "description": "",
+    "keywords": [],
+    "active": 1,
+    "order": 0,
+    "providers": [
+        "Modules\\Devices\\Providers\\DevicesServiceProvider"
+    ],
+    "aliases":{},
+    "files": [
+        "start.php"
+    ]
+}

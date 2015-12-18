@@ -7,7 +7,6 @@ use Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
-use Webpatser\Uuid\Uuid;
 
 class AuthController extends Controller
 {
@@ -64,7 +63,6 @@ class AuthController extends Controller
     protected function create(array $data)
     {
         return User::create([
-            'id' => Uuid::generate(4),
             'name' => $data['name'],
             'email' => $data['email'],
             'username' => $data['username'],

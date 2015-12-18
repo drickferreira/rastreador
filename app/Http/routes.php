@@ -13,26 +13,7 @@
 
 Route::get('/', function () {
 	if (Auth::check() || Auth::viaRemember()){
-
-		$config = array();
-	    $config['center'] = 'auto';
-	    $config['onboundschanged'] = 'if (!centreGot) {
-	            var mapCentre = map.getCenter();
-	            marker_0.setOptions({
-	                position: new google.maps.LatLng(mapCentre.lat(), mapCentre.lng())
-	            });
-	        }
-	        centreGot = true;';
-	    $config['map_height'] = '500px';
-    	Gmaps::initialize($config);
-
-    	$marker = array();
-    	$marker['draggable'] = true;
-    	Gmaps::add_marker($marker);
-
-    	$map = Gmaps::create_map();
-
-    	return view('home', [ 'map' => $map ]);
+		return view('home');
     } else {
     	return redirect('auth/login');
     }
@@ -54,3 +35,5 @@ Route::post('password/email', 'Auth\PasswordController@postEmail');
 // Password reset routes...
 Route::get('password/reset/{token}', 'Auth\PasswordController@getReset');
 Route::post('password/reset', 'Auth\PasswordController@postReset');
+
+Route::resource('maps','MapController');

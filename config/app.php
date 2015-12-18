@@ -144,6 +144,7 @@ return [
         App\Providers\AuthServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        App\Providers\UuidServiceProvider::class,
 
         /**
          * Adicional Providers
@@ -151,6 +152,8 @@ return [
         Drickferreira\BootstrapForms\BootstrapFormsServiceProvider::class,
         GeneaLabs\Phpgmaps\PhpgmapsServiceProvider::class,
         Barryvdh\Debugbar\ServiceProvider::class,
+        Pingpong\Modules\ModulesServiceProvider::class,
+        UxWeb\SweetAlert\SweetAlertServiceProvider::class,
     ],
 
     /*
@@ -202,7 +205,9 @@ return [
         'Html'      => Collective\Html\HtmlFacade::class,
         'Uuid'      => Webpatser\Uuid\Uuid::class,
         'Gmaps'     => GeneaLabs\Phpgmaps\Facades\PhpgmapsFacade::class,
+        'Module'    => Pingpong\Modules\Facades\Module::class,
         'Debugbar'  => Barryvdh\Debugbar\Facade::class,
+        'Alert'     => UxWeb\SweetAlert\SweetAlert::class,
     ],
 
 ];

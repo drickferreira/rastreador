@@ -9,6 +9,7 @@
 	{!! Html::style('assets/css/bootstrap.css') !!}
 	{!! Html::style('assets/css/bootstrap-theme.css') !!}
 	{!! Html::style('assets/css/style.css') !!}
+	{!! Html::style('assets/css/sweetalert.css') !!}
 	@yield('custom-css')
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -18,9 +19,16 @@
     <![endif]-->
 </head>
 <body>
-	@yield('content')
+	@yield('navbar')
+	<div class="container-fluid">
+	    <div class="row">
+			@yield('sidebar')
+			@yield('content')
+		</div>
+	</div>
 {!! Html::script('/assets/js/jquery.min.js') !!}
 {!! Html::script('/assets/js/bootstrap.min.js') !!}
+{!! Html::script('/assets/js/sweetalert.min.js') !!}
 @yield('custom-js')
 </body>
 </html>
