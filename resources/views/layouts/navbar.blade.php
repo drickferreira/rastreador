@@ -7,7 +7,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            {!! link_to('/', 'Rastreador 1.0', [ 'class' => 'navbar-brand']) !!}
+            {!! link_to('/', 'Easy Tracker', [ 'class' => 'navbar-brand']) !!}
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">

@@ -9,6 +9,9 @@
 
 .sidebar {
   box-shadow: 1px 8px 10px 1px rgba(0, 0, 0, .14);
+  -webkit-border-radius: 5px;
+     -moz-border-radius: 5px;
+          border-radius: 5px;
 }
 
 .form-signin {
@@ -55,5 +58,25 @@
 }
 
 .listview table tr > td:last-child {
-  width:25%;
+  max-width:25%;
+}
+
+.huge {
+    font-size: 40px;
+}
+
+.btn .glyphicon.left {
+  margin-right: 5px; 
+}
+
+.btn .glyphicon.right {
+  margin-left: 5px; 
+}
+
+.rotate {
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  transform: rotate(45deg);
 }

@@ -15,4 +15,9 @@ class Device extends Model {
 
     protected $dates = ['deleted_at'];
 
+    public function Positions()
+    {
+    	return $this->hasMany('Modules\Positions\Entities\Position');
+    }
+
 }

@@ -45,11 +45,13 @@ class FTP {
 
 	public function read($file)
 	{
-		$filename = storage_path('framework/cache').'ftp_'.str_random(10).'.xml';
+		$filename = tempnam(storage_path('framework/cache'),'ftp_');
 		$local = fopen($filename, 'w');
 		ftp_fget($this->cnx, $local, $file, FTP_ASCII, 0);
 		fclose($local);
-		return simplexml_load_file($filename);
+		$xml = simplexml_load_file($filename);
+		unlink($filename);
+		return $xml;
 	}
 
 	public function login()
@@ -61,6 +63,7 @@ class FTP {
 	{
 		return ftp_nlist($this->cnx, $name);
 	}
+
 }
 
 ?>

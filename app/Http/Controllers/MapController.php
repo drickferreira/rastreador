@@ -6,115 +6,67 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Modules\Devices\Entities\Device;
+use Modules\Positions\Entities\Position;
 use App\FTP;
-use Gmaps;
-use Carbon\Carbon;
+use App\Helpers;
 
 class MapController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
+    {
+        $devices = Device::all();
+        return view('maps.index', ['devices' => $devices]);
+    }
+
+    public function create()
     {
         $ftp = new FTP;
         $ftp->chdir('data');
         $list = $ftp->dir();
-        return view('maps.index', ['list' => $list]);
+        $count = 0;
+
+        foreach ($list as $file) {
+
+            $xml = $ftp->read($file);
+            //dd($xml);
+
+            foreach($xml->xpath('POSITION') as $pos){
+                //dd($pos);
+                $device = Device::where('serial', xmlGetVal($pos,'FIRMWARE/SERIAL'))
+                                  ->where('model', xmlGetVal($pos,'FIRMWARE/PROTOCOL'))
+                                  ->first();
+                //dd($device);
+                $ip = strval($pos['ipv4']);
+                if($ip === '')
+                {
+                    $ip = xmlGetVal($xml,'//MXT1XX_IP_DATA/IP');
+                }  
+                $position = array(
+                    'ip' => $ip, 
+                    'memory_index' => xmlGetVal($pos,'FIRMWARE/MEMORY_INDEX', 'int'),
+                    'transmission_reason' => xmlGetVal($pos,'FIRMWARE/TRANSMISSION_REASON','int'), 
+                    'date' => xmlGetVal($pos,'GPS/DATE','str'), 
+                    'power_supply' => xmlGetVal($pos,'HARDWARE_MONITOR/POWER_SUPPLY','float'), 
+                    'temperature' => xmlGetVal($pos,'HARDWARE_MONITOR/TEMPERATURE','int'), 
+                    'ignition' => xmlGetVal($pos,'HARDWARE_MONITOR/INPUTS/IGNITION','bool'), 
+                    'panic' => xmlGetVal($pos,'HARDWARE_MONITOR/INPUTS/PANIC','bool'), 
+                    'battery_charging' => xmlGetVal($pos,'HARDWARE_MONITOR/FLAG_STATE/BATTERY_CHARGING','bool'),
+                    'battery_failure' => xmlGetVal($pos,'HARDWARE_MONITOR/FLAG_STATE/BATTERY_FAILURE','bool'),
+                    'latitude' => xmlGetVal($pos,'GPS/LATITUDE','float'),
+                    'longitude' => xmlGetVal($pos,'GPS/LONGITUDE','float'),
+                    'direction' => xmlGetVal($pos,'GPS/COURSE','int'),
+                    'speed' => xmlGetVal($pos,'GPS/SPEED','float'),
+                    'hodometer' => xmlGetVal($pos,'GPS/HODOMETER','int'),
+                );
+                //dd($position); 
+                $new = new Position($position);
+                $device->Positions()->save($new);
+                $count++;
+            }
+        }
+        return $count;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-
-        $ftp = new FTP;
-        $ftp->chdir('data');
-        $xml = $ftp->read($id);
-        $dt = new Carbon((string) $xml->POSITION->GPS->DATE);
-        $data = array(
-            'ip' => (string) $xml->POSITION->attributes()->ipv4,
-            'serial' => (string) $xml->POSITION->SERIAL,
-            'data' => $dt->format('d/m/Y H:i:s'),
-            'lat' => (string) $xml->POSITION->GPS->LATITUDE,
-            'long' => (string) $xml->POSITION->GPS->LONGITUDE,
-            'type' => (string) $xml->POSITION->FIRMWARE->PROTOCOL,
-        );
-        $config = array();
-        $config['center'] = $data['lat'].','.$data['long'];
-        $config['zoom'] = '16';
-//        $config['map_height'] = '500px';
-        Gmaps::initialize($config);
-
-        $marker = array();
-        $marker['position'] = $data['lat'].','.$data['long'];
-        $marker['infowindow_content'] = 'Saporra Funciona!';
-        Gmaps::add_marker($marker);
-
-        $map = Gmaps::create_map();
-
-        return view('maps.show', ['map' => $map, 'data' => $data]);
-
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
 }

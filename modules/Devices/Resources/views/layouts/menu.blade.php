@@ -22,7 +22,6 @@
     @endforeach
     </div>
 </div>
-<div class="clearfix">&nbsp;</div>
 <script type="text/javascript">
     function confirmDelete(id){
         swal(
@@ -30,24 +29,29 @@
             title: "Confirma Exclusão?",
             text: "Você não poderá desfazer essa operação!",
             type: "warning",   
-            showCancelButton: true,   
+            showCancelButton: true,
             confirmButtonColor: "#DD6B55",   
             confirmButtonText: "Sim, Excluir!",   
             closeOnConfirm: false 
         }, function()
         {   
-            $.ajax({
-                url: '/devices/' + id,
-                type: 'POST',
-                data: {
+            $.post(
+                '/devices/' + id,
+                {
                     _method : 'DELETE',
                     _token : '{{csrf_token()}}',
                 },  
-                success: function(result) {
-                    swal("Aparelho Excluído!", "O Aparelho foi excluído.", "success");
+                function(result) {
+                    swal(
+                    {
+                        title: "Aparelho Excluído!", 
+                        text: "O Aparelho foi excluído.",
+                        type: "success",
+                        timer: 2000,
+                    });
                     document.location.href = '/devices';
                 }
-            });
+            );
             
         });
     }
