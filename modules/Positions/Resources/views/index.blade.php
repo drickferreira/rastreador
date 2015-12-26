@@ -1,5 +1,12 @@
 @extends('layouts.base')
 @section('main')
+<div class="btn-toolbar">
+    <div class="btn-group btn-group-sm">
+        <button class="btn btn-default" onclick="javascript:history.back();"><i class="fa fa-lg fa-undo"></i> Voltar</button>
+        <a class="btn btn-default" href="{!! route('positions.showRoute') !!}"><i class="fa fa-lg fa-map"></i> Traçar Rota</a>
+    </div>
+</div>
+<div class="clearfix">&nbsp;</div>
 <div class="listview">
 <table class="table-responsive table-striped table-hover table-condensed">
 	<thead>
@@ -38,7 +45,7 @@
 					    <i class="fa fa-lg fa-road"></i>
 					</button>
 		    		<a class="btn btn-success btn-xs" title="Ver no Mapa" href="{!! route('positions.showMap', $position->id) !!}">
-					    <i class="fa fa-lg fa-map"></i>
+					    <i class="fa fa-lg fa-map-marker"></i>
 					</a>
 		    		<a class="btn btn-danger btn-xs" title="Informações" href="{!! route('positions.showInfo', $position->id) !!}">
 					    <i class="fa fa-lg fa-info-circle"></i>

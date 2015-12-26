@@ -24,8 +24,6 @@ class PositionsController extends Controller {
 	{
 		$position = Position::find($request->id);
 		//dd($position);
-		$lat = $position->latitude;
-		$lng = $position->longitude;
 		$latlng = $position->latitude.','.$position->longitude;
 		$response = \GoogleMaps::load('geocoding')
 				        ->setParamByKey('latlng', $latlng)
@@ -39,14 +37,14 @@ class PositionsController extends Controller {
 		$position = Position::find($id);
 		//dd($position);
         $config = array();
-        $config['center'] = $position->latitude.','.$position->longitude;
+		$latlng = $position->latitude.','.$position->longitude;
+        $config['center'] = $latlng;
         $config['zoom'] = '16';
 //        $config['map_height'] = '500px';
         Gmaps::initialize($config);
 
         $marker = array();
-        $marker['position'] = $position->latitude.','.$position->longitude;
-        $marker['infowindow_content'] = 'Saporra Funciona!';
+        $marker['position'] = $latlng;
         Gmaps::add_marker($marker);
 
         $map = Gmaps::create_map();
@@ -59,5 +57,33 @@ class PositionsController extends Controller {
 	{
 		$position = Position::find($id);
         return view('positions::info', ['position' => $position]);
+	}
+
+	public function showRoute()
+	{
+		$positions = Position::orderBy('date', 'desc')
+					->take(30)
+					->get();
+
+        $config = array();
+//        $config['center'] = $position->latitude.','.$position->longitude;
+        $config['zoom'] = 'auto';
+        Gmaps::initialize($config);
+
+		$polyline = array();
+       	$polyline['points'] = array();
+        foreach ($positions as $position) 
+        {
+			$latlng = $position->latitude.','.$position->longitude;
+        	$polyline['points'][] = $latlng;
+	        // $marker = array();
+	        // $marker['position'] = $latlng;$_SERVER['variable']
+	        // Gmaps::add_marker($marker);        	
+        }
+		Gmaps::add_polyline($polyline);
+
+        $map = Gmaps::create_map();
+
+        return view('positions::show', ['map' => $map]);
 	}
 }
