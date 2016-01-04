@@ -1,6 +1,6 @@
 <?php
 
-Route::group(['prefix'=> 'positions', 'namespace' => 'Modules\Positions\Http\Controllers'], function()
+Route::group(['prefix'=> 'positions', 'namespace' => 'Modules\Positions\Http\Controllers', 'middleware' => 'auth'], function()
 {
 	Route::get('/', 'PositionsController@index')->name('positions.index');
 	Route::get('getAddress', 'PositionsController@getAddress')->name('positions.getAddress');

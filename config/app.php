@@ -154,6 +154,7 @@ return [
         GoogleMaps\ServiceProvider\GoogleMapsServiceProvider::class,
         Barryvdh\Debugbar\ServiceProvider::class,
         Pingpong\Modules\ModulesServiceProvider::class,
+        Pingpong\Generators\GeneratorsServiceProvider::class,
         UxWeb\SweetAlert\SweetAlertServiceProvider::class,
     ],
 

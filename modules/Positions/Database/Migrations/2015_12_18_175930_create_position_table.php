@@ -19,12 +19,12 @@ class CreatePositionTable extends Migration {
             $table->smallInteger('memory_index')->unsigned();
             $table->tinyInteger('transmission_reason')->unsigned();
             $table->dateTime('date');
-            $table->double('latitude', 10, 6);
-            $table->double('longitude', 10, 6);
-            $table->char('direction', 1);
-            $table->decimal('speed', 3, 2);
+            $table->double('latitude', 18, 14);
+            $table->double('longitude', 18, 14);
+            $table->decimal('direction', 1, 0);
+            $table->decimal('speed', 6, 2);
             $table->mediumInteger('hodometer');
-            $table->decimal('power_supply', 2, 2);
+            $table->decimal('power_supply', 4, 2);
             $table->tinyInteger('temperature');
             $table->boolean('ignition');
             $table->boolean('panic');

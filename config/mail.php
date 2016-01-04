@@ -54,7 +54,7 @@ return [
     |
     */
 
-    'from' => ['address' => null, 'name' => null],
+    'from' => ['address' => env('MAIL_FROM'), 'name' => env('MAIL_NAME')],
 
     /*
     |--------------------------------------------------------------------------
@@ -106,7 +106,7 @@ return [
     |
     */
 
-    'sendmail' => 'C:\wamp\sendmail\sendmail.exe -t -i',
+    'sendmail' => 'c:\wamp\sendmail\sendmail.exe',
 
     /*
     |--------------------------------------------------------------------------

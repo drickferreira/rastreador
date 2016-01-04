@@ -61,8 +61,9 @@ class PositionsController extends Controller {
 
 	public function showRoute()
 	{
-		$positions = Position::orderBy('date', 'desc')
-					->take(30)
+		$positions = Position::orderBy('date', 'asc')
+					->skip(50)
+					->take(10)
 					->get();
 
         $config = array();
@@ -76,9 +77,9 @@ class PositionsController extends Controller {
         {
 			$latlng = $position->latitude.','.$position->longitude;
         	$polyline['points'][] = $latlng;
-	        // $marker = array();
-	        // $marker['position'] = $latlng;$_SERVER['variable']
-	        // Gmaps::add_marker($marker);        	
+	        $marker = array();
+	        $marker['position'] = $latlng;
+	        Gmaps::add_marker($marker);        	
         }
 		Gmaps::add_polyline($polyline);
 

@@ -22,7 +22,7 @@
 <body>
 	@yield('navbar')
 	<div class="container-fluid">
-	    <div class="row">
+	    <div class="row-fluid">
 			@yield('sidebar')
 			@yield('content')
 		</div>

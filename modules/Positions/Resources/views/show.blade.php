@@ -3,6 +3,6 @@
 {!! $map['html'] !!}
 @endsection
 @section('custom-js')
-{!! Html::script('/assets/js/scripts.js') !!}
 {!! $map['js'] !!}
+{!! Html::script('/assets/js/map.js') !!}
 @endsection

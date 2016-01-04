@@ -37,3 +37,8 @@ Route::get('password/reset/{token}', 'Auth\PasswordController@getReset');
 Route::post('password/reset', 'Auth\PasswordController@postReset');
 
 Route::resource('maps','MapController');
+
+Route::get('mail', function(){
+	return view('emails.index');
+});
+Route::post('mail/send', 'MapController@sendmail');

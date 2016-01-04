@@ -19,7 +19,7 @@
     {!! Form::closeGroup() !!}
 
     {!! Form::openGroup('direction') !!}
-        {!! Form::text('direction', fieldValue('direction', $position->direction), ['label'=> 'Direção', 'readonly'] ) !!}
+        {!! Form::text('direction', fieldValue('directions', $position->direction), ['label'=> 'Direção', 'readonly'] ) !!}
         {!! Form::text('speed', $position->speed, ['label'=> 'Velocidade', 'readonly'] ) !!}
     {!! Form::closeGroup() !!}
     {!! Form::openGroup('power') !!}
