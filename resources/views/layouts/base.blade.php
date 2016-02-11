@@ -8,12 +8,8 @@
 	@include('layouts.navbar')
 @endsection
 
-@section('sidebar')
-	@include('layouts.sidebar')
-@endsection
-
 @section('content')
-    <div class="col-sm-9 main">
+    <div class="main">
         @yield('main')
     </div>     
 @endsection

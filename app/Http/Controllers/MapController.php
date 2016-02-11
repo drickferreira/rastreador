@@ -26,9 +26,13 @@ class MapController extends Controller
         $list = $ftp->dir();
         $count = 0;
 
-        foreach ($list as $file) {
+        $file = $list[0];
+
+        //foreach ($list as $file) 
+        {
 
             $xml = $ftp->read($file);
+            //$ftp->delete($file);
             //dd($xml);
 
             foreach($xml->xpath('POSITION') as $pos){

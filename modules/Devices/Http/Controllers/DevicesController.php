@@ -3,7 +3,7 @@
 use Pingpong\Modules\Routing\Controller;
 use Modules\Devices\Entities\Device;
 use Illuminate\Http\Request;
-
+use Storage;
 
 class DevicesController extends Controller {
 	
@@ -25,7 +25,13 @@ class DevicesController extends Controller {
 	 */
 	public function create()
 	{
-		return view('devices::create');
+		$disk = Storage::disk('icons');
+		$icons = $disk->allFiles();
+		$arr_icons = [];
+		foreach ($icons as $icon){
+			$arr_icons[asset('assets/icons/'.$icon)] = str_replace('.png', '', $icon);
+		}
+		return view('devices::create')->with('icons', $arr_icons);
 	}
 
 	/**
@@ -60,8 +66,14 @@ class DevicesController extends Controller {
 	 */
 	public function edit($id)
 	{
+		$disk = Storage::disk('icons');
+		$icons = $disk->allFiles();
+		$arr_icons = [];
+		foreach ($icons as $icon){
+			$arr_icons[] = asset('assets/icons/'.$icon);
+		}
 		$device = Device::findOrFail($id);
-		return view('devices::edit', compact('device'));
+		return view('devices::edit', compact('device'))->with('icons', $arr_icons);
 	}
 
 	/**

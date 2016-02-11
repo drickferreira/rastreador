@@ -1,13 +1,10 @@
-$(document).ready(function(){
-	var btn = '<button id="fullscreen" data-toggle="collapse" data-target=".sidebar" class="btn btn-default" onclick="fullscreen()"><i class="glyphicon glyphicon-fullscreen"></i></button>';
-	$(".main").append(btn);
-	$("#map_canvas").css("height", "100%");
-})
-
-function fullscreen(){
-	var center = map.getCenter();
-	$(".main").toggleClass('col-sm-9 col-sm-12');
-    google.maps.event.trigger(map, "resize");
-    map.setCenter(center);
+function autoCenter(){
+	$("#map_canvas").css("height", "90%");
+	var latlngbounds = new google.maps.LatLngBounds();
+	$.each(lat_longs_map, function(i, m){
+	   latlngbounds.extend(m);
+	});
+	map.setCenter(latlngbounds.getCenter());
+	map.fitBounds(latlngbounds); 
 }
 	

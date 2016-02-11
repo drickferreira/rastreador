@@ -6,7 +6,8 @@
 <table class="table table-striped table-hover table-condensed">
 	<thead>
 		<tr>
-			<th>Nome</th>
+			<th>Ícone</th>
+			<th>Placa</th>
 			<th>Modelo</th>
 			<th>Serial</th>
 			<th></th>
@@ -15,6 +16,7 @@
 	<tbody>
 		@forelse ($devices as $device)
 		    <tr>
+		    	<td><img height="20px" src="{{ $device->icon }}"><span class="icon-label">{{ $device->label }}</span></td>
 		    	<td>{{ $device->name }}</td>
 		    	<td>{{ fieldValue('devices', $device->model) }}</td>
 		    	<td>{{ $device->serial }}</td>

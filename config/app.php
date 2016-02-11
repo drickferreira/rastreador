@@ -150,7 +150,6 @@ return [
          * Adicional Providers
          */
         Drickferreira\BootstrapForms\BootstrapFormsServiceProvider::class,
-        GeneaLabs\Phpgmaps\PhpgmapsServiceProvider::class,
         GoogleMaps\ServiceProvider\GoogleMapsServiceProvider::class,
         Barryvdh\Debugbar\ServiceProvider::class,
         Pingpong\Modules\ModulesServiceProvider::class,
@@ -206,7 +205,6 @@ return [
         'Form'      => Collective\Html\FormFacade::class,
         'Html'      => Collective\Html\HtmlFacade::class,
         'Uuid'      => Webpatser\Uuid\Uuid::class,
-        'Gmaps'     => GeneaLabs\Phpgmaps\Facades\PhpgmapsFacade::class,
         'GoogleMaps'=> GoogleMaps\Facade\GoogleMapsFacade::class,
         'Module'    => Pingpong\Modules\Facades\Module::class,
         'Debugbar'  => Barryvdh\Debugbar\Facade::class,

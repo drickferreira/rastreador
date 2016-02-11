@@ -48,6 +48,11 @@ return [
             'root'   => storage_path('app'),
         ],
 
+        'icons' => [
+            'driver' => 'local',
+            'root'   => public_path('assets/icons'),
+        ],
+
         'ftp' => [
             'driver'   => 'ftp',
             'host'     => 'ftp.example.com',

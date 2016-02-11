@@ -10,7 +10,6 @@
         "alexpechkarev/google-maps": "1.0.2",
         "webpatser/laravel-uuid": "2.*",
         "drickferreira/enhanced-bootstrap-forms": "dev-master",
-        "genealabs/phpgmaps": "^0.3.4",
         "barryvdh/laravel-debugbar": "^2.0",
         "pingpong/sky": "~2.0",
         "uxweb/sweet-alert": "~1.1"

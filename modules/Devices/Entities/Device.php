@@ -11,7 +11,7 @@ class Device extends Model {
 
     protected $table = 'devices';
 
-    protected $fillable = ['name', 'model', 'serial'];
+    protected $fillable = ['name', 'model', 'serial', 'icon'];
 
     protected $dates = ['deleted_at'];
 
