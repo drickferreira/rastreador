@@ -17,7 +17,6 @@
     
     {!! Form::openGroup('name') !!}
         {!! Form::text('name', old('name'), ['label'=> 'Placa', 'maxlength' => '8']) !!}
-        {!! Form::text('label', old('label'), ['label' => 'Label', 'maxlength' => '1']) !!}
         {!! Form::label('icone', 'Ícone', ['class' => 'col-md-2 control-label']) !!}
         <div class="col-md-2">   
             <div class="dropdown">
