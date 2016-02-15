@@ -15,7 +15,7 @@
             </div>
             <a href="#">
                 <div class="panel-footer">
-                    <span class="pull-left">{!! link_to_route($item['route'], 'Ver Detalhes')!!}</span>
+                    <span class="pull-left">{!! link_to($item['link'], 'Ver Detalhes')!!}</span>
                     <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
                     <div class="clearfix"></div>
                 </div>

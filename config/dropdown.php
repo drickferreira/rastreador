@@ -157,6 +157,13 @@ return [
         100 => 'Eventos de Telemetria',
         101 => 'Reconstrução do Evento (reservado)',
         102 => 'Reconstrução da Rota'
-    )
+    ),
+		
+		'roles' => array 
+		(
+			10 => 'Super Admin',
+			20 => 'Admin - Empresa',
+			30 => 'Usuário Comum',
+		)
 
 ];

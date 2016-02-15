@@ -1,0 +1,61 @@
+<?php $__env->startSection('main'); ?>
+<div class="btn-toolbar">
+    <div class="btn-group btn-group-sm">
+        <button class="btn btn-default" onclick="javascript:history.back();"><i class="fa fa-lg fa-undo"></i> Voltar</button>
+        <button type="button" form="idLista" class="btn btn-default" onclick="validaChecked()"><i class="fa fa-lg fa-map"></i> Ver no Mapa</button>
+    </div>
+</div>
+<div class="clearfix">&nbsp;</div>
+<div class="listview">
+<?php echo Form::open(array('route' => 'positions.showAllMap', 'id' => 'idLista')); ?>
+
+	<table class="table-responsive table-striped table-hover table-condensed">
+		<thead>
+			<tr>
+				<th width="3%"><input type="checkbox" name="todos" id="todos" onclick="selectTodos()"></th>
+				<th width="18%">Veículo</th>
+				<th width="14%">Data / Hora</th>
+				<th>Endereço</th>
+				<th class="text-center" width="5%">Ignição</th>
+				<th class="text-right" width="9%">Velocidade</th>
+				<th class="text-center" width="12%">Visualizar</th>
+			</tr>
+		</thead>
+		<tbody>
+			<?php $__empty_1 = true; foreach($positions as $position): $__empty_1 = false; ?>
+			    <tr>
+			    	<td><input type="checkbox" name="ids[]" value="<?php echo e($position->vehicle_id); ?>" onclick="checkSelected()"></td>
+			    	<td><a href="<?php echo route('positions.showLast', [$position->vehicle_id, 15]); ?>"><?php echo e($position->name); ?></a></td>
+			    	<td><?php echo e($position->date->format('d/m/Y H:i:s')); ?></td>
+			    	<td><span class="address" geo-lat="<?php echo e($position->latitude); ?>" geo-lng="<?php echo e($position->longitude); ?>"></span></td>
+			    	<td class="text-center">
+				    	<?php if($position->ignition === 1): ?>
+				    		<i class="fa fa-lg fa-circle on"></i>
+				    	<?php else: ?>
+				    		<i class="fa fa-lg fa-circle off"></i>
+				    	<?php endif; ?>
+			    	</td>
+			    	<td class="text-right"><?php echo e($position->speed); ?> km/h</td>
+			    	<td class="text-center">
+			    		<a class="btn btn-success btn-xs" title="Ver no Mapa" href="<?php echo route('positions.showMap', $position->id); ?>">
+						    <i class="fa fa-lg fa-map-marker"></i>
+						</a>
+			    		<a class="btn btn-primary btn-xs" title="Últimas Posições" href="<?php echo route('positions.showLast', $position->vehicle_id); ?>">
+						    <i class="fa fa-lg fa-list-ol"></i>
+						</a>
+			    	</td>
+			    </tr>
+			<?php endforeach; if ($__empty_1): ?>
+				<tr><td colspan="4">Nenhum registro encontrado.</td></tr>
+			<?php endif; ?>
+		</tbody>
+	</table>
+<?php echo Form::close(); ?>
+
+</div>
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('custom-js'); ?>
+<?php echo Html::script('/assets/js/geocode.js'); ?>
+
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.base', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

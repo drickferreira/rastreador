@@ -29,7 +29,7 @@ class User extends Model implements AuthenticatableContract,
      *
      * @var array
      */
-    protected $fillable = ['name', 'username', 'email', 'password'];
+    protected $fillable = ['name', 'username', 'email', 'password', 'company_id', 'role'];
 
     /**
      * The attributes excluded from the model's JSON form.
@@ -44,4 +44,25 @@ class User extends Model implements AuthenticatableContract,
      * @var array
      */
     protected $dates = ['deleted_at'];
+		
+    public function Company()
+    {
+    	return $this->belongsTo('Modules\Companies\Entities\Company');
+    }
+		
+		public function isSuperAdmin()
+		{
+			return $this->role === 10;
+		}
+
+		public function isAdmin()
+		{
+			return $this->role === 20;
+		}
+
+		public function isUser()
+		{
+			return $this->role === 30;
+		}
+
 }

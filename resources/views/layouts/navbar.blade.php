@@ -12,9 +12,16 @@
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-left" id="userMenu">
                 <li><a href="/"><i class="glyphicon glyphicon-home"></i> Home</a></li>
-                <li><a href="/devices"><i class="glyphicon glyphicon-cog"></i> Aparelhos</a></li>
+								@if (Auth::user()->isSuperAdmin())
+                  <li><a href="/user"><i class="glyphicon glyphicon-user"></i> Usuários</a></li>
+                  <li><a href="/companies"><i class="glyphicon glyphicon-briefcase"></i> Empresas</a></li>
+                @endif
+								@if (Auth::user()->isSuperAdmin() || Auth::user()->isAdmin())
+                  <li><a href="/devices"><i class="glyphicon glyphicon-cog"></i> Aparelhos</a></li>
+                  <li><a href="/accounts"><i class="fa fa-users"></i> Clientes</a></li>
+                  <li><a href="/vehicles"><i class="fa fa-car"></i> Veículos</a></li>
+                @endif
                 <li><a href="/positions"><i class="glyphicon glyphicon-map-marker"></i> Posições</span></a></li>
-                <li><a href="#" onclick="loadXml()"><i class="glyphicon glyphicon-refresh"></i> Processar Arquivos XML</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">

@@ -9,16 +9,16 @@ class Position extends Model {
 
 	protected $table = 'positions';
     protected $fillable = ['ip','memory_index', 'transmission_reason', 'date', 
-    	'latitude', 'longitude', 'direction', 'speed', 'hodometer', 'power_supply', 'temperature', 
-    	'ignition', 'panic', 'battery_charging', 'battery_failure', 'device_id'];
+    	'latitude', 'longitude', 'speed', 'hodometer', 'power_supply', 'temperature', 
+    	'ignition', 'panic', 'battery_charging', 'battery_failure', 'vehicle_id'];
 
     protected $dates = ['date', 'created_at', 'updated_at', 'deleted_at'];
 
     public $timestamps = false;
 
-    public function Device()
+    public function Vehicle()
     {
-    	return $this->belongsTo('Modules\Devices\Entities\Device');
+    	return $this->belongsTo('Modules\Vehicles\Entities\Vehicle');
     } 
 
 }

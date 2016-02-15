@@ -2,8 +2,11 @@
 
 use Pingpong\Modules\Routing\Controller;
 use Modules\Devices\Entities\Device;
+use Modules\Companies\Entities\Company;
+use Modules\Vehicles\Entities\Vehicle;
 use Illuminate\Http\Request;
-use Storage;
+use Auth;
+use Carbon\Carbon;
 
 class DevicesController extends Controller {
 	
@@ -14,98 +17,109 @@ class DevicesController extends Controller {
 	 */
 	public function index()
 	{
-		$devices = Device::latest()->get();
-		return view('devices::index', compact('devices'));
-	}
-
-	/**
-	 * Show the form for creating a new resource.
-	 *
-	 * @return Response
-	 */
-	public function create()
-	{
-		$disk = Storage::disk('icons');
-		$icons = $disk->allFiles();
-		$arr_icons = [];
-		foreach ($icons as $icon){
-			$arr_icons[asset('assets/icons/'.$icon)] = str_replace('.png', '', $icon);
+		if (Auth::user()->isSuperAdmin() || Auth::user()->isAdmin()) {
+			if (Auth::user()->isSuperAdmin()) {
+				$filter = \DataFilter::source(Device::with('Company'));
+			} else if (Auth::user()->isAdmin()) {
+				$filter = \DataFilter::source(Device::with('Company')->where('company_id', Auth::user()->company_id));
+			}
+			$filter->add('name','Identificação', 'text');
+			$filter->add('serial','Serial', 'text');
+			$filter->add('hasvehicle', 'Atribuído', 'select')
+				->options(array(0 => 'Todos', 1 => 'Com veículo', 2 => 'Sem Veículo'))
+				->scope('hasvehicle');
+			$filter->submit('Buscar');
+			$filter->reset('Limpar');
+			$filter->build();
+			
+			$grid = \DataGrid::source($filter);
+			$grid->attributes(array("class"=>"table table-striped"));
+			$grid->add('name','Identificação', true);
+			$grid->add('serial','Número de Série', true);
+			$grid->add('{{ fieldValue("devices", $model) }}','Modelo', true);
+			$grid->add('assignedvehicle','Veículo', true);
+			if (Auth::user()->isSuperAdmin()) {
+				$grid->add('Company.name','Empresa', true);
+				$grid->edit('devices/edit', 'Ações','show|modify|delete');
+				$grid->link('devices/edit',"Novo Aparelho", "TR");
+			} else if (Auth::user()->isAdmin()) {
+				$grid->add('<a class="btn btn-default" href="devices/vehicle/{{$id}}"><i class="fa fa-car"></i></a>', '');
+			}
+			return view('devices::index', compact('filter', 'grid'));
+		} else {
+			return view('errors.503');
 		}
-		return view('devices::create')->with('icons', $arr_icons);
 	}
 
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @return Response
-	 */
-	public function store(Request $request)
+	public function getVehicle($id)
 	{
-		$this->validate($request, ['name' => 'required', 'model' => 'required', 'serial' => 'unique:devices']); 
-		Device::create($request->all());
-		return redirect('devices');
-	}
-
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function show($id)
-	{
-		$device = Device::findOrFail($id);
-		return view('devices::show', compact('device'));
-	}
-
-	/**
-	 * Show the form for editing the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function edit($id)
-	{
-		$disk = Storage::disk('icons');
-		$icons = $disk->allFiles();
-		$arr_icons = [];
-		foreach ($icons as $icon){
-			$arr_icons[] = asset('assets/icons/'.$icon);
+		if (Auth::user()->isAdmin()) {
+			$device = Device::findOrFail($id);
+			$vehicles = ['' => ''] + Vehicle::whereHas('Account', function ($query) {
+				$query->where('company_id', Auth::user()->company_id);			
+			})->doesntHave('Device', 'and', function($q){
+    		$q->where('remove_date', null);
+			})->get()->lists("fullname", "id")->all();
+			$form = \DataForm::create();
+			$form->add('device_id', '', 'hidden')->insertValue($device->id);
+			$form->add('device_name', 'Aparelho', 'text')->insertValue($device->name)->mode('readonly');
+			if ($device->assignedvehicle){
+				$vehicle = $device->Vehicle->where('remove_date', null)->first();
+				$form->add('assignedvehicle', 'Veículo', 'text')->insertValue($vehicle->plate)->mode('readonly');
+				$form->add('vehicle_id', '', 'hidden')->insertValue($vehicle->id);
+				$form->add('install_date', 'Data de Instalação', 'date')->insertValue($vehicle->pivot->install_date)->mode('readonly');
+				$form->add('description', 'Observações', 'textarea')->insertValue($vehicle->pivot->description)->mode('readonly');
+				$form->add('action','', 'hidden')->insertValue('remove');
+				$form->submit('Remover Veículo');
+			} else {
+				$form->add('vehicle_id', 'Veículo', 'select')->options($vehicles);
+				$form->add('install_date', 'Data de Instalação', 'date')->format('d-m-Y');
+				$form->add('description', 'Observações', 'textarea');
+				$form->add('action','', 'hidden')->insertValue('assign');
+				$form->submit('Salvar');
+			}
+			return view('devices::vehicle', compact('form'));
+		} else {
+			return view('errors.503');
 		}
-		$device = Device::findOrFail($id);
-		return view('devices::edit', compact('device'))->with('icons', $arr_icons);
 	}
 
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function update($id, Request $request)
+	public function postVehicle(Request $request)
 	{
-		$this->validate($request, array( 
-			'name' => 'required', 
-			'model' => 'required', 
-			'serial' => 'unique:devices,serial,'.$id
-			)
-		); 
-		$device = Device::findOrFail($id);
-		$device->update($request->all());
-		return redirect('devices');
+		if (Auth::user()->isAdmin()) {
+			$device = Device::findOrFail($request->device_id);
+			if ($request->action == 'assign') {
+				$this->validate($request, ['vehicle_id' => 'required', 'install_date' => 'required', 'description' => 'required|min:15']);
+				$device->Vehicle()->attach($request->vehicle_id, array(
+					'install_date' => $request->install_date,
+					'description' => $request->description,
+				));
+			} elseif ($request->action == 'remove') {
+				$vehicle = $device->Vehicle->where("id", $request->vehicle_id)->first();
+				$vehicle->pivot->remove_date = Carbon::now()->toDateString();
+				$vehicle->pivot->save();
+			}
+			return redirect('devices');
+		} else {
+			return view('errors.503');
+		}
 	}
 
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function destroy($id)
+	public function edit()
 	{
-
-		Device::destroy($id);
+		if (Auth::user()->isSuperAdmin()) {
+			$form = \DataEdit::source(new Device);
+			$form->link("devices","Voltar", "TR")->back();
+			$form->text('name','Identificação')->rule('required|min:5');
+			$form->select('model','Modelo')->options(config("dropdown.devices"));
+			$companies = ['' => ''] + Company::lists("name", "id")->all();
+			$form->select('company_id', 'Empresa')->options($companies);
+			return $form->view('devices::edit', compact('form'));
+		} else {
+			return view('errors.503');
+		}
 	}
+
 
 	
 }

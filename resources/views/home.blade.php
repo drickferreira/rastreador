@@ -7,7 +7,7 @@
 		'icon' => 'car',
 		'text' => 'Veículos',
 		'count' => 2,
-		'route' => 'devices.index',
+		'link' => 'devices',
 	],	
 )])	
 @endsection

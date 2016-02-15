@@ -8,25 +8,22 @@
 
         <h2 class="form-signin-heading">Login</h2>
 
-        {!! Form::loadConfig('horizontal') !!}
-        
         {!! Form::open(['action' => 'Auth\AuthController@postLogin']) !!}
 
-        {!! Form::openGroup('username') !!}
-            {!! Form::text('username', old('username'), ['label' => 'Usuário', 'placeholder' => 'Usuário']) !!}
-        {!! Form::closeGroup() !!}
-
-        {!! Form::openGroup('password') !!}
-            {!! Form::password('password', ['label' => 'Senha', 'placeholder' => 'Senha']) !!}
-        {!! Form::closeGroup() !!}
-
-        {!! Form::openGroup('remember')!!}
-            {!! Form::checkbox('remember', 1, null, ['label' => 'Lembrar', 'offset' => 2]) !!}
-        {!! Form::closeGroup()!!}
-
-        {!! Form::openGroup('login') !!}
-            {!! Form::submit('Login', [ 'class' => 'btn btn-lg btn-primary btn-block', 'offset' => 2 ]) !!}
-        {!! Form::closeGroup() !!}
+            <div class="form-group">
+            	<label for="username">Usuário</label>
+              {!! Form::text('username', old('username'), ['class' => 'form-control', 'placeholder' => 'Usuário']) !!}
+            </div>
+            <div class="form-group">
+            	<label for="username">Senha</label>
+	            {!! Form::password('password', ['class' => 'form-control', 'placeholder' => 'Senha']) !!}
+            </div>
+            <div class="form-group">
+            	<label for="username">
+	              {!! Form::checkbox('remember') !!}
+              Lembrar</label>
+            </div>
+            {!! Form::submit('Login', [ 'class' => 'btn btn-lg btn-primary btn-block']) !!}
 
         {!! Form::close() !!}
 

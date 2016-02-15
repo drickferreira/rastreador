@@ -8,35 +8,40 @@
 
         <h2 class="form-signin-heading">Cadastro</h2>
 
-        {!! Form::loadConfig('2column') !!}
-
-        {!! Form::open([ 'action' => 'Auth\AuthController@postRegister', ]) !!}
+        {!! Form::open([ 'action' => 'Auth\AuthController@postRegister']) !!}
         
-
-        {!! Form::openGroup('name') !!}
-            {!! Form::text('name', old('name'), ['label'=> 'Nome', 'placeholder' => 'Nome', 'extend' => 'full']) !!}
-        {!! Form::closeGroup() !!}
-
-        {!! Form::openGroup('email') !!}
-            {!! Form::email('email', old('email'), ['label'=> 'E-mail', 'placeholder' => 'E-mail', 'extend' => 'full']) !!}
-        {!! Form::closeGroup() !!}
-
-        {!! Form::openGroup('username') !!}
-            {!! Form::text('username', old('username'), ['label'=> 'Usuário', 'placeholder' => 'Usuário', 'extend' => 'full']) !!}
-        {!! Form::closeGroup() !!}
-
-        {!! Form::openGroup('password') !!}
-            {!! Form::password('password', ['label'=> 'Senha', 'placeholder' => 'Senha']) !!}
-            {!! Form::password('password_confirmation', ['label'=> 'Confirme', 'placeholder' => 'Repita a Senha']) !!}
-        {!! Form::closeGroup() !!}
-
-        {!! Form::openGroup('enviar') !!}
-            {!! Form::submit('Enviar', ['class' => 'btn btn-lg btn-primary btn-block', 'extend' => 'full' ]) !!}
-        {!! Form::closeGroup() !!}
-
-
+          @if($errors->has())
+          	<div class="bg-danger">
+            @foreach ($errors->all() as $error)
+	            {{ $error }}
+            @endforeach
+            </div>
+          @endif
+        
+          <div class="form-group">
+            <label for="name">Nome</label>
+            {!! Form::text('name', old('name'), ['class' => 'form-control', 'placeholder' => 'Nome']) !!}
+          </div>
+          <div class="form-group">
+            <label for="name">E-mail</label>
+            {!! Form::text('email', old('email'), ['class' => 'form-control', 'placeholder' => 'E-mail']) !!}
+          </div>
+          <div class="form-group">
+            <label for="username">Usuário</label>
+            {!! Form::text('username', old('username'), ['class' => 'form-control', 'placeholder' => 'Usuário']) !!}
+          </div>
+          <div class="form-group">
+            <label for="password">Senha</label>
+            {!! Form::password('password', ['class' => 'form-control', 'placeholder' => 'Senha']) !!}
+          </div>
+          <div class="form-group">
+            <label for="password_confirmation">Confirme a Senha</label>
+            {!! Form::password('password_confirmation', ['class' => 'form-control', 'placeholder' => 'Senha']) !!}
+          </div>
+          <div class="form-group">
+            {!! Form::submit('Enviar', ['class' => 'btn btn-lg btn-primary btn-block']) !!}
+          </div>
         {!! Form::close() !!}
-
     </div>
 </div>
 @endsection

@@ -21,6 +21,9 @@ class CreateDevicesTable extends Migration {
             $table->softDeletes();
             $table->timestamps();
             $table->primary('id');
+						$table->uuid('company_id');
+						$table->foreign('company_id')
+									->references('id')->on('companies');
         });
     }
 

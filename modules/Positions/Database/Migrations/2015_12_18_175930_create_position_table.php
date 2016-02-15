@@ -16,12 +16,11 @@ class CreatePositionTable extends Migration {
         {
             $table->uuid('id');
             $table->string('ip', 25);
-            $table->smallInteger('memory_index')->unsigned();
+            $table->integer('memory_index')->unsigned();
             $table->tinyInteger('transmission_reason')->unsigned();
             $table->dateTime('date');
             $table->double('latitude', 18, 14);
             $table->double('longitude', 18, 14);
-            $table->decimal('direction', 1, 0);
             $table->decimal('speed', 6, 2);
             $table->mediumInteger('hodometer');
             $table->decimal('power_supply', 4, 2);
@@ -33,12 +32,8 @@ class CreatePositionTable extends Migration {
             $table->uuid('device_id');
             $table->softDeletes();
             $table->primary('id');
-        });
-        
-        Schema::table('positions', function($table)
-        {
-            $table->foreign('device_id')
-                  ->references('id')->on('devices')
+            $table->foreign('vehicle_id')
+                  ->references('id')->on('vehicles')
                   ->onDelete('cascade');
         });
     }

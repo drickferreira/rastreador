@@ -1,9 +1,7 @@
 $(document).ready(function(){
-    if (typeof _token !== 'undefined'){
-        var refreshDiv = '<div id="refresh"><input type="checkbox" name="autorefresh" checked="true" onclick="setRefresh()" id="autorefresh">Atualizar Posições</div>';
-        $("#gmap").append(refreshDiv);
-        setRefresh();
-    }
+	var refreshDiv = '<div id="refresh"><input type="checkbox" name="autorefresh" checked="true" onclick="setRefresh()" id="autorefresh">Atualizar Posições</div>';
+	$("#gmap").append(refreshDiv);
+	setRefresh();
 })
 
 function setRefresh(){

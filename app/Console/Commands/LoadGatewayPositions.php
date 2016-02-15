@@ -5,7 +5,8 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Modules\Devices\Entities\Device;
 use Modules\Positions\Entities\Position;
-use App\FTP;
+use App\Ftp;
+use Carbon\Carbon;
 
 class LoadGatewayPositions extends Command
 {
@@ -41,17 +42,17 @@ class LoadGatewayPositions extends Command
     public function handle()
     {
         
-        $ftp = new FTP;
+        $ftp = new Ftp;
         $ftp->chdir('data');
         $list = $ftp->dir();
         $count = 0;
-
-        $file = $list[0];
-        //foreach ($list as $file) 
+				
+        //$file = $list[0];
+        foreach ($list as $file) 
         {
-
+						
+						$this->info(Carbon::now()->toDateTimeString()." - Processando arquivo $file"); 
             $xml = $ftp->read($file);
-            $ftp->delete($file);
             //dd($xml);
 
             foreach($xml->xpath('POSITION') as $pos){
@@ -59,6 +60,7 @@ class LoadGatewayPositions extends Command
                 $device = Device::where('serial', xmlGetVal($pos,'FIRMWARE/SERIAL'))
                                   ->where('model', xmlGetVal($pos,'FIRMWARE/PROTOCOL'))
                                   ->first();
+								$vehicle = $device->Vehicle->where('remove_date', null)->first();
                 //dd($device);
                 $ip = strval($pos['ipv4']);
                 if($ip === '')
@@ -78,20 +80,20 @@ class LoadGatewayPositions extends Command
                     'battery_failure' => xmlGetVal($pos,'HARDWARE_MONITOR/FLAG_STATE/BATTERY_FAILURE','bool'),
                     'latitude' => xmlGetVal($pos,'GPS/LATITUDE','float'),
                     'longitude' => xmlGetVal($pos,'GPS/LONGITUDE','float'),
-                    'direction' => xmlGetVal($pos,'GPS/COURSE','int'),
                     'speed' => xmlGetVal($pos,'GPS/SPEED','float'),
                     'hodometer' => xmlGetVal($pos,'GPS/HODOMETER','int'),
                 );
                 //dd($position); 
                 $new = new Position($position);
-                $device->Positions()->save($new);
+                $vehicle->Positions()->save($new);
                 $count++;
             }
         }
+        $ftp->delete($file);
         if ($count>0){
-            return "Nenhuma Posicao encontrada!";
+            $this->info("$count Posicoes encontradas!");
         } else {
-            return "$count Posicoes encontradas!";
-        }
+            $this->error("Nenhuma Posicao encontrada!");
+		}
     }
 }

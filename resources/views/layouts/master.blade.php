@@ -11,6 +11,7 @@
 	{!! Html::style('assets/css/style.css') !!}
 	{!! Html::style('assets/css/sweetalert.css') !!}
 	{!! Html::style('assets/css/font-awesome.min.css') !!}
+  {!! Rapyd::styles() !!}
 	@yield('custom-css')
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -22,14 +23,13 @@
 <body>
 	@yield('navbar')
 	<div class="container-fluid">
-	    <div class="row-fluid">
-			@yield('sidebar')
-			@yield('content')
-		</div>
+    @yield('sidebar')
+    @yield('content')
 	</div>
 {!! Html::script('/assets/js/jquery.min.js') !!}
 {!! Html::script('/assets/js/bootstrap.min.js') !!}
 {!! Html::script('/assets/js/sweetalert.min.js') !!}
+{!! Rapyd::scripts() !!}
 @yield('custom-js')
 </body>
 </html>

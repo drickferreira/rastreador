@@ -7,12 +7,12 @@
     "require": {
         "php": ">=5.5.9",
         "laravel/framework": "5.1.*",
-        "alexpechkarev/google-maps": "1.0.2",
+        "alexpechkarev/google-maps": "1.0.4",
         "webpatser/laravel-uuid": "2.*",
-        "drickferreira/enhanced-bootstrap-forms": "dev-master",
         "barryvdh/laravel-debugbar": "^2.0",
         "pingpong/sky": "~2.0",
-        "uxweb/sweet-alert": "~1.1"
+        "uxweb/sweet-alert": "~1.1",
+	 "zofe/rapyd": "2.1.*"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

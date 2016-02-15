@@ -52,7 +52,7 @@ return [
     |
     */
 
-    'locale' => 'pt-BR',
+    'locale' => 'pt',
 
     /*
     |--------------------------------------------------------------------------
@@ -149,12 +149,12 @@ return [
         /**
          * Adicional Providers
          */
-        Drickferreira\BootstrapForms\BootstrapFormsServiceProvider::class,
         GoogleMaps\ServiceProvider\GoogleMapsServiceProvider::class,
         Barryvdh\Debugbar\ServiceProvider::class,
         Pingpong\Modules\ModulesServiceProvider::class,
         Pingpong\Generators\GeneratorsServiceProvider::class,
         UxWeb\SweetAlert\SweetAlertServiceProvider::class,
+				Zofe\Rapyd\RapydServiceProvider::class,
     ],
 
     /*
@@ -209,6 +209,9 @@ return [
         'Module'    => Pingpong\Modules\Facades\Module::class,
         'Debugbar'  => Barryvdh\Debugbar\Facade::class,
         'Alert'     => UxWeb\SweetAlert\SweetAlert::class,
+				'Trusty'		=> Pingpong\Trusty\Facades\Trusty::class,
+				'Role'			=> Pingpong\Trusty\Role::class,
+				'Permission'=> Pingpong\Trusty\Permission::class,
     ],
 
 ];
