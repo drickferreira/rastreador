@@ -6,3 +6,4 @@ Homestead.json
 sftp-config.json
 composer.lock
 config/debugbar.php
+scheduler.log
