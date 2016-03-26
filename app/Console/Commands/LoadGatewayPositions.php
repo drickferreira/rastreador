@@ -53,6 +53,7 @@ class LoadGatewayPositions extends Command
 						
 						$this->info(Carbon::now()->toDateTimeString()." - Processando arquivo $file"); 
             $xml = $ftp->read($file);
+		        $ftp->delete($file);
             //dd($xml);
 
             foreach($xml->xpath('POSITION') as $pos){
@@ -89,7 +90,6 @@ class LoadGatewayPositions extends Command
                 $count++;
             }
         }
-        $ftp->delete($file);
         if ($count>0){
             $this->info("$count Posicoes encontradas!");
         } else {

@@ -9,5 +9,5 @@ Route::group(array('prefix'=> 'positions', 'namespace' => 'Modules\Positions\Htt
 	Route::get('showInfo/{id}', 'PositionsController@showInfo')->name('positions.showInfo');
 	Route::post('showRoute', 'PositionsController@showRoute')->name('positions.showRoute');
 	Route::post('updatePositions', 'PositionsController@updatePositions');
-	Route::get('showLast/{id}/{pagesize}', 'PositionsController@showLast')->name('positions.showLast');
+	Route::get('showLast/{id}', 'PositionsController@showLast')->name('positions.showLast');
 });

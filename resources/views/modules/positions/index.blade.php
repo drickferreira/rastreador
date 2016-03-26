@@ -25,7 +25,7 @@
 			@forelse ($positions as $position)
 			    <tr>
 			    	<td><input type="checkbox" name="ids[]" value="{{ $position->vehicle_id }}" onclick="checkSelected()"></td>
-			    	<td><a href="{!! route('positions.showLast', [$position->vehicle_id, 15]) !!}">{{$position->name}}</a></td>
+			    	<td><a href="{!! route('positions.showLast', $position->vehicle_id) !!}">{{$position->name}}</a></td>
 			    	<td>{{ $position->date->format('d/m/Y H:i:s') }}</td>
 			    	<td><span class="address" geo-lat="{{ $position->latitude }}" geo-lng="{{ $position->longitude }}"></span></td>
 			    	<td class="text-center">

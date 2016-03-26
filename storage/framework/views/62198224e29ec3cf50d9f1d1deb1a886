@@ -25,7 +25,7 @@
 			<?php $__empty_1 = true; foreach($positions as $position): $__empty_1 = false; ?>
 			    <tr>
 			    	<td><input type="checkbox" name="ids[]" value="<?php echo e($position->vehicle_id); ?>" onclick="checkSelected()"></td>
-			    	<td><a href="<?php echo route('positions.showLast', [$position->vehicle_id, 15]); ?>"><?php echo e($position->name); ?></a></td>
+			    	<td><a href="<?php echo route('positions.showLast', $position->vehicle_id); ?>"><?php echo e($position->name); ?></a></td>
 			    	<td><?php echo e($position->date->format('d/m/Y H:i:s')); ?></td>
 			    	<td><span class="address" geo-lat="<?php echo e($position->latitude); ?>" geo-lng="<?php echo e($position->longitude); ?>"></span></td>
 			    	<td class="text-center">

@@ -47,10 +47,9 @@ class PositionsController extends Controller {
 	{
 		$locations = array();
     $ids = $request->input('ids');
-        
 		foreach ($ids as $id) {
-			$device = Device::find($id);
-			$position = $device->Positions()
+			$vehicle = Vehicle::find($id);
+			$position = $vehicle->Positions()
 						->orderBy('memory_index', 'desc')
 						->first();
 			if ($position){
@@ -66,11 +65,12 @@ class PositionsController extends Controller {
 		(
 			'lat' => $position->latitude,
 			'lon' => $position->longitude,
-			'title' => $position->Device->name,
-			'html' => '<div><input type="hidden" id="device" value="'.$position->Device->id.'"/>'.
-					  '<h5>'.$position->Device->name.'</h5>'.
+			'title' => $position->Vehicle->plate,
+			'vehicle_id' => $position->vehicle_id,
+			'position_id' => $position->id,
+			'html' => '<h5>'.$position->Vehicle->plate.'</h5>'.
 					  '<p>Data: '.$position->date.'</p>'.
-					  '<p>Velocidade: '.$position->speed.' km/h</p></div>',
+					  '<p>Velocidade: '.$position->speed.' km/h</p>',
 		);	
 		return $locations;
 	}
@@ -91,8 +91,8 @@ class PositionsController extends Controller {
 		$ids = json_decode($data["ids"]);
 		$new_positions = array();
 		foreach ($ids as $id) {
-			$device = Device::find($id);
-			$position = $device->Positions()
+			$vehicle = Vehicle::find($id);
+			$position = $vehicle->Positions()
 						->orderBy('memory_index', 'desc')
 						->first();
 			if ($position){
@@ -111,8 +111,8 @@ class PositionsController extends Controller {
 	public function showLast($id)
 	{
 		$vehicle = Vehicle::find($id);
-		$positions = $vehicle->Positions()
-			->orderBy('memory_index', 'desc');
+		$positions = $vehicle->Positions()->orderBy('memory_index', 'desc')->take(10)
+               ->get();
 		return view('positions::last', array('positions' => $positions, 'vehicle' => $vehicle));
 	}
 
