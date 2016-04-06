@@ -24,6 +24,9 @@ class CreateDevicesTable extends Migration {
 						$table->uuid('company_id');
 						$table->foreign('company_id')
 									->references('id')->on('companies');
+						$table->index('model');
+						$table->index('serial');
+						$table->index(['model','serial']);
         });
     }
 

@@ -17,7 +17,7 @@ class Vehicle extends Model {
 
     public function Device()
     {
-    	return $this->belongsToMany('Modules\Devices\Entities\Device');
+    	return $this->belongsToMany('Modules\Devices\Entities\Device')->withPivot('install_date', 'remove_date', 'description');
     }
 		
 		public function Account()

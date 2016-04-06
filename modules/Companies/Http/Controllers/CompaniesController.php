@@ -37,8 +37,8 @@ class CompaniesController extends Controller {
 			$form->text('name','Nome')->rule('required|min:5');
 			$form->text('cnpj','CPF / CNPJ')->attributes(array("data-mask"=>"00.000.000/0000-00"));
 			$form->text('insc','Insc. Estadual');
-			$form->text('phone1','Telefone')->attributes(array("data-mask"=>"(00)#0000-0000"));
-			$form->text('phone2','Telefone')->attributes(array("data-mask"=>"(00)#0000-0000"));
+			$form->text('phone1','Telefone')->attributes(array("data-mask"=>"(00)0000-00000"));
+			$form->text('phone2','Telefone')->attributes(array("data-mask"=>"(00)0000-00000"));
 			$form->text('email','E-mail')->rule('email');
 			$form->text('address','Endereço');
 			$form->text('number','Número');

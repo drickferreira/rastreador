@@ -50,5 +50,5 @@ Route::resource('maps','MapController');
 Route::get('mail', function(){
 	return view('emails.index');
 });
-Route::post('mail/send', 'MapController@sendmail');
 */
+Route::get('mail/send', 'MapController@sendmail');

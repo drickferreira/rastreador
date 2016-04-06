@@ -15,18 +15,9 @@ return [
 
     'devices' => array
     (
-        160   =>  'MXT100 / MXT100+',
-        161   =>  'MXT101 / MXT101+',
-        162   =>  'MXT150 / MXT150+',
+        166   =>  'Maxtrack MXT140',
         163   =>  'MXT151 / MXT151+',
-        165   =>  'iMXT',
-        166   =>  'MXT140',
-        167   =>  'MXT141',
-        168   =>  'MXT100N',
-        170   =>  'G100',
-        171   =>  'MXT130',
-        172   =>  'MXT142',
-        173   =>  'MXT130D'
+        162   =>  'Maxtrack MXT150 / MXT150+',
     ),
 
     'directions-class' => array

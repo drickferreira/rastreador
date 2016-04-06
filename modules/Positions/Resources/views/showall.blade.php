@@ -33,25 +33,27 @@
 		map.fitBounds(bounds, { padding: [50, 50] });
 		autoRefresh = setInterval(function(){
 			recriaPosicoes();
-		}, 10000);	
+		}, 10000);
 		var toggle = L.easyButton({
-			states: [{
-				icon: 'fa-check-square-o',
+			states: [
+			{
 				stateName: 'stop',
+				icon: 'fa-check-square-o',
+				title: 'Parar Atualização',
 				onClick: function(control) {
 					control.state('reload');
-					autoRefresh = setInterval(function(){
-						recriaPosicoes();
-					}, 10000);	
-				},
-				title: 'Parar Atualização'
-			},{
+					clearInterval(autoRefresh);
+				}
+			},
+			{
 				stateName: 'reload',
 				icon: 'fa-square-o',
 				title: 'Atualizar em tempo real',
 				onClick: function(control) {
 					control.state('stop');
-					clearInterval(autoRefresh);
+					autoRefresh = setInterval(function(){
+						recriaPosicoes();
+					}, 10000);	
 				}
 			}]
 		});

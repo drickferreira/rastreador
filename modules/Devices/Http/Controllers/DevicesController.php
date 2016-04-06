@@ -4,6 +4,7 @@ use Pingpong\Modules\Routing\Controller;
 use Modules\Devices\Entities\Device;
 use Modules\Companies\Entities\Company;
 use Modules\Vehicles\Entities\Vehicle;
+use Modules\Positions\Entities\Position;
 use Illuminate\Http\Request;
 use Auth;
 use Carbon\Carbon;
@@ -36,14 +37,15 @@ class DevicesController extends Controller {
 			$grid->attributes(array("class"=>"table table-striped"));
 			$grid->add('name','Identificação', true);
 			$grid->add('serial','Número de Série', true);
-			$grid->add('{{ fieldValue("devices", $model) }}','Modelo', true);
-			$grid->add('assignedvehicle','Veículo', true);
+			$grid->add('{{ fieldValue("devices", $model) }}','Modelo');
+			$grid->add('assignedvehicle','Veículo');
 			if (Auth::user()->isSuperAdmin()) {
 				$grid->add('Company.name','Empresa', true);
 				$grid->edit('devices/edit', 'Ações','show|modify|delete');
 				$grid->link('devices/edit',"Novo Aparelho", "TR");
 			} else if (Auth::user()->isAdmin()) {
-				$grid->add('<a class="btn btn-default" href="devices/vehicle/{{$id}}"><i class="fa fa-car"></i></a>', '');
+				$grid->link('devices/test',"Teste por Serial", "TR");
+				$grid->add('<div class="btn-group"><a class="btn btn-default" href="devices/vehicle/{{$id}}"><i class="fa fa-car"></i></a><a class="btn btn-default" href="devices/test/{{$id}}"><i class="fa fa-thumbs-up"></i></a></div>', '');
 			}
 			return view('devices::index', compact('filter', 'grid'));
 		} else {
@@ -111,6 +113,7 @@ class DevicesController extends Controller {
 			$form = \DataEdit::source(new Device);
 			$form->link("devices","Voltar", "TR")->back();
 			$form->text('name','Identificação')->rule('required|min:5');
+			$form->text('serial','Serial')->rule('required|min:5');
 			$form->select('model','Modelo')->options(config("dropdown.devices"));
 			$companies = ['' => ''] + Company::lists("name", "id")->all();
 			$form->select('company_id', 'Empresa')->options($companies);
@@ -119,7 +122,43 @@ class DevicesController extends Controller {
 			return view('errors.503');
 		}
 	}
-
-
 	
+	public function test($id)
+	{
+		$device = Device::findOrFail($id);
+		$position = $device->Positions()
+						->orderBy('memory_index', 'desc')
+						->first();
+		return view('devices::test', compact('position', 'device'));
+	}
+
+	public function testSerial()
+	{
+		return view('devices::testserial');
+	}
+	
+	public function searchBySerial(Request $request)
+	{
+		$data = $request->all();
+		$model = $data['model'];
+		$serial = $data['serial'];
+		$index = $data['index'];
+		$position = Position::where('serial', '=', $serial)
+												->where('memory_index', '>', $index)
+												->orderBy('memory_index', 'asc')
+												->get();
+		return json_encode($position);
+	}
+
+	public function searchLastBySerial(Request $request)
+	{
+		$data = $request->all();
+		$model = $data['model'];
+		$serial = $data['serial'];
+		$position = Position::where('serial', $serial)
+												->orderBy('memory_index', 'desc')
+												->first();
+		return json_encode($position);
+	}
+
 }

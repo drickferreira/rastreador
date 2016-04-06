@@ -15,6 +15,8 @@ class CreatePositionTable extends Migration {
         Schema::create('positions', function(Blueprint $table)
         {
             $table->uuid('id');
+            $table->integer('serial');
+            $table->smallInteger('model');
             $table->string('ip', 25);
             $table->integer('memory_index')->unsigned();
             $table->tinyInteger('transmission_reason')->unsigned();
@@ -35,6 +37,9 @@ class CreatePositionTable extends Migration {
             $table->foreign('vehicle_id')
                   ->references('id')->on('vehicles')
                   ->onDelete('cascade');
+						$table->index('model');
+						$table->index('serial');
+						$table->index(['model','serial']);
         });
     }
 

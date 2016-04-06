@@ -8,7 +8,7 @@ use Modules\Devices\Entities\Device;
 use Modules\Positions\Entities\Position;
 use App\Ftp;
 use App\Helpers;
-use Illuminate\Support\Facades\Mail;
+use Mail;
 
 class MapController extends Controller
 {
@@ -79,7 +79,6 @@ class MapController extends Controller
 
     public function sendmail(){
 
-
         $result = Mail::send('emails.message', [], function($message){
             $message->from('drickferreira@afinet.com.br', 'Teste do Laravel');
             $message->to('drickferreira@gmail.com')->subject('Teste de Mensagem do Laravel');
@@ -92,7 +91,6 @@ class MapController extends Controller
         if(empty($result)) throw new \Exception('Email could not be sent.');
 
         return "Email enviado!";
-
 
     }
 
