@@ -52,3 +52,21 @@ Route::get('mail', function(){
 });
 */
 Route::get('mail/send', 'MapController@sendmail');
+
+Route::get('sendemail', function () {
+
+    $data = array(
+        'name' => "Learning Laravel",
+    );
+
+    Mail::send('emails.test', $data, function ($message) {
+
+        $message->from('drickferreira@afinet.com.br', 'Learning Laravel');
+
+        $message->to('drickferreira@afinet.com.br')->subject('Learning Laravel test email');
+
+    });
+
+    return "Your email has been sent successfully";
+
+});

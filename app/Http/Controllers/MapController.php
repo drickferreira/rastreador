@@ -9,6 +9,7 @@ use Modules\Positions\Entities\Position;
 use App\Ftp;
 use App\Helpers;
 use Mail;
+use Config;
 
 class MapController extends Controller
 {
@@ -78,10 +79,10 @@ class MapController extends Controller
     }
 
     public function sendmail(){
-
+			
         $result = Mail::send('emails.message', [], function($message){
             $message->from('drickferreira@afinet.com.br', 'Teste do Laravel');
-            $message->to('drickferreira@gmail.com')->subject('Teste de Mensagem do Laravel');
+            $message->to('drickferreira@afinet.com.br')->subject('Teste de Mensagem do Laravel');
         });
 
         // Laravel tells us exactly what email addresses failed, let's send back the first

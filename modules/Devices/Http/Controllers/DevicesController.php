@@ -40,9 +40,10 @@ class DevicesController extends Controller {
 			$grid->add('{{ fieldValue("devices", $model) }}','Modelo');
 			$grid->add('assignedvehicle','Veículo');
 			if (Auth::user()->isSuperAdmin()) {
-				$grid->add('Company.name','Empresa', true);
+				$grid->add('Company.name','Empresa');
 				$grid->edit('devices/edit', 'Ações','show|modify|delete');
 				$grid->link('devices/edit',"Novo Aparelho", "TR");
+				$grid->link('devices/test',"Teste por Serial", "TR");
 			} else if (Auth::user()->isAdmin()) {
 				$grid->link('devices/test',"Teste por Serial", "TR");
 				$grid->add('<div class="btn-group"><a class="btn btn-default" href="devices/vehicle/{{$id}}"><i class="fa fa-car"></i></a><a class="btn btn-default" href="devices/test/{{$id}}"><i class="fa fa-thumbs-up"></i></a></div>', '');
