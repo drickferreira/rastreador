@@ -21,7 +21,7 @@ class AccountsController extends Controller {
 			$grid->add('phone1','Telefone'); 
 			$grid->add('phone2','Telefone'); 
 			$grid->edit('accounts/edit', 'Ações','show|modify|delete');
-			$grid->link('accounts/edit',"Novo Associado", "TR");
+			$grid->link('accounts/edit',"Novo Cliente", "TR");
 			$grid->orderBy('name','asc');
 			return view('accounts::index', compact('filter', 'grid'));
 		} else {

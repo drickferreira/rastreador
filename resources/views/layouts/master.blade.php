@@ -11,8 +11,13 @@
 	{!! Html::style('assets/css/style.css') !!}
 	{!! Html::style('assets/css/sweetalert.css') !!}
 	{!! Html::style('assets/css/font-awesome.min.css') !!}
+	{!! Html::style('assets/css/ionicons.min.css') !!}
   {!! Rapyd::styles() !!}
 	@yield('custom-css')
+  {!! Html::script('/assets/js/jquery.min.js') !!}
+  {!! Html::script('/assets/js/bootstrap.min.js') !!}
+  {!! Html::script('/assets/js/sweetalert.min.js') !!}
+  {!! Rapyd::scripts() !!}
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -23,13 +28,8 @@
 <body>
 	@yield('navbar')
 	<div class="container-fluid">
-    @yield('sidebar')
     @yield('content')
 	</div>
-{!! Html::script('/assets/js/jquery.min.js') !!}
-{!! Html::script('/assets/js/bootstrap.min.js') !!}
-{!! Html::script('/assets/js/sweetalert.min.js') !!}
-{!! Rapyd::scripts() !!}
 @yield('custom-js')
 </body>
 </html>

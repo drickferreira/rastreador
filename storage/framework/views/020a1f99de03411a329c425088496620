@@ -18,9 +18,18 @@
                   <li><a href="/companies"><i class="glyphicon glyphicon-briefcase"></i> Empresas</a></li>
                 <?php endif; ?>
 								<?php if(Auth::user()->isSuperAdmin() || Auth::user()->isAdmin()): ?>
-                  <li><a href="/devices"><i class="glyphicon glyphicon-cog"></i> Aparelhos</a></li>
+                  <li><a href="/devices"><i class="fa fa-tags"></i> Aparelhos</a></li>
                   <li><a href="/accounts"><i class="fa fa-users"></i> Clientes</a></li>
                   <li><a href="/vehicles"><i class="fa fa-car"></i> Veículos</a></li>
+                  <ul class="nav navbar-nav navbar-left">
+                      <li class="dropdown">
+                          <a class="dropdown-toggle" role="button" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-file"></i> Relatórios<span class="caret"></span></a>
+                          <ul id="g-account-menu" class="dropdown-menu" role="menu">
+                              <li><a href="<?php echo action('ReportsController@NotReporting'); ?>"><i class="glyphicon glyphicon-car"></i> Veículos não Reportando</a></li>
+                          </ul>
+                      </li>
+                       
+                  </ul>
                 <?php endif; ?>
                 <li><a href="/positions"><i class="glyphicon glyphicon-map-marker"></i> Posições</span></a></li>
             </ul>
@@ -38,29 +47,4 @@
     </div>
     <!-- /container -->
 </div>
-<script type="text/javascript">
-    function loadXml()
-    {
-        swal(
-        {   
-            title: "Atenção!",
-            text: "O processamento dos Arquivos pode demorar alguns instantes... Confirma?",   
-            type: "info",   
-            showCancelButton: true,   
-            closeOnConfirm: false,   
-            showLoaderOnConfirm: true, 
-        }, function()
-        {   
-            $.get(
-                "/maps/create", 
-                {
-                    "_token": '<?php echo e(csrf_token()); ?>',
-                }, function(data){
-                    //console.log(data);
-                    swal("Finalizado!", data + ' Posições importadas!'); 
-                }
-            );
-        });
-    }
-</script>
 <!-- /Navbar -->

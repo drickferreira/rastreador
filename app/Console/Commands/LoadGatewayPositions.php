@@ -51,7 +51,6 @@ class LoadGatewayPositions extends Command
         //$file = $list[0];
         foreach ($list as $file) 
         {
-						
 						$this->info(Carbon::now()->toDateTimeString()." - Processando arquivo $file"); 
             $xml = $ftp->read($file);
 		        $ftp->delete($file);
@@ -65,6 +64,10 @@ class LoadGatewayPositions extends Command
 									{
 											$ip = xmlGetVal($xml,'//MXT1XX_IP_DATA/IP');
 									}  
+									$date = new Carbon(xmlGetVal($pos,'GPS/DATE','str'));
+									$now = new Carbon();
+									$now->addDay();
+									if ($now->gte($date)) continue;
 									$position = array(
 											'ip' => $ip, 
 											'serial' => xmlGetVal($pos,'FIRMWARE/SERIAL'),

@@ -11,7 +11,7 @@ class VehiclesController extends Controller {
 	public function index()
 	{
 		if (Auth::user()->isAdmin() || Auth::user()->isSuperAdmin()) {
-			$filter = \DataFilter::source(Vehicle::whereHas('Account', function ($query) {
+			$filter = \DataFilter::source(Vehicle::with('Account')->whereHas('Account', function ($query) {
 					$query->where('company_id', Auth::user()->company_id);
 			}));
 			$filter->add('plate','Placa', 'text');
@@ -19,17 +19,22 @@ class VehiclesController extends Controller {
 			$filter->add('model','Modelo', 'text');
 			$filter->add('year','Ano', 'text');
 			$filter->add('color','Cor', 'text');
+			$filter->add('hasdevice', 'Atribuído', 'select')
+				->options(array(0 => 'Todos', 1 => 'Com Rastreador', 2 => 'Sem Rastreador'))
+				->scope('hasdevice');
 			$filter->submit('Buscar');
 			$filter->reset('Limpar');
 			$filter->build();
 			
 			$grid = \DataGrid::source($filter);
 			$grid->attributes(array("class"=>"table table-striped"));
+			$grid->add('Account.name','Cliente', 'account_id');
 			$grid->add('plate','Placa', true);
 			$grid->add('brand','Marca', true);
 			$grid->add('model','Modelo', true); 
 			$grid->add('year','Ano', true); 
 			$grid->add('color','Cor', true); 
+			$grid->add('assigneddevice','Aparelho'); 
 			$grid->edit('vehicles/edit', 'Ações','show|modify|delete');
 			$grid->link('vehicles/edit',"Novo Veículo", "TR");
 			$grid->paginate(10);
@@ -62,7 +67,6 @@ class VehiclesController extends Controller {
 	
 	public function getAccountlist()
 	{
-		//needed only if you want a custom remote ajax call for a custom search
 		return Account::where("name","like", \Input::get("q")."%")->take(10)->get();
 	}
 

@@ -149,7 +149,6 @@ return [
         /**
          * Adicional Providers
          */
-        GoogleMaps\ServiceProvider\GoogleMapsServiceProvider::class,
         Barryvdh\Debugbar\ServiceProvider::class,
         Pingpong\Modules\ModulesServiceProvider::class,
         Pingpong\Generators\GeneratorsServiceProvider::class,
@@ -205,7 +204,6 @@ return [
         'Form'      => Collective\Html\FormFacade::class,
         'Html'      => Collective\Html\HtmlFacade::class,
         'Uuid'      => Webpatser\Uuid\Uuid::class,
-        'GoogleMaps'=> GoogleMaps\Facade\GoogleMapsFacade::class,
         'Module'    => Pingpong\Modules\Facades\Module::class,
         'Debugbar'  => Barryvdh\Debugbar\Facade::class,
         'Alert'     => UxWeb\SweetAlert\SweetAlert::class,

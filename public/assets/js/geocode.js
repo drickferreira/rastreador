@@ -2,7 +2,7 @@ var nextAddress = 0;
 var delay = 100;
 
 $(document).ready(function(e) {
-	theNext();
+//	theNext();
 });
 
 function theNext() {
@@ -13,6 +13,21 @@ function theNext() {
 		}, delay);
 		nextAddress++;
 	}
+}
+
+function searchAddr(id){
+	var lat = $("#" + id).attr("geo-lat"),
+			lng = $("#" + id).attr("geo-lng");
+			
+	$.getJSON("http://nominatim.openstreetmap.org/reverse",
+	{
+		format: 'json',
+		lat: lat,
+		lon: lng,
+		addressdetails: 1,
+	}, function(data){		
+		$("#" + id).text(decodeAddress(data.address));
+	});
 }
 
 function getAddress(index, next) {

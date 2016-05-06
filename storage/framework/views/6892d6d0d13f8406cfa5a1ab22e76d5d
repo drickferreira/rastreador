@@ -16,9 +16,19 @@
 
 	<?php echo Html::style('assets/css/font-awesome.min.css'); ?>
 
+	<?php echo Html::style('assets/css/ionicons.min.css'); ?>
+
   <?php echo Rapyd::styles(); ?>
 
 	<?php echo $__env->yieldContent('custom-css'); ?>
+  <?php echo Html::script('/assets/js/jquery.min.js'); ?>
+
+  <?php echo Html::script('/assets/js/bootstrap.min.js'); ?>
+
+  <?php echo Html::script('/assets/js/sweetalert.min.js'); ?>
+
+  <?php echo Rapyd::scripts(); ?>
+
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -29,17 +39,8 @@
 <body>
 	<?php echo $__env->yieldContent('navbar'); ?>
 	<div class="container-fluid">
-    <?php echo $__env->yieldContent('sidebar'); ?>
     <?php echo $__env->yieldContent('content'); ?>
 	</div>
-<?php echo Html::script('/assets/js/jquery.min.js'); ?>
-
-<?php echo Html::script('/assets/js/bootstrap.min.js'); ?>
-
-<?php echo Html::script('/assets/js/sweetalert.min.js'); ?>
-
-<?php echo Rapyd::scripts(); ?>
-
 <?php echo $__env->yieldContent('custom-js'); ?>
 </body>
 </html>

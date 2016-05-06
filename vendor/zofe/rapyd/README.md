@@ -22,7 +22,7 @@ Nothing to "generate", just some classes to let you develop and maintain CRUD ba
 
 ## Install in Laravel 5.2, 5.1, 5.0, 4.*
 
-dev-master is on laravel 5.1  
+dev-master should work laravel 5.2 but is tested on 5.1 (LTS)   
 
 1. To `composer.json` add:  
 `"zofe/rapyd": "2.2.*"` for Laravel 5.2  
@@ -132,6 +132,11 @@ datagrid supports also csv output, so it can be used as "report" tool.
    $grid->buildCSV('export_articles', 'Y-m-d.His');  // force download with custom stamp
    $grid->buildCSV('uploads/filename', 'Y-m-d');  // write on file 
     ...
+    $grid->buildCSV('uploads/filename', 'Y-m-d', false); // without sanitize cells
+    
+    $as_excel = ['delimiter'=>',', 'enclosure'=>'"', 'line_ending'=>"\n"];  
+    $grid->buildCSV('uploads/filename', 'Y-m-d', true, $as_excel); // with customizations
+    
 ```
 
 

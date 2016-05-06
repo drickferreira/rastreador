@@ -11,13 +11,7 @@
 |
 */
 
-Route::get('/', function () {
-	if (Auth::check() || Auth::viaRemember()){
-		return view('home');
-    } else {
-    	return redirect('auth/login');
-    }
-});
+Route::get('/', 'DashBoardController@index');
 
 // Authentication routes...
 Route::get('auth/login', 'Auth\AuthController@getLogin');
@@ -34,6 +28,9 @@ Route::group(['prefix' => 'user', 'middleware' => 'auth'], function()
 // Registration routes...
 Route::get('auth/register', 'Auth\AuthController@getRegister');
 Route::post('auth/register', 'Auth\AuthController@postRegister');
+
+Route::get('notReporting', 'ReportsController@NotReporting');
+
 
 /*
 
