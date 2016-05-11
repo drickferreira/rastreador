@@ -15,6 +15,8 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         Commands\Inspire::class,
         Commands\LoadGatewayPositions::class,
+				Commands\GetDashBoardData::class,
+				Commands\DeleteOldXML::class,
     ];
 
     /**
@@ -27,7 +29,11 @@ class Kernel extends ConsoleKernel
     {
         //$schedule->command('inspire')->hourly();
         $schedule->command('positions:load')
-				->everyMinute()
-				->appendOutputTo('scheduler.log');
+					->everyMinute()
+					->appendOutputTo('scheduler.log');
+				$schedule->command('dashboard:update')
+					->hourly();	
+				$schedule->command('xml:delete')
+					->daily();
     }
 }

@@ -48,23 +48,22 @@ return [
             'root'   => storage_path('app'),
         ],
 
-        'icons' => [
+        'xml' => [
             'driver' => 'local',
-            'root'   => public_path('assets/icons'),
+            'root'   => storage_path('xml'),
         ],
 
         'ftp' => [
             'driver'   => 'ftp',
-            'host'     => 'ftp.example.com',
-            'username' => 'your-username',
-            'password' => 'your-password',
+            'host'     => '177.10.199.54',
+            'username' => 'rastreador',
+            'password' => 'F@ast#2008$',
+            'port'     => 21,
+            'passive'  => false,
+            'ssl'      => false,
+            'timeout'  => 30,
 
-            // Optional FTP Settings...
-            // 'port'     => 21,
             // 'root'     => '',
-            // 'passive'  => true,
-            // 'ssl'      => true,
-            // 'timeout'  => 30,
         ],
 
         's3' => [

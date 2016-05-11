@@ -22,6 +22,7 @@ Route::group(['prefix' => 'user', 'middleware' => 'auth'], function()
 {
 	Route::get('/', 'UserController@index');
 	Route::any('edit', 'UserController@edit');
+	Route::get('create', 'UserController@create');
 });
 
 

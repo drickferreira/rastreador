@@ -8,6 +8,8 @@ use Modules\Vehicles\Entities\Vehicle;
 use Modules\Positions\Entities\Position;
 use App\Ftp;
 use Carbon\Carbon;
+use Storage;
+
 
 class LoadGatewayPositions extends Command
 {
@@ -42,18 +44,22 @@ class LoadGatewayPositions extends Command
      */
     public function handle()
     {
-        
-        $ftp = new Ftp;
-        $ftp->chdir('data');
-        $list = $ftp->dir();
+        $ftp = Storage::disk('ftp');
+				$local = Storage::disk('xml');
+				
+        $list = $ftp->files('data');
         $count = 0;
 				
         //$file = $list[0];
         foreach ($list as $file) 
         {
+						$filename = basename($file);
 						$this->info(Carbon::now()->toDateTimeString()." - Processando arquivo $file"); 
-            $xml = $ftp->read($file);
-		        $ftp->delete($file);
+						if ($content = $ftp->read($file)){
+							$xml = simplexml_load_string($content);
+							$local->put($filename, $content);
+							$ftp->delete($file);
+						}
 
             foreach($xml->xpath('POSITION') as $pos){
                 $device = Device::where('serial', xmlGetVal($pos,'FIRMWARE/SERIAL'))
@@ -64,15 +70,21 @@ class LoadGatewayPositions extends Command
 									{
 											$ip = xmlGetVal($xml,'//MXT1XX_IP_DATA/IP');
 									}  
+									$now = Carbon::now();
 									$date = new Carbon(xmlGetVal($pos,'GPS/DATE','str'));
-									$now = new Carbon();
-									$now->addDay();
-									if ($now->gte($date)) continue;
+									if ($now->timestamp >= $date->timestamp){
+//										$this->info(xmlGetVal($pos,'FIRMWARE/SERIAL').": usando date");
+										$prefix = $date->timestamp * 100000;
+									} else {
+//										$this->info(xmlGetVal($pos,'FIRMWARE/SERIAL').":usando now");
+										$prefix = $now->timestamp * 100000;
+									}
+									$memory_index = xmlGetVal($pos,'FIRMWARE/MEMORY_INDEX', 'int') + $prefix;
 									$position = array(
 											'ip' => $ip, 
 											'serial' => xmlGetVal($pos,'FIRMWARE/SERIAL'),
 											'model' => xmlGetVal($pos,'FIRMWARE/PROTOCOL'),
-											'memory_index' => xmlGetVal($pos,'FIRMWARE/MEMORY_INDEX', 'int'),
+											'memory_index' => $memory_index,
 											'transmission_reason' => xmlGetVal($pos,'FIRMWARE/TRANSMISSION_REASON','int'), 
 											'date' => xmlGetVal($pos,'GPS/DATE','str'), 
 											'power_supply' => xmlGetVal($pos,'HARDWARE_MONITOR/POWER_SUPPLY','float'), 

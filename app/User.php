@@ -1,5 +1,4 @@
 <?php
-
 namespace App;
 
 use Illuminate\Auth\Authenticatable;
@@ -63,6 +62,11 @@ class User extends Model implements AuthenticatableContract,
 		public function isUser()
 		{
 			return $this->role === 30;
+		}
+
+		public function isAccount()
+		{
+			return $this->role === 40;
 		}
 
 }

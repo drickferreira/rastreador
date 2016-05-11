@@ -1,17 +1,13 @@
-<?php
+<?php 
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
-use App\Http\Requests;
 use App\Http\Controllers\Controller;
-use Modules\Companies\Entities\Company;
-use App\User;
 use Auth;
+use App\User;
+use Modules\Companies\Entities\Company;
 
-class UserController extends Controller
-{
+class UserController extends Controller {
     /**
      * Display a listing of the resource.
      *
@@ -19,16 +15,41 @@ class UserController extends Controller
      */
     public function index()
     {
-			if (Auth::user()->isSuperAdmin()) {
-				$grid = \DataGrid::source(User::with('Company'));
-				$grid->attributes(array("class"=>"table table-striped"));
-				$grid->add('username','Usuário', true);
-				$grid->add('name','Nome', true);
-				$grid->add('Company.name','Empresa', 'company_id');
-				$grid->edit('user/edit', 'Ações','show|modify|delete');
-//				$grid->link('user/edit',"Novo Usuário", "TR");
+			if (Auth::user()->isSuperAdmin() || Auth::user()->isAdmin() ) {
+				if (Auth::user()->isSuperAdmin()) {
+					$grid = \DataGrid::source(User::with('Company'));
+					$grid->attributes(array("class"=>"table table-striped"));
+					$grid->add('username','Usuário', true);
+					$grid->add('name','Nome', true);
+					$grid->add('Company.name','Empresa', 'company_id');
+					$grid->edit('user/edit', 'Ações','show|modify|delete');
+					$grid->link('user/edit',"Novo Usuário", "TR");
+				} else {
+					$grid = \DataGrid::source(User::with('Company')->where('company_id', Auth::user()->company_id));
+					$grid->attributes(array("class"=>"table table-striped"));
+					$grid->add('username','Usuário', true);
+					$grid->add('name','Nome', true);
+					$grid->edit('user/edit', 'Ações','show|modify|delete');
+					$grid->link('user/create',"Novo Usuário", "TR");
+				}
 				$grid->orderBy('name','asc');
 				return view('user.index', compact('grid'));
+			} else {
+				return view('errors.503');
+			}
+    }
+
+    public function create()
+    {
+			if (Auth::user()->isSuperAdmin()) {
+				$form = \DataEdit::source(new User);
+				$form->link("user","Voltar", "TR")->back();
+				$form->text('name','Nome');
+				$options = ['' => ''] + Company::lists('name', 'id')->all();
+				$form->select('company_id','Empresa')->options($options);
+				$form->text('email','Email')->rule('email');
+				$form->select('role','Perfil')->options(config("dropdown.roles"));
+				return $form->view('user.create', compact('form'));
 			} else {
 				return view('errors.503');
 			}
@@ -51,5 +72,4 @@ class UserController extends Controller
 				return view('errors.503');
 			}
     }
-
 }

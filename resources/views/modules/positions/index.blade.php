@@ -10,7 +10,7 @@
 <div class="clearfix">&nbsp;</div>
 <div class="listview">
   <div class="rpd-dataform inline">
-    <form method="GET" action="http://172.30.0.109/positions?search=1" accept-charset="UTF-8" class="form-inline" role="form">
+    <form method="GET" action="/positions?search=1" accept-charset="UTF-8" class="form-inline" role="form">
       <div class="form-group" id="fg_name">
         <label for="plate" class="sr-only">Placa</label>
         <span id="div_plate">
@@ -18,7 +18,7 @@
         </span>
       </div>
       <input class="btn btn-primary" type="submit" value="Buscar">
-      <a href="http://172.30.0.109/positions" class="btn btn-default">Limpar</a>
+      <a href="/positions" class="btn btn-default">Limpar</a>
       <input name="search" type="hidden" value="1">
     </form>
   </div>
