@@ -12,17 +12,32 @@ class PositionsController extends Controller {
 	public function index(Request $request)
 	{
 		$data = $request->all();
-		if (isset($data['plate'])){
-			$vehicles = Vehicle::whereRaw("plate LIKE '%".$data['plate']."%'")
-				->whereHas('Device', function ($query) {
-				$query->where('company_id', Auth::user()->company_id)
-					->where('remove_date', null);
-			})->get();
+		if (Auth::user()->isAccount()) {
+			if (isset($data['plate'])){
+				$vehicles = Auth::user()->Vehicles()->whereRaw("plate LIKE '%".strtoupper($data['plate'])."%'")
+					->whereHas('Device', function ($query) {
+					$query->where('company_id', Auth::user()->company_id)
+						->where('remove_date', null);
+				})->get();
+			} else {
+				$vehicles = Auth::user()->Vehicles()->whereHas('Device', function ($query) {
+					$query->where('company_id', Auth::user()->company_id)
+						->where('remove_date', null);
+				})->get();
+			}
 		} else {
-			$vehicles = Vehicle::whereHas('Device', function ($query) {
-				$query->where('company_id', Auth::user()->company_id)
-					->where('remove_date', null);
-			})->get();
+			if (isset($data['plate'])){
+				$vehicles = Vehicle::whereRaw("plate LIKE '%".strtoupper($data['plate'])."%'")
+					->whereHas('Device', function ($query) {
+					$query->where('company_id', Auth::user()->company_id)
+						->where('remove_date', null);
+				})->get();
+			} else {
+				$vehicles = Vehicle::whereHas('Device', function ($query) {
+					$query->where('company_id', Auth::user()->company_id)
+						->where('remove_date', null);
+				})->get();
+			}
 		}
 		$positions = array();
 		foreach($vehicles as $vehicle){
@@ -71,19 +86,51 @@ class PositionsController extends Controller {
     return view('positions::showall', array('locations' => $locations));		
 	}
 
+	public function dashboardMap()
+	{
+		$vehicles = Vehicle::whereHas('Device', function ($query) {
+			$query->where('company_id', Auth::user()->company_id)
+				->where('remove_date', null);
+		})->get();
+		$locations = array();
+		foreach ($vehicles as $vehicle) {
+			$position = $vehicle->Positions()
+						->orderBy('memory_index', 'desc')
+						->first();
+			if ($position){
+				$locations[] = $this->getLocations($position);
+			}
+    }
+    return $locations;		
+	}
+
+
 	function getLocations(Position $position)
 	{
-		$locations = array
-		(
-			'lat' => $position->latitude,
-			'lon' => $position->longitude,
-			'title' => $position->Vehicle->plate,
-			'vehicle_id' => $position->vehicle_id,
-			'position_id' => $position->id,
-			'html' => '<h5>'.$position->Vehicle->plate.'</h5>'.
-					  '<p>Data: '.$position->date.'</p>'.
-					  '<p>Velocidade: '.$position->speed.' km/h</p>',
-		);	
+		if ($position->vehicle_id){
+			$locations = array
+			(
+				'lat' => $position->latitude,
+				'lon' => $position->longitude,
+				'title' => $position->Vehicle->plate,
+				'vehicle_id' => $position->vehicle_id,
+				'position_id' => $position->id,
+				'html' => '<h5>'.$position->Vehicle->plate.'</h5>'.
+							'<p>Data: '.$position->date.'</p>'.
+							'<p>Velocidade: '.$position->speed.' km/h</p>',
+			);	
+		} else {
+			$locations = array
+			(
+				'lat' => $position->latitude,
+				'lon' => $position->longitude,
+				'title' => $position->Device->serial,
+				'position_id' => $position->id,
+				'html' => '<h5>'.$position->Device->serial.'</h5>'.
+							'<p>Data: '.$position->date.'</p>'.
+							'<p>Velocidade: '.$position->speed.' km/h</p>',
+			);	
+		}
 		return $locations;
 	}
 

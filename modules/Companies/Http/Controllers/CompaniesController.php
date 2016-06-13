@@ -18,6 +18,7 @@ class CompaniesController extends Controller {
 			$filter->build();
 
 			$grid = \DataGrid::source($filter);
+			$grid->label('Empresas');
 			$grid->attributes(array("class"=>"table table-striped"));
 			$grid->add('name','Nome', true);
 			$grid->add('cnpj','CPF/CNPJ', true);
@@ -48,6 +49,15 @@ class CompaniesController extends Controller {
 			$form->text('state','Estado');
 			$form->text('country','País');
 			$form->text('postalcode','CEP')->attributes(array("data-mask"=>"##.###-###"));
+			if ($form->status == 'create'){
+				$form->label('Nova Empresa');
+			} else {
+				$form->label("Empresa");
+			}
+			$form->saved(function () use ($form){
+				return redirect('companies')->with('message','Registro salvo com sucesso!'); 
+      });
+			$form->build();
 			return $form->view('companies::edit', compact('form'));
 		} else {
 			return view('errors.503');

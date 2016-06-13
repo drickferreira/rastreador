@@ -155,6 +155,13 @@ return [
 			10 => 'Super Admin',
 			20 => 'Admin - Empresa',
 			30 => 'Usuário Comum',
+		),
+
+		'company_roles' => array 
+		(
+			20 => 'Admin - Empresa',
+			30 => 'Usuário Comum',
+			40 => 'Cliente',
 		)
 
 ];

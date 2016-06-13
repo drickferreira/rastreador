@@ -1,32 +1,35 @@
 @extends('layouts.base')
-
 @section('main')
-@include('user.layouts.menu', ['buttons' => ['save', 'cancel']])
-
-<div class="editview">
-        {!! Form::loadConfig('2column') !!}
-
-        {!! Form::open([ 'route' => 'user.store', ]) !!}
-
-        {!! Form::openGroup('name') !!}
-	        {!! Form::select('company_id', $options, old('company_id'), ['label'=> 'Empresa']) !!}
-        {!! Form::closeGroup() !!}
-
-        {!! Form::openGroup('name') !!}
-            {!! Form::text('name', old('name'), ['label'=> 'Nome', 'placeholder' => 'Nome']) !!}
-		        {!! getDropdown('roles','role', old('role'), ['label'=> 'Tipo de Usuário'] ) !!}
-        {!! Form::closeGroup() !!}
-
-        {!! Form::openGroup('email') !!}
-            {!! Form::text('username', old('username'), ['label'=> 'Usuário', 'placeholder' => 'Usuário']) !!}
-            {!! Form::email('email', old('email'), ['label'=> 'E-mail', 'placeholder' => 'E-mail']) !!}
-        {!! Form::closeGroup() !!}
-
-        {!! Form::openGroup('password') !!}
-            {!! Form::password('password', ['label'=> 'Senha', 'placeholder' => 'Senha']) !!}
-            {!! Form::password('password_confirmation', ['label'=> 'Confirme', 'placeholder' => 'Repita a Senha']) !!}
-        {!! Form::closeGroup() !!}
-
-        {!! Form::close() !!}
+<div class="col-md-4 col-md-offset-4 editview">
+  {!! Form::open([ 'action' => 'Auth\AuthController@postRegister']) !!}
+  
+    @if($errors->has())
+      <div class="bg-danger">
+      @foreach ($errors->all() as $error)
+        {{ $error }}
+      @endforeach
+      </div>
+    @endif
+  
+    <div class="form-group">
+      <label for="name">Nome</label>
+      {!! Form::text('name', old('name'), ['class' => 'form-control', 'placeholder' => 'Nome']) !!}
+    </div>
+    <div class="form-group">
+      <label for="name">E-mail</label>
+      {!! Form::text('email', old('email'), ['class' => 'form-control', 'placeholder' => 'E-mail']) !!}
+    </div>
+    @if (Auth::user()->isAdmin())
+      {!! Form::hidden('company_id', Auth::user()->company_id) !!}
+    @else
+    <div class="form-group">
+      <label for="company_id">Empresa</label>
+      {!! Form::select('company_id', $companies, ['class' => 'form-control']) !!}
+    </div>
+    @endif
+    <div class="form-group">
+      {!! Form::submit('Enviar', ['class' => 'btn btn-lg btn-primary btn-block']) !!}
+    </div>
+  {!! Form::close() !!}
 </div>
 @endsection

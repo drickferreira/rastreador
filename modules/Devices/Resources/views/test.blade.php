@@ -25,10 +25,11 @@
         <div class="col-md-3">
         {!! Form::text('latitude', $position->latitude, ['class' => 'form-control', 'readonly'] ) !!}
         </div>
-        <label for="longitude" class="col-md-2 control-label">Latitude</label>
+        <label for="longitude" class="col-md-2 control-label">Longitude</label>
         <div class="col-md-3">
         {!! Form::text('longitude', $position->longitude, ['class' => 'form-control', 'readonly'] ) !!}
         </div>
+        <a class="btn btn-success" title="Ver no Mapa" href="{!! route('positions.showMap', $position->id) !!}"><i class="fa fa-lg fa-map-marker"></i></a>
     </div>
     <div class="form-group">
         <label for="ignition" class="col-md-2 control-label">Ignição</label>

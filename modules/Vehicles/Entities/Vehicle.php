@@ -73,6 +73,10 @@ class Vehicle extends Model {
 			}
     }
 
+		public function Users()
+    {
+			return $this->belongsToMany('App\User');
+    }
 
 
 }

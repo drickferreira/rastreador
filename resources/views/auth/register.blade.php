@@ -20,11 +20,13 @@
         
           <div class="form-group">
             <label for="name">Nome</label>
+            {!! Form::hidden('company_id', $company_id) !!}
+            {!! Form::hidden('role', $role) !!}
             {!! Form::text('name', old('name'), ['class' => 'form-control', 'placeholder' => 'Nome']) !!}
           </div>
           <div class="form-group">
             <label for="name">E-mail</label>
-            {!! Form::text('email', old('email'), ['class' => 'form-control', 'placeholder' => 'E-mail']) !!}
+            {!! Form::text('email', $email, ['class' => 'form-control', 'readonly']) !!}
           </div>
           <div class="form-group">
             <label for="username">Usuário</label>

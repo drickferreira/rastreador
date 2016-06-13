@@ -6,13 +6,36 @@
 <?php $__env->stopSection(); ?>
 <?php $__env->startSection('content'); ?>
   <div class="main">
-    <?php echo $__env->yieldContent('main'); ?>
+    <?php if(session()->has('message')): ?>
+    <div class="alert alert-success alert-dismissible fade in" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <?php echo session('message'); ?>
+
+    </div>
+    <?php endif; ?>
+    <?php if(session()->has('error')): ?>
+    <div class="alert alert-danger alert-dismissible fade in" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <?php echo session('error'); ?>
+
+    </div>
+    <?php endif; ?>
+    <?php if(count($errors) > 0): ?>
+    <div class="alert alert-danger alert-dismissible fade in" role="alert">
+      <ul>
+        <?php foreach($errors->all() as $error): ?>
+            <li><?php echo e($error); ?></li>
+        <?php endforeach; ?>
+      </ul>
+    </div>
+    <?php endif; ?>
+	<?php echo $__env->yieldContent('main'); ?>
   </div>     
 <?php $__env->stopSection(); ?>
 <?php $__env->startSection('custom-js'); ?>
 <?php echo Html::script('/assets/js/jquery.mask.min.js'); ?>
 
-  @parent
+@parent
 <?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('layouts.master', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

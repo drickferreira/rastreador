@@ -14,7 +14,10 @@ class VehiclesController extends Controller {
 			$filter = \DataFilter::source(Vehicle::with('Account')->whereHas('Account', function ($query) {
 					$query->where('company_id', Auth::user()->company_id);
 			}));
-			$filter->add('plate','Placa', 'text');
+			$filter->add('plate','Placa', 'text')
+				->scope( function ($query, $value) {
+					return $query->whereRaw("plate LIKE '%".strtoupper($value)."%'");
+   		});
 			$filter->add('brand','Marca', 'text');
 			$filter->add('model','Modelo', 'text');
 			$filter->add('year','Ano', 'text');
@@ -27,6 +30,7 @@ class VehiclesController extends Controller {
 			$filter->build();
 			
 			$grid = \DataGrid::source($filter);
+			$grid->label('Veículos');
 			$grid->attributes(array("class"=>"table table-striped"));
 			$grid->add('Account.name','Cliente', 'account_id');
 			$grid->add('plate','Placa', true);
@@ -41,7 +45,7 @@ class VehiclesController extends Controller {
 
 			return view('vehicles::index', compact('filter', 'grid'));
 		} else {
-			return view('errors.503');
+			return redirect()->back()->with('error', 'Você não tem permissão para acessar esse módulo!');
 		}
 	}
 
@@ -49,7 +53,12 @@ class VehiclesController extends Controller {
 	{
 		if (Auth::user()->isAdmin() || Auth::user()->isSuperAdmin()) {
 			$form = \DataEdit::source(new Vehicle);
-			$form->link("vehicles","Voltar", "TR")->back();
+			$form->link("vehicles","Veículos", "TR")->back();
+			if ($form->status == 'create'){
+				$form->label('Novo Veículo');
+			} else {
+				$form->label("Veículo");
+			}
 			$options = Account::where('company_id', Auth::user()->company_id)->orderBy('name')->lists("name", "id")->all();
 			$form->add('Account.name', 'Cliente', 'autocomplete')->options($options);
 			$form->text('plate','Placa')->attributes(array("data-mask"=>"AAA-0000"));
@@ -58,10 +67,13 @@ class VehiclesController extends Controller {
 			$form->text('year','Ano')->attributes(array("data-mask"=>"0000")); 
 			$form->text('color','Cor');
 			$form->checkbox('active','Ativo');
-			 
+			$form->saved(function () use ($form){
+				return redirect('vehicles')->with('message','Registro salvo com sucesso!'); 
+      });
+			$form->build();
 			return $form->view('vehicles::create', compact('form'));
 		} else {
-			return view('errors.503');
+			return redirect()->back()->with('error', 'Você não tem permissão para acessar esse módulo!');
 		}
 	}
 	

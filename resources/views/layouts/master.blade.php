@@ -6,12 +6,12 @@
 	<meta name=viewport content="width=device-width, initial-scale=1">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>Rastreamento WEB 1.0</title>
-	{!! Html::style('assets/css/bootstrap.css') !!}
+	{!! Html::style('http://fonts.googleapis.com/css?family=Open+Sans') !!}
+  {!! Html::style('assets/css/bootstrap.css') !!}
 	{!! Html::style('assets/css/bootstrap-theme.css') !!}
 	{!! Html::style('assets/css/style.css') !!}
 	{!! Html::style('assets/css/sweetalert.css') !!}
 	{!! Html::style('assets/css/font-awesome.min.css') !!}
-	{!! Html::style('assets/css/ionicons.min.css') !!}
   {!! Rapyd::styles() !!}
 	@yield('custom-css')
   {!! Html::script('/assets/js/jquery.min.js') !!}

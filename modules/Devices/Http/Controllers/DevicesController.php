@@ -26,25 +26,24 @@ class DevicesController extends Controller {
 			}
 			$filter->add('name','Identificação', 'text');
 			$filter->add('serial','Serial', 'text')->clause('where')->operator('=');
-			$devices = ['' => 'Modelo'] + config("dropdown.devices");
-			$filter->add('model','Modelo', 'select')->options($devices);
+			$filter->add('model','Modelo', 'select')->option('','Modelo')->options(config("dropdown.devices"));
 			$filter->add('hasvehicle', 'Atribuído', 'select')
 				->options(array(0 => 'Todos', 1 => 'Com veículo', 2 => 'Sem Veículo'))
 				->scope('hasvehicle');
 			if (Auth::user()->isSuperAdmin()) {
-				$companies = ['' => 'Empresa'] + Company::lists("name", "id")->all();
-				$filter->add('company_id', '', 'select')->options($companies);
+				$filter->add('company_id', '', 'select')->option('','Empresa')->options(Company::lists("name", "id")->all());
 			} 
 			$filter->submit('Buscar');
 			$filter->reset('Limpar');
 			$filter->build();
 			
 			$grid = \DataGrid::source($filter);
+			$grid->label('Aparelhos');
 			$grid->attributes(array("class"=>"table table-striped"));
 			$grid->add('name','Identificação', true);
 			$grid->add('serial','Número de Série', true);
 			$grid->add('{{ fieldValue("devices", $model) }}','Modelo', 'model');
-			$grid->add('assignedvehicle','Veículo', 'vehicle_id');
+			$grid->add('assignedvehicle','Veículo');
 			if (Auth::user()->isSuperAdmin()) {
 				$grid->add('Company.name','Empresa', 'company_id');
 				$grid->edit('devices/edit', 'Ações','show|modify|delete');
@@ -52,7 +51,7 @@ class DevicesController extends Controller {
 				$grid->link('devices/test',"Teste por Serial", "TR");
 			} else if (Auth::user()->isAdmin()) {
 				$grid->link('devices/test',"Teste por Serial", "TR");
-				$grid->add('<div class="btn-group"><a class="btn btn-default" href="devices/vehicle/{{$id}}"><i class="fa fa-car"></i></a><a class="btn btn-default" href="devices/test/{{$id}}"><i class="fa fa-thumbs-up"></i></a></div>', '');
+				$grid->add('<div class="btn-group"><a class="btn btn-default" title="Instalação" href="devices/vehicle/{{$id}}"><i class="fa fa-car"></i></a><a class="btn btn-default" title="Última Posição" href="devices/test/{{$id}}"><i class="fa fa-thumbs-up"></i></a></div>', '');
 			}
 			$grid->paginate(10);
 			return view('devices::index', compact('filter', 'grid'));
@@ -65,7 +64,7 @@ class DevicesController extends Controller {
 	{
 		if (Auth::user()->isAdmin()) {
 			$device = Device::findOrFail($id);
-			$vehicles = ['' => ''] + Vehicle::whereHas('Account', function ($query) {
+			$vehicles = Vehicle::whereHas('Account', function ($query) {
 				$query->where('company_id', Auth::user()->company_id);			
 			})->doesntHave('Device', 'and', function($q){
     		$q->where('remove_date', null);
@@ -73,19 +72,22 @@ class DevicesController extends Controller {
 			$form = \DataForm::create();
 			$form->add('device_id', '', 'hidden')->insertValue($device->id);
 			$form->add('device_name', 'Aparelho', 'text')->insertValue($device->name)->mode('readonly');
+			$form->link('/devices', 'Voltar', 'TR');
 			if ($device->assignedvehicle){
 				$vehicle = $device->Vehicle->where('remove_date', null)->first();
 				$form->add('assignedvehicle', 'Veículo', 'text')->insertValue($vehicle->plate)->mode('readonly');
 				$form->add('vehicle_id', '', 'hidden')->insertValue($vehicle->id);
-				$form->add('install_date', 'Data de Instalação', 'date')->insertValue($vehicle->pivot->install_date)->mode('readonly');
+				$form->add('install_date', 'Data de Instalação', 'date')->insertValue($vehicle->pivot->install_date)->mode('readonly')->format('d/m/Y');
 				$form->add('description', 'Observações', 'textarea')->insertValue($vehicle->pivot->description)->mode('readonly');
 				$form->add('action','', 'hidden')->insertValue('remove');
-				$form->submit('Remover Veículo');
+				$form->submit('Remover Aparelho');
+				$form->label('Remover Aparelho');
 			} else {
-				$form->add('vehicle_id', 'Veículo', 'select')->options($vehicles);
-				$form->add('install_date', 'Data de Instalação', 'date')->format('d-m-Y');
+				$form->add('vehicle_id', 'Veículo', 'select')->option("","")->options($vehicles);
+				$form->add('install_date', 'Data de Instalação', 'date')->format('d/m/Y');
 				$form->add('description', 'Observações', 'textarea');
 				$form->add('action','', 'hidden')->insertValue('assign');
+				$form->label('Instalar Aparelho');
 				$form->submit('Salvar');
 			}
 			return view('devices::vehicle', compact('form'));
@@ -121,18 +123,20 @@ class DevicesController extends Controller {
 			$form = \DataEdit::source(new Device);
 			$form->link("devices","Voltar", "TR")->back();
 			$form->text('name','Identificação')->rule('required|min:5');
-			$form->text('serial','Serial')->rule('required|min:5');
+			$form->text('serial','Serial')->rule('required|min:5|unique:devices');
 			$form->select('model','Modelo')->options(config("dropdown.devices"));
-			$companies = ['' => ''] + Company::lists("name", "id")->all();
-			$form->select('company_id', 'Empresa')->options($companies);
-						$form->saved(function() use ($form)
-			{
-					$form->message("Registro salvo!");
-					$form->link("/devices","Voltar");
-			});
+			$form->select('company_id', 'Empresa')->option('','')->options(Company::lists("name", "id")->all());
+			if ($form->status == 'create'){
+				$form->label('Novo Aparelho');
+			} else {
+				$form->label("Aparelho");
+			}
+			$form->saved(function () use ($form){
+				return redirect('devices')->with('message','Registro salvo com sucesso!'); 
+      });
 			return $form->view('devices::edit', compact('form'));
 		} else {
-			return view('errors.503');
+			return redirect()->back()->with('error', 'Você não tem permissão para acessar esse módulo!');
 		}
 	}
 	

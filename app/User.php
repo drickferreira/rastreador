@@ -68,5 +68,10 @@ class User extends Model implements AuthenticatableContract,
 		{
 			return $this->role === 40;
 		}
-
+		
+		public function Vehicles()
+		{
+			return $this->belongsToMany('Modules\Vehicles\Entities\Vehicle');
+		}
+		
 }

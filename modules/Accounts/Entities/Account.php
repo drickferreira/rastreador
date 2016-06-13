@@ -24,5 +24,15 @@ class Account extends Model {
 			->orWhere('cpf_cnpj','like','%'.$value.'%');
 	}
 
+	public function scopeHasvehicle($query, $value)
+	{
+		if ($value == 0){
+			return $query;
+		} elseif ($value == 1){
+			return $query->has('Vehicles');
+		} elseif ($value == 2){
+			return $query->doesntHave('Vehicles');
+		}
+	}
 
 }

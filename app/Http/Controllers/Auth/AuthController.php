@@ -21,7 +21,9 @@ class AuthController extends Controller
     |
     */
 
-    use AuthenticatesAndRegistersUsers, ThrottlesLogins;
+    use AuthenticatesAndRegistersUsers, ThrottlesLogins { 
+			AuthenticatesAndRegistersUsers::postRegister as register; 
+		}
 
 
     protected $redirectPath = '/';
@@ -49,7 +51,7 @@ class AuthController extends Controller
         return Validator::make($data, [
             'name' => 'required|max:255',
             'email' => 'required|email|max:255|unique:users',
-            'username' => 'required|max:20',
+            'username' => 'required|max:20|unique:users',
             'password' => 'required|confirmed|min:6',
         ]);
     }
@@ -67,8 +69,9 @@ class AuthController extends Controller
             'email' => $data['email'],
             'username' => $data['username'],
             'password' => bcrypt($data['password']),
+						'company_id' => $data['company_id'],
+						'role' => $data['role'],
         ]);
     }
 
- 
 }

@@ -52,7 +52,7 @@ return [
     |
     */
 
-    'locale' => 'pt',
+    'locale' => 'pt-BR',
 
     /*
     |--------------------------------------------------------------------------
@@ -65,7 +65,7 @@ return [
     |
     */
 
-    'fallback_locale' => 'en',
+    'fallback_locale' => 'pt',
 
     /*
     |--------------------------------------------------------------------------
@@ -145,6 +145,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\UuidServiceProvider::class,
+        App\Providers\UserServiceProvider::class,
 
         /**
          * Adicional Providers
