@@ -84,15 +84,16 @@ class DevicesController extends Controller {
 				$form->label('Remover Aparelho');
 			} else {
 				$form->add('vehicle_id', 'Veículo', 'select')->option("","")->options($vehicles);
-				$form->add('install_date', 'Data de Instalação', 'date')->format('d/m/Y');
+				$form->add('install_date', 'Data de Instalação', 'date')->format('d/m/Y')
+					->onchange('var data=$("#install_date").val();data = data.replace(/(\d{2})\/(\d{2})\/(\d{4})/, "$3/$2/$1");var dt = new Date(data),hoje=new Date();if (dt>hoje){swal("Data Inválida!", "A data de instalação não pode ser maior que hoje!", "warning");$("#install_date").val("").focus();}');
 				$form->add('description', 'Observações', 'textarea');
 				$form->add('action','', 'hidden')->insertValue('assign');
 				$form->label('Instalar Aparelho');
 				$form->submit('Salvar');
 			}
-			return view('devices::vehicle', compact('form'));
+			return $form->view('devices::vehicle', compact('form'));
 		} else {
-			return view('errors.503');
+			return $form->view('errors.503');
 		}
 	}
 
@@ -123,7 +124,7 @@ class DevicesController extends Controller {
 			$form = \DataEdit::source(new Device);
 			$form->link("devices","Voltar", "TR")->back();
 			$form->text('name','Identificação')->rule('required|min:5');
-			$form->text('serial','Serial')->rule('required|min:5|unique:devices');
+			$form->text('serial','Serial')->rule('required|min:5')->unique();
 			$form->select('model','Modelo')->options(config("dropdown.devices"));
 			$form->select('company_id', 'Empresa')->option('','')->options(Company::lists("name", "id")->all());
 			if ($form->status == 'create'){
@@ -134,6 +135,10 @@ class DevicesController extends Controller {
 			$form->saved(function () use ($form){
 				return redirect('devices')->with('message','Registro salvo com sucesso!'); 
       });
+			if ($form->status == "show"){
+				$form->link("#", "Registro de Alterações", "TR", ['onClick'=>"MyWindow=window.open('audit/".$form->model->id."','MyWindow','width=800,height=400'); return false;"]);
+			}
+			$form->build();
 			return $form->view('devices::edit', compact('form'));
 		} else {
 			return redirect()->back()->with('error', 'Você não tem permissão para acessar esse módulo!');
@@ -176,6 +181,64 @@ class DevicesController extends Controller {
 												->orderBy('memory_index', 'desc')
 												->first();
 		return json_encode($position);
+	}
+	
+	public function audit($id)
+	{
+		$device = Device::findOrFail($id);
+		$logs = $device->logs;
+		$audit = array();
+		$labels = array(
+			'name' => 'Identificação',
+			'serial' => 'Número de Série',
+			'model' => 'Modelo',
+			'company_id' => 'Empresa'
+		);
+		if ($logs)
+		foreach($logs as $log)
+		{
+			foreach( $log->old_value as $key => $value)
+			{
+				switch ($key){
+					case 'model':
+						$audit[] = array(
+							'label' => $labels[$key],
+							'old' => fieldValue("devices", $value),
+							'new' => fieldValue("devices", $log->new_value[$key]),
+							'user' => $log->user->username,
+							'date' => date('d/m/Y H:i:s', strtotime($log->updated_at))
+						);
+						break;
+					case 'company_id':
+						$audit[] = array(
+							'label' => $labels[$key],
+							'old' => Company::find($value)->name,
+							'new' => Company::find($log->new_value[$key])->name,
+							'user' => $log->user->username,
+							'date' => date('d/m/Y H:i:s', strtotime($log->updated_at))
+						);
+						break;
+					default:
+						$audit[] = array(
+							'label' => $labels[$key],
+							'old' => $value,
+							'new' => $log->new_value[$key],
+							'user' => $log->user->username,
+							'date' => date('d/m/Y H:i:s', strtotime($log->updated_at))
+						);
+						break;
+				}
+			}
+		}
+		$grid = \DataGrid::source($audit);
+		$grid->attributes(array("class"=>"table table-striped .table-condensed"));
+		$grid->add('label', 'Campo');
+		$grid->add('old', 'Valor Anterior');
+		$grid->add('new', 'Novo Valor');
+		$grid->add('user', 'Alterado por');
+		$grid->add('date', 'Data/Hora da Alteração');
+		$grid->paginate(10);
+		return view('layouts.audit', compact('grid'));
 	}
 
 }

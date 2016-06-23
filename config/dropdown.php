@@ -150,6 +150,14 @@ return [
         102 => 'Reconstrução da Rota'
     ),
 		
+		'all_roles' => array 
+		(
+			10 => 'Super Admin',
+			20 => 'Admin - Empresa',
+			30 => 'Usuário Comum',
+			40 => 'Cliente',
+		),
+
 		'roles' => array 
 		(
 			10 => 'Super Admin',

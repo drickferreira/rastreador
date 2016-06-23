@@ -70,6 +70,9 @@ class VehiclesController extends Controller {
 			$form->saved(function () use ($form){
 				return redirect('vehicles')->with('message','Registro salvo com sucesso!'); 
       });
+			if ($form->status == "show"){
+				$form->link("#", "Registro de Alterações", "TR", ['onClick'=>"MyWindow=window.open('audit/".$form->model->id."','MyWindow','width=800,height=400'); return false;"]);
+			}
 			$form->build();
 			return $form->view('vehicles::create', compact('form'));
 		} else {
@@ -82,6 +85,57 @@ class VehiclesController extends Controller {
 		return Account::where("name","like", \Input::get("q")."%")->take(10)->get();
 	}
 
-
+		
+	public function audit($id)
+	{
+		$vehicle = Vehicle::findOrFail($id);
+		$logs = $vehicle->logs;
+		$audit = array();
+		$labels = array(
+			'plate' => 'Placa',
+			'brand' => 'Marca',
+			'model' => 'Modelo',
+			'year' => 'Ano',
+			'color' => 'Cor',
+			'active' => 'Ativo',
+			'account_id' => 'Cliente'
+		);
+		if ($logs)
+		foreach($logs as $log)
+		{
+			foreach( $log->old_value as $key => $value)
+			{
+					switch ($key){
+						case 'active':
+							$audit[] = array(
+								'label' => $labels[$key],
+								'old' => $value ? "Sim" : "Não",
+								'new' => $log->new_value[$key] ? "Sim" : "Não",
+								'user' => $log->user->username,
+								'date' => date('d/m/Y H:i:s', strtotime($log->updated_at))
+							);
+							break;
+						default:
+							$audit[] = array(
+								'label' => $labels[$key],
+								'old' => $value,
+								'new' => $log->new_value[$key],
+								'user' => $log->user->username,
+								'date' => date('d/m/Y H:i:s', strtotime($log->updated_at))
+							);
+							break;
+					}
+				}
+		}
+		$grid = \DataGrid::source($audit);
+		$grid->attributes(array("class"=>"table table-striped .table-condensed"));
+		$grid->add('label', 'Campo');
+		$grid->add('old', 'Valor Anterior');
+		$grid->add('new', 'Novo Valor');
+		$grid->add('user', 'Alterado por');
+		$grid->add('date', 'Data/Hora da Alteração');
+		$grid->paginate(10);
+		return view('layouts.audit', compact('grid'));
+	}
 
 }

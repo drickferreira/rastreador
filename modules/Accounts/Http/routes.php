@@ -3,4 +3,5 @@ Route::group(['prefix' => 'accounts', 'namespace' => 'Modules\Accounts\Http\Cont
 {
 	Route::get('/', 'AccountsController@index');
 	Route::any('edit', 'AccountsController@edit');
+	Route::get('audit/{id}', 'AccountsController@audit');
 });

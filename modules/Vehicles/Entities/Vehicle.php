@@ -2,10 +2,11 @@
    
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\AuditingTrait;
 
 class Vehicle extends Model {
 
-		use SoftDeletes;
+		use SoftDeletes, AuditingTrait;
 		
     protected $table = 'vehicles';
 
@@ -77,6 +78,5 @@ class Vehicle extends Model {
     {
 			return $this->belongsToMany('App\User');
     }
-
 
 }

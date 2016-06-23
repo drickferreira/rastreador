@@ -57,11 +57,59 @@ class CompaniesController extends Controller {
 			$form->saved(function () use ($form){
 				return redirect('companies')->with('message','Registro salvo com sucesso!'); 
       });
+			if ($form->status == "show"){
+				$form->link("#", "Registro de Alterações", "TR", ['onClick'=>"MyWindow=window.open('audit/".$form->model->id."','MyWindow','width=800,height=400'); return false;"]);
+			}
 			$form->build();
 			return $form->view('companies::edit', compact('form'));
 		} else {
 			return view('errors.503');
 		}
 	}
-	
+		
+	public function audit($id)
+	{
+		$company = Company::findOrFail($id);
+		$logs = $company->logs;
+		$audit = array();
+		$labels = array(
+			'name' => 'Nome',
+			'cnpj' => 'CNPJ',
+			'insc' => 'Inscrição Estadual',
+			'phone1' => 'Telefone',
+			'phone2' => 'Telefone',
+			'email' => 'E-mail',
+			'address' => 'Endereço',
+			'number' => 'Número',
+			'comp' => 'Complemento',
+			'quarter' => 'Bairro',
+			'city' => 'Cidade',
+			'state' => 'Estado',
+			'country' => 'País',
+			'postalcode' => 'CEP'
+		);
+		if ($logs)
+		foreach($logs as $log)
+		{
+			foreach( $log->old_value as $key => $value)
+			{
+				$audit[] = array(
+					'label' => $labels[$key],
+					'old' => $value,
+					'new' => $log->new_value[$key],
+					'user' => $log->user->username,
+					'date' => date('d/m/Y H:i:s', strtotime($log->updated_at))
+				);
+			}
+		}
+		$grid = \DataGrid::source($audit);
+		$grid->attributes(array("class"=>"table table-striped .table-condensed"));
+		$grid->add('label', 'Campo');
+		$grid->add('old', 'Valor Anterior');
+		$grid->add('new', 'Novo Valor');
+		$grid->add('user', 'Alterado por');
+		$grid->add('date', 'Data/Hora da Alteração');
+		$grid->paginate(10);
+		return view('layouts.audit', compact('grid'));
+	}	
 }

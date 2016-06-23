@@ -4,4 +4,5 @@ Route::group(['prefix' => 'vehicles', 'namespace' => 'Modules\Vehicles\Http\Cont
 {
 	Route::get('/', 'VehiclesController@index');
 	Route::any('edit', 'VehiclesController@edit');
+	Route::get('audit/{id}', 'VehiclesController@audit');
 });

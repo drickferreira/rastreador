@@ -33,7 +33,8 @@
         "Pingpong\\Modules\\ModulesServiceProvider",
         "Pingpong\\Generators\\GeneratorsServiceProvider",
         "UxWeb\\SweetAlert\\SweetAlertServiceProvider",
-        "Zofe\\Rapyd\\RapydServiceProvider"
+        "Zofe\\Rapyd\\RapydServiceProvider",
+        "OwenIt\\Auditing\\AuditingServiceProvider"
     ],
     "eager": [
         "Illuminate\\Auth\\AuthServiceProvider",
@@ -57,7 +58,8 @@
         "Pingpong\\Modules\\ModulesServiceProvider",
         "Pingpong\\Generators\\GeneratorsServiceProvider",
         "UxWeb\\SweetAlert\\SweetAlertServiceProvider",
-        "Zofe\\Rapyd\\RapydServiceProvider"
+        "Zofe\\Rapyd\\RapydServiceProvider",
+        "OwenIt\\Auditing\\AuditingServiceProvider"
     ],
     "deferred": {
         "command.app.name": "Illuminate\\Foundation\\Providers\\ArtisanServiceProvider",

@@ -155,6 +155,7 @@ return [
         Pingpong\Generators\GeneratorsServiceProvider::class,
         UxWeb\SweetAlert\SweetAlertServiceProvider::class,
 				Zofe\Rapyd\RapydServiceProvider::class,
+				OwenIt\Auditing\AuditingServiceProvider::class,
     ],
 
     /*

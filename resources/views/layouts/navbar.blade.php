@@ -26,8 +26,9 @@
                   <ul class="nav navbar-nav navbar-left">
                       <li class="dropdown">
                           <a class="dropdown-toggle" role="button" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-file"></i> Relatórios<span class="caret"></span></a>
-                          <ul id="g-account-menu" class="dropdown-menu" role="menu">
-                              <li><a href="{!! action('ReportsController@NotReporting') !!}"><i class="glyphicon glyphicon-car"></i> Veículos não Reportando</a></li>
+                          <ul id="g-report-menu" class="dropdown-menu" role="menu">
+                            <li><a href="{!! action('ReportsController@NotReporting') !!}"><i class="glyphicon glyphicon-remove-circle"></i> Veículos não Reportando</a></li>
+                              <li><a href="{!! action('ReportsController@installByDay') !!}"><i class="glyphicon glyphicon-wrench"></i> Instalações Diárias</a></li>
                           </ul>
                       </li>
                        
@@ -42,7 +43,7 @@
                       <li class="dropdown">
                           <a class="dropdown-toggle" role="button" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-file"></i> Relatórios<span class="caret"></span></a>
                           <ul id="g-account-menu" class="dropdown-menu" role="menu">
-                              <li><a href="{!! action('ReportsController@NotReporting') !!}"><i class="glyphicon glyphicon-car"></i> Veículos não Reportando</a></li>
+                              <li><a href="{!! action('ReportsController@NotReporting') !!}"><i class="glyphicon glyphicon-remove-circle"></i> Veículos não Reportando</a></li>
                           </ul>
                       </li>
                        

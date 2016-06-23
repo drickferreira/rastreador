@@ -9,14 +9,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Auth\PasswordController;
 use Illuminate\Support\Facades\Password;
 use Modules\Companies\Entities\Company;
+use Modules\Vehicles\Entities\Vehicle;
 use Illuminate\Http\Request;
 
 class UserController extends Controller {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+	
     public function index()
     {
 			if (Auth::user()->isSuperAdmin() || Auth::user()->isAdmin() ) {
@@ -27,7 +24,7 @@ class UserController extends Controller {
 					$grid->add('username','Usuário', true);
 					$grid->add('name','Nome', true);
 					$grid->add('Company.name','Empresa', 'company_id');
-					$grid->add('{{ fieldValue("roles", $role) }}','Perfil', 'role');
+					$grid->add('{{ fieldValue("all_roles", $role) }}','Perfil', 'role');
 					$grid->edit('user/edit', 'Ações','show|modify|delete');
 					$grid->link('user/edit',"Novo Usuário", "TR");
 				} else {
@@ -41,9 +38,9 @@ class UserController extends Controller {
 						$role = $row->cells[2]->value;
 						$classes = array( 10 => 'primary', 20 => 'success', 30 => 'default');
 						if ($role == 40) {
-							$row->cells[2]->value = '<a class="btn btn-danger btn-xs" title="Veículos" href="/user/vehicles/'.$row->data->id.'">'.fieldValue('company_roles', $row->cells[2]->value).' <i class="fa fa-car"></i></a>';
+							$row->cells[2]->value = '<a class="btn btn-danger btn-xs" title="Veículos" href="/user/vehicles/'.$row->data->id.'">'.fieldValue('all_roles', $row->cells[2]->value).' <i class="fa fa-car"></i></a>';
 						} else {
-							$row->cells[2]->value = '<button class="btn btn-'.$classes[$role].' btn-xs">'.fieldValue('company_roles', $row->cells[2]->value).'</button>';
+							$row->cells[2]->value = '<button class="btn btn-'.$classes[$role].' btn-xs">'.fieldValue('all_roles', $row->cells[2]->value).'</button>';
 						}
 					});
 					$grid->edit('user/edit', 'Ações','show|modify|delete');
@@ -61,7 +58,7 @@ class UserController extends Controller {
 			if (Auth::user()->isSuperAdmin() || Auth::user()->isAdmin()) {
 				$form = \DataEdit::source(new User);
 				$form->link("user","Usuários", "TR")->back();
-				$form->text('username','Usuário')->rule('required|max:20')->unique();
+				$form->text('username','Usuário')->rule('required|alpha_dash|max:20')->unique();
 				$form->text('name','Nome')->rule('required|max:255');
 				$form->text('email','Email')->rule('required|email|max:255')->unique();
 				if (Auth::user()->isSuperAdmin()){
@@ -86,6 +83,9 @@ class UserController extends Controller {
 				$form->saved(function () use ($form) {
 			    return redirect('user')->with('message','Usuário salvo com sucesso!'); 
         });
+				if ($form->status == "show"){
+					$form->link("#", "Registro de Alterações", "TR", ['onClick'=>"MyWindow=window.open('audit/".$form->model->id."','MyWindow','width=800,height=400'); return false;"]);
+				}
 				$form->build();
 				return $form->view('user.edit', compact('form'));
 			} else {
@@ -101,9 +101,19 @@ class UserController extends Controller {
 			$form->link("/user","Cancelar", "TR")->back();
 			$form->text('username','Usuário')->mode('readonly');
 			$form->text('name','Nome')->mode('readonly');
-			$form->tags('Vehicles.plate', 'Veículos');
+			$form->tags('Vehicles.plate', 'Veículos')->remote("plate", "id", "/user/autocomplete");
 			return $form->view('user.vehicles', compact('form'));
 		}
+
+		public function getAutocomplete()
+    {
+        return Vehicle::where("plate","like", strtoupper(\Input::get("q"))."%")
+				->whereHas('Account', function ($query) {
+			    $query->where('company_id', Auth::user()->company_id);
+				})->take(10)
+        ->select(\DB::raw('plate, id'))->get();
+    }
+
 		
 		public function reset(Request $request)
 		{
@@ -146,4 +156,64 @@ class UserController extends Controller {
 				return redirect()->back()->with('error', 'A senha informada não corresponde à senha atual!'); 
 			}
  		}
+		
+		public function audit($id)
+		{
+			$user = User::findOrFail($id);
+			$logs = $user->logs;
+			$audit = array();
+			$labels = array(
+				'name' => 'Nome',
+				'username' => 'Nome de Usuário',
+				'email' => 'E-mail',
+				'company_id' => 'Empresa',
+				'role' => 'Perfil'
+			);
+			if ($logs)
+			foreach($logs as $log)
+			{
+				foreach( $log->old_value as $key => $value)
+				{
+					switch ($key){
+						case 'role':
+							$audit[] = array(
+								'label' => $labels[$key],
+								'old' => fieldValue("all_roles", $value),
+								'new' => fieldValue("all_roles", $log->new_value[$key]),
+								'user' => $log->user->username,
+								'date' => date('d/m/Y H:i:s', strtotime($log->updated_at))
+							);
+							break;
+						case 'company_id':
+							$audit[] = array(
+								'label' => $labels[$key],
+								'old' => Company::find($value)->name,
+								'new' => Company::find($log->new_value[$key])->name,
+								'user' => $log->user->username,
+								'date' => date('d/m/Y H:i:s', strtotime($log->updated_at))
+							);
+							break;
+						default:
+							$audit[] = array(
+								'label' => $labels[$key],
+								'old' => $value,
+								'new' => $log->new_value[$key],
+								'user' => $log->user->username,
+								'date' => date('d/m/Y H:i:s', strtotime($log->updated_at))
+							);
+							break;
+					}
+				}
+			}
+			$grid = \DataGrid::source($audit);
+			$grid->attributes(array("class"=>"table table-striped .table-condensed"));
+			$grid->add('label', 'Campo');
+			$grid->add('old', 'Valor Anterior');
+			$grid->add('new', 'Novo Valor');
+			$grid->add('user', 'Alterado por');
+			$grid->add('date', 'Data/Hora da Alteração');
+			$grid->paginate(10);
+			return view('layouts.audit', compact('grid'));
+		}
+
 }

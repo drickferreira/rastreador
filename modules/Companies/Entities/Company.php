@@ -1,8 +1,13 @@
 <?php namespace Modules\Companies\Entities;
    
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes as SoftDeletes;
+use OwenIt\Auditing\AuditingTrait;
+
 
 class Company extends Model {
+	
+	use SoftDeletes, AuditingTrait;
 
 	protected $table = 'companies';
 	protected $fillable = ['name', 'cnpj', 'insc', 'phone1', 'phone2', 'email', 'address', 'number', 'comp', 'quarter', 'city', 'state',	'country', 'postalcode'];

@@ -9,6 +9,10 @@ body {
 	background-size:cover;
 }
 
+.no-back {
+	background: none !important;
+}
+
 .dashboard {
 	background-size:cover;
 	width: 100%;
@@ -79,6 +83,12 @@ body {
     .listview, .editview {
         padding: 0px 5px;
     }
+}
+
+.auditview {
+	background:#FFF;
+	font-size: 12px;
+	padding: 15px 20px 10px 20px;
 }
 
 .listview, .editview {

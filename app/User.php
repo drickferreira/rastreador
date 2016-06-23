@@ -9,6 +9,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\SoftDeletes as SoftDeletes;
+use OwenIt\Auditing\AuditingTrait;
 
 class User extends Model implements AuthenticatableContract,
                                     AuthorizableContract,

@@ -4,10 +4,12 @@ namespace Modules\Devices\Entities;
    
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes as SoftDeletes;
+use OwenIt\Auditing\AuditingTrait;
 
 class Device extends Model {
 
-	use SoftDeletes;
+	
+	use SoftDeletes, AuditingTrait;
 
     protected $table = 'devices';
 
@@ -56,5 +58,5 @@ class Device extends Model {
 				}, '<');
 			}
     }
-
+		
 }

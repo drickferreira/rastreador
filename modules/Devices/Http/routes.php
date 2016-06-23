@@ -10,4 +10,5 @@ Route::group(['prefix'=> 'devices', 'namespace' => 'Modules\Devices\Http\Control
 	Route::get('test', 'DevicesController@testSerial');
 	Route::post('lastPosition', 'DevicesController@searchLastBySerial');
 	Route::post('search', 'DevicesController@searchBySerial');
+	Route::get('audit/{id}', 'DevicesController@audit');
 });

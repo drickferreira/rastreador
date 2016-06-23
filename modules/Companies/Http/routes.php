@@ -3,4 +3,5 @@ Route::group(['prefix' => 'companies', 'namespace' => 'Modules\Companies\Http\Co
 {
 	Route::get('/', 'CompaniesController@index');
 	Route::any('edit', 'CompaniesController@edit');
+	Route::get('audit/{id}', 'CompaniesController@audit');
 });

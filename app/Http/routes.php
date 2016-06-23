@@ -16,6 +16,10 @@
 	Route::get('auth/login', 'Auth\AuthController@getLogin');
 	Route::post('auth/login', 'Auth\AuthController@postLogin');
 	Route::get('auth/logout', 'Auth\AuthController@getLogout');
+
+// Password reset link request routes...
+	Route::get('password/email', 'Auth\PasswordController@getEmail');
+	Route::post('password/email', 'Auth\PasswordController@postEmail');
 	
 	Route::group(['middleware' => 'auth'], function () {
 	
@@ -26,17 +30,16 @@
 			{
 				Route::get('/', 'UserController@index');
 				Route::any('edit', 'UserController@edit');
-				Route::get('vehicles/{id}', 'UserController@vehicles');
+				Route::any('vehicles/{id}', 'UserController@vehicles');
 				Route::get('reset', 'UserController@reset');
 				Route::get('password', 'UserController@getpassword');
 				Route::post('password', 'UserController@setpassword');
+				Route::get('audit/{id}', 'UserController@audit');
+				Route::get('autocomplete', 'UserController@getAutocomplete');
 			});
 			
 			Route::get('notReporting', 'ReportsController@NotReporting');
-	});
-	
-	Route::get('adm', function(){
-		return view('auth.adm');
+			Route::get('installByDay', 'ReportsController@installByDay');
 	});
 	
 	// Password reset routes...

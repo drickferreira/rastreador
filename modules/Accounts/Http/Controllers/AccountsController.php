@@ -55,12 +55,51 @@ class AccountsController extends Controller {
 			$form->saved(function () use ($form){
 				return redirect('accounts')->with('message','Registro salvo com sucesso!'); 
       });
+			if ($form->status == "show"){
+				$form->link("#", "Registro de Alterações", "TR", ['onClick'=>"MyWindow=window.open('audit/".$form->model->id."','MyWindow','width=800,height=400'); return false;"]);
+			}
 			$form->build();
 			return $form->view('accounts::create', compact('form'));
 		} else {
 			return redirect()->back()->with('error', 'Você não tem permissão para acessar esse módulo!');
 		}
 	}
-
+	
+	public function audit($id)
+	{
+		$account = Account::findOrFail($id);
+		$logs = $account->logs;
+		$audit = array();
+		$labels = array(
+			'name' => 'Nome',
+			'cpf_cnpj' => 'CPF/CNPJ',
+			'phone1' => 'Telefone',
+			'phone2' => 'Telefone',
+			'description' => 'Observações',
+		);
+		if ($logs)
+		foreach($logs as $log)
+		{
+			foreach( $log->old_value as $key => $value)
+			{
+				$audit[] = array(
+					'label' => $labels[$key],
+					'old' => $value,
+					'new' => $log->new_value[$key],
+					'user' => $log->user->username,
+					'date' => date('d/m/Y H:i:s', strtotime($log->updated_at))
+				);
+			}
+		}
+		$grid = \DataGrid::source($audit);
+		$grid->attributes(array("class"=>"table table-striped .table-condensed"));
+		$grid->add('label', 'Campo');
+		$grid->add('old', 'Valor Anterior');
+		$grid->add('new', 'Novo Valor');
+		$grid->add('user', 'Alterado por');
+		$grid->add('date', 'Data/Hora da Alteração');
+		$grid->paginate(10);
+		return view('layouts.audit', compact('grid'));
+	}
 	
 }
