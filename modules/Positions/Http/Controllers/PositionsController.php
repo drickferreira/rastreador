@@ -16,26 +16,22 @@ class PositionsController extends Controller {
 			if (isset($data['plate'])){
 				$vehicles = Auth::user()->Vehicles()->whereRaw("plate LIKE '%".strtoupper($data['plate'])."%'")
 					->whereHas('Device', function ($query) {
-					$query->where('company_id', Auth::user()->company_id)
-						->where('remove_date', null);
+					$query->where('company_id', Auth::user()->company_id);
 				})->get();
 			} else {
 				$vehicles = Auth::user()->Vehicles()->whereHas('Device', function ($query) {
-					$query->where('company_id', Auth::user()->company_id)
-						->where('remove_date', null);
+					$query->where('company_id', Auth::user()->company_id);
 				})->get();
 			}
 		} else {
 			if (isset($data['plate'])){
 				$vehicles = Vehicle::whereRaw("plate LIKE '%".strtoupper($data['plate'])."%'")
 					->whereHas('Device', function ($query) {
-					$query->where('company_id', Auth::user()->company_id)
-						->where('remove_date', null);
+					$query->where('company_id', Auth::user()->company_id);
 				})->get();
 			} else {
 				$vehicles = Vehicle::whereHas('Device', function ($query) {
-					$query->where('company_id', Auth::user()->company_id)
-						->where('remove_date', null);
+					$query->where('company_id', Auth::user()->company_id);
 				})->get();
 			}
 		}
@@ -57,12 +53,30 @@ class PositionsController extends Controller {
 				);
 			}
 		}
+		$grid = \DataGrid::source($positions);
+		$grid->attributes(array("class"=>"table table-striped table-hover table-condensed"));
+		$grid->add('<input type="checkbox" name="ids[]" value="{{ $vehicle_id }}" onclick="checkSelected()">', '<input type="checkbox" name="todos" id="todos" onclick="selectTodos()">');
+		$grid->add('<a href="{!! route("positions.showLast", $vehicle_id) !!}">{{$name}}</a>', 'Veículo');
+		$grid->add('date|strtotime|date[d/m/Y H:i:s]', 'Data/Hora');
+		$grid->add('<span id="{{ $id }}" class="address" geo-lat="{{ $latitude }}" geo-lng="{{ $longitude }}"></span>', 'Endereço');
+		$grid->add('ignition', 'Ignição')
+		->cell(function($value) { 
+			 return $value ? '<i class="fa fa-lg fa-circle on"></i>' : '<i class="fa fa-lg fa-circle off"></i>';
+		});
+		$grid->add('{{$speed}} km/h', 'Velocidade');
+		$grid->add('<div class="btn-group btn-group-xs"><a class="btn btn-success" title="Ver no Mapa" href="{!! route("positions.showMap", $id) !!}"><i class="fa fa-lg fa-map-marker"></i></a><a target="_blank" class="btn btn-danger" title="Visualizar no Google Maps" href="https://www.google.com/maps?q={{ $latitude }},{{ $longitude }}"><i class="fa fa-lg fa-google"></i></a><a class="btn btn-primary" title="Últimas Posições" href="{!! route("positions.showLast", $vehicle_id) !!}"> <i class="fa fa-lg fa-list-ol"></i></a><button type="button" class="btn btn-info" title="Buscar Endereço" onclick="searchAddr(\'{{ $id }}\')"><i class="fa fa-lg fa-search"></i></button></div>', 'Ações');
+		$grid->orderBy('date','desc');
+		$grid->paginate(10);
+		
+		return view('positions::index1', compact('grid'));
+
 		usort($positions, function($a, $b) {
    		return $a->date < $b->date;
 		});
 		return view('positions::index', array('positions' => $positions));
 	}
 
+	
 	public function showMap($id)
 	{
 		$position = Position::find($id);
@@ -89,8 +103,7 @@ class PositionsController extends Controller {
 	public function dashboardMap()
 	{
 		$vehicles = Vehicle::whereHas('Device', function ($query) {
-			$query->where('company_id', Auth::user()->company_id)
-				->where('remove_date', null);
+			$query->where('company_id', Auth::user()->company_id);
 		})->get();
 		$locations = array();
 		foreach ($vehicles as $vehicle) {
@@ -169,13 +182,16 @@ class PositionsController extends Controller {
 		);
 		$request->replace($new);		
 
-		$pag = $pag ? $pag : 10;	
-
 		$vehicle = Vehicle::find($id);
 		$now = new Carbon();
 		$now->subDays(5);
-		$positions = $vehicle->Positions();//->where('date', '>', $now->toDateTimeString());
-		$filter = \DataFilter::source($positions);
+		
+		if ($request->input('search')){
+			$filter = \DataFilter::source($vehicle->Positions());
+		} else {
+			$filter = \DataFilter::source($vehicle->Positions()->limit(10));
+		}
+//		$filter = \DataFilter::source($vehicle->Positions());
 		$filter->add('dataini','Data Inicial', 'datetime')->format('d/m/Y H:i:s')->scope(function ($query, $value)  {
 			$test = (bool)strtotime($value);
 			if ($test)
@@ -203,7 +219,10 @@ class PositionsController extends Controller {
 		$grid->add('speed','Velocidade');
 		$grid->add('<a class="btn btn-success btn-xs" title="Ver no Mapa" href="/positions/showMap/{{$id}}"><i class="fa fa-lg fa-map-marker"></i></a><a class="btn btn-danger btn-xs" title="Informações" href="/positions/showInfo/{{$id}}"><i class="fa fa-lg fa-info"></i></a><button type="button" class="btn btn-info btn-xs" title="Buscar Endereço" onclick="searchAddr(\'{{$id}}\')"><i class="fa fa-lg fa-search"></i></button>','Ações', true); 
 		$grid->orderBy('memory_index','desc');
-		$grid->paginate($pag);
+
+		if ($pag) {
+			$grid->paginate($pag);
+		}
 
 		return view('positions::last', compact('filter', 'grid', 'vehicle'));
 	}

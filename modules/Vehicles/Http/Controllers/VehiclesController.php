@@ -61,7 +61,7 @@ class VehiclesController extends Controller {
 			}
 			$options = Account::where('company_id', Auth::user()->company_id)->orderBy('name')->lists("name", "id")->all();
 			$form->add('Account.name', 'Cliente', 'autocomplete')->options($options);
-			$form->text('plate','Placa')->attributes(array("data-mask"=>"AAA-0000"));
+			$form->text('plate','Placa')->rule('required|min:8')->unique()->attributes(array("data-mask"=>"AAA-0000"));
 			$form->text('brand','Marca');
 			$form->text('model','Modelo'); 
 			$form->text('year','Ano')->attributes(array("data-mask"=>"0000")); 
@@ -103,14 +103,14 @@ class VehiclesController extends Controller {
 		if ($logs)
 		foreach($logs as $log)
 		{
-			foreach( $log->old_value as $key => $value)
+			foreach( $log->new_value as $key => $value)
 			{
 					switch ($key){
 						case 'active':
 							$audit[] = array(
 								'label' => $labels[$key],
-								'old' => $value ? "Sim" : "Não",
-								'new' => $log->new_value[$key] ? "Sim" : "Não",
+								'old' => testVal($log->old_value, $key) ? "Ativo" : "Inativo",
+								'new' => testVal($log->new_value, $key) ? "Ativo" : "Inativo",
 								'user' => $log->user->username,
 								'date' => date('d/m/Y H:i:s', strtotime($log->updated_at))
 							);
@@ -118,8 +118,8 @@ class VehiclesController extends Controller {
 						default:
 							$audit[] = array(
 								'label' => $labels[$key],
-								'old' => $value,
-								'new' => $log->new_value[$key],
+								'old' => testVal($log->old_value, $key) ? $log->old_value[$key] : '',
+								'new' => testVal($log->new_value, $key) ? $log->new_value[$key] : '',
 								'user' => $log->user->username,
 								'date' => date('d/m/Y H:i:s', strtotime($log->updated_at))
 							);

@@ -25,5 +25,5 @@ class Position extends Model {
     {
     	return $this->belongsTo('Modules\Devices\Entities\Device');
     } 
-
+		
 }

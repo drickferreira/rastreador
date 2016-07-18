@@ -91,12 +91,12 @@ class CompaniesController extends Controller {
 		if ($logs)
 		foreach($logs as $log)
 		{
-			foreach( $log->old_value as $key => $value)
+			foreach( $log->new_value as $key => $value)
 			{
 				$audit[] = array(
 					'label' => $labels[$key],
-					'old' => $value,
-					'new' => $log->new_value[$key],
+					'old' => testVal($log->old_value, $key) ? $log->old_value[$key] : '',
+					'new' => testVal($log->new_value, $key) ? $log->new_value[$key] : '',
 					'user' => $log->user->username,
 					'date' => date('d/m/Y H:i:s', strtotime($log->updated_at))
 				);

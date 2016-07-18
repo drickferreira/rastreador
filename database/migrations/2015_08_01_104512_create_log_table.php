@@ -14,9 +14,9 @@ class CreateLogTable extends Migration
     {
         Schema::create('logs', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('user_id')->nullable();
+            $table->uuid('user_id')->nullable();
             $table->string('owner_type');
-            $table->integer('owner_id');
+            $table->uuid('owner_id');
             $table->text('old_value')->nullable();
             $table->text('new_value')->nullable();
             $table->string('type');

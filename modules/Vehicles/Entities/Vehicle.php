@@ -18,7 +18,7 @@ class Vehicle extends Model {
 
     public function Device()
     {
-    	return $this->belongsToMany('Modules\Devices\Entities\Device')->withPivot('install_date', 'remove_date', 'description');
+    	return $this->hasOne('Modules\Devices\Entities\Device');
     }
 		
 		public function Account()
@@ -78,5 +78,12 @@ class Vehicle extends Model {
     {
 			return $this->belongsToMany('App\User');
     }
+		
+		public function lastPosition()
+		{
+			return $this->hasOne('Modules\Positions\Entities\Position')
+						->getQuery()
+						->orderBy('memory_index', 'desc');
+		}
 
 }

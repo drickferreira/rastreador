@@ -172,14 +172,14 @@ class UserController extends Controller {
 			if ($logs)
 			foreach($logs as $log)
 			{
-				foreach( $log->old_value as $key => $value)
+				foreach($log->new_value as $key => $value)
 				{
 					switch ($key){
 						case 'role':
 							$audit[] = array(
 								'label' => $labels[$key],
-								'old' => fieldValue("all_roles", $value),
-								'new' => fieldValue("all_roles", $log->new_value[$key]),
+								'old' => testVal($log->old_value, $key) ? fieldValue("all_roles", $log->old_value[$key]) : '',
+								'new' => testVal($log->old_value, $key) ? fieldValue("all_roles", $log->new_value[$key]) : '',
 								'user' => $log->user->username,
 								'date' => date('d/m/Y H:i:s', strtotime($log->updated_at))
 							);
@@ -187,8 +187,8 @@ class UserController extends Controller {
 						case 'company_id':
 							$audit[] = array(
 								'label' => $labels[$key],
-								'old' => Company::find($value)->name,
-								'new' => Company::find($log->new_value[$key])->name,
+								'old' => testVal($log->old_value, $key) ? Company::find($log->old_value[$key])->name : '[não associado]',
+								'new' => testVal($log->new_value, $key) ? Company::find($log->new_value[$key])->name : '[não associado]',
 								'user' => $log->user->username,
 								'date' => date('d/m/Y H:i:s', strtotime($log->updated_at))
 							);
@@ -196,8 +196,8 @@ class UserController extends Controller {
 						default:
 							$audit[] = array(
 								'label' => $labels[$key],
-								'old' => $value,
-								'new' => $log->new_value[$key],
+								'old' => testVal($log->old_value, $key) ? $log->old_value[$key] : '',
+								'new' => testVal($log->new_value, $key) ? $log->new_value[$key] : '',
 								'user' => $log->user->username,
 								'date' => date('d/m/Y H:i:s', strtotime($log->updated_at))
 							);

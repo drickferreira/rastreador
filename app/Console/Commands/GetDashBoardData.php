@@ -47,10 +47,8 @@ class GetDashBoardData extends Command
 					
 					//Vehicles
 					$vehicles = $company->Vehicles->count();
-					$vehicles_no_device = $company->Vehicles()->doesntHave('Device', 'and', function($q){
-						$q->where('remove_date', null);
-					})->count();
-					$vehicles_with_device = $vehicles - $vehicles_no_device;
+					$vehicles_with_device = $company->Vehicles()->has('Device')->count();
+					$vehicles_no_device = $vehicle - $vehicles_with_device;
 					$parameter[$company->id]['Vehicles'] = array($vehicles, $vehicles_with_device, $vehicles_no_device);
 					
 					//Devices
@@ -61,14 +59,10 @@ class GetDashBoardData extends Command
 					//Positions
 					$now = new Carbon();
 					$now->subDays(5);
-					$vehicles = Vehicle::with('Account')->whereHas('Device', function ($query) use ($company) {
-						$query->where('company_id', $company->id)
-							->where('remove_date', null);
-					})->get();
+					$vehicles = $company->Vehicles()->has('Device')->get();
 					
 					$positions = array();
 					foreach($vehicles as $vehicle){
-						$device = $vehicle->Device()->where('remove_date', null)->first();
 						$position = $vehicle->Positions()
 									->orderBy('memory_index', 'desc')
 									->first();
@@ -76,7 +70,7 @@ class GetDashBoardData extends Command
 							if ($position->date < $now) {
 								$positions[] = (object) array(
 									'name' => $vehicle->Account->name,
-									'serial' => $device->serial,
+									'serial' => $position->serial,
 									'plate' => $vehicle->plate,
 									'date' => $position->date,
 									'obs' => 'Veículo não reportando há pelo menos 5 dias',
@@ -85,7 +79,7 @@ class GetDashBoardData extends Command
 						} else {
 							$positions[] = (object) array(
 								'name' => $vehicle->Account->name,
-								'serial' => $device->serial,
+								'serial' => $vehicle->Device()->serial,
 								'plate' => $vehicle->plate,
 								'date' => null,
 								'obs' => 'Veículo não possui registros',

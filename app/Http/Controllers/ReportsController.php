@@ -43,11 +43,11 @@ class ReportsController extends Controller
 	
 	public function installByDay()
 	{
-		$install = DB::table('device_vehicle')
-			->join('devices', 'device_id', '=', 'devices.id')
-			->select('install_date', DB::raw('count(*) as total'))
-			->groupBy('install_date')
-			->orderBy('install_date', 'DESC');
+		$install = DB::table('logs')
+			->join('devices', 'owner_id', '=', 'devices.id')
+			->select(DB::raw("to_char(logs.updated_at, 'YYYY-MM-DD') as install_date, count(*) as total"))
+			->groupBy(DB::raw("to_char(logs.updated_at, 'YYYY-MM-DD')"))
+			->orderBy(DB::raw("to_char(logs.updated_at, 'YYYY-MM-DD')"), 'DESC');
 			
 		$filter = \DataFilter::source($install);
 		$filter->add('install_date','Data de Instalação','daterange')->format('d/m/Y');

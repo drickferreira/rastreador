@@ -18,14 +18,20 @@ class CreateDevicesTable extends Migration {
             $table->string('name');
             $table->smallInteger('model');
             $table->integer('serial');
+						$table->uuid('company_id')->nullable();
+						$table->uuid('vehicle_id')->nullable();
+						$table->text('description');
             $table->softDeletes();
             $table->timestamps();
-            $table->primary('id');
-						$table->uuid('company_id');
+					  $table->primary('id');
 						$table->foreign('company_id')
-									->references('id')->on('companies');
+									->references('id')->on('companies')
+									->onDelete('set null');
+						$table->foreign('vehicle_id')
+									->references('id')->on('vehicles')
+									->onDelete('set null')
 						$table->index('model');
-						$table->index('serial');
+						$table->unique('serial');
 						$table->index(['model','serial']);
         });
     }

@@ -103,8 +103,8 @@ class LoadGatewayPositions extends Command
 									if ($device) {
 										$new->Device()->associate($device);
 										$new->save();
-										$vehicle = $device->Vehicle()->where('remove_date', null)->first();
-										if ($vehicle){
+										if ($device->has('Vehicle')){
+											$vehicle = $device->Vehicle;
 											$new->Vehicle()->associate($vehicle);
 											$new->save();
 										} 

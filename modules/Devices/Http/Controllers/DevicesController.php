@@ -20,9 +20,9 @@ class DevicesController extends Controller {
 	{
 		if (Auth::user()->isSuperAdmin() || Auth::user()->isAdmin()) {
 			if (Auth::user()->isSuperAdmin()) {
-				$filter = \DataFilter::source(Device::with('Company'));
+				$filter = \DataFilter::source(Device::with('Vehicle', 'Company'));
 			} else if (Auth::user()->isAdmin()) {
-				$filter = \DataFilter::source(Device::with('Company')->where('company_id', Auth::user()->company_id));
+				$filter = \DataFilter::source(Device::with('Vehicle')->where('company_id', Auth::user()->company_id));
 			}
 			$filter->add('name','Identificação', 'text');
 			$filter->add('serial','Serial', 'text')->clause('where')->operator('=');
@@ -43,16 +43,15 @@ class DevicesController extends Controller {
 			$grid->add('name','Identificação', true);
 			$grid->add('serial','Número de Série', true);
 			$grid->add('{{ fieldValue("devices", $model) }}','Modelo', 'model');
-			$grid->add('assignedvehicle','Veículo');
+			$grid->add('Vehicle.plate','Veículo');
 			if (Auth::user()->isSuperAdmin()) {
 				$grid->add('Company.name','Empresa', 'company_id');
 				$grid->edit('devices/edit', 'Ações','show|modify|delete');
 				$grid->link('devices/edit',"Novo Aparelho", "TR");
-				$grid->link('devices/test',"Teste por Serial", "TR");
-			} else if (Auth::user()->isAdmin()) {
-				$grid->link('devices/test',"Teste por Serial", "TR");
-				$grid->add('<div class="btn-group"><a class="btn btn-default" title="Instalação" href="devices/vehicle/{{$id}}"><i class="fa fa-car"></i></a><a class="btn btn-default" title="Última Posição" href="devices/test/{{$id}}"><i class="fa fa-thumbs-up"></i></a></div>', '');
+			} else {
+				$grid->add('<a title="Visualizar" href="devices/edit?show={{$id}}"><span class="glyphicon glyphicon-eye-open"> </span></a> <a title="Modificar" href="devices/edit?modify={{$id}}"><span class="glyphicon glyphicon-edit"> </span></a> <a title="Instalar/Remover" href="devices/vehicle/{{$id}}"><span class="glyphicon glyphicon-wrench"> </span></a> <a title="Última Posição" href="devices/test/{{$id}}"><span class="glyphicon glyphicon-thumbs-up"> </span></a>', 'Ações');
 			}
+			$grid->link('devices/test',"Teste por Serial", "TR");
 			$grid->paginate(10);
 			return view('devices::index', compact('filter', 'grid'));
 		} else {
@@ -63,30 +62,25 @@ class DevicesController extends Controller {
 	public function getVehicle($id)
 	{
 		if (Auth::user()->isAdmin()) {
-			$device = Device::findOrFail($id);
+			$device = Device::find($id);
 			$vehicles = Vehicle::whereHas('Account', function ($query) {
 				$query->where('company_id', Auth::user()->company_id);			
-			})->doesntHave('Device', 'and', function($q){
-    		$q->where('remove_date', null);
-			})->get()->lists("fullname", "id")->all();
+			})->doesntHave('Device')
+				->get()->lists("fullname", "id")->all();
 			$form = \DataForm::create();
-			$form->add('device_id', '', 'hidden')->insertValue($device->id);
+			$form->add('device_id', '', 'hidden')->insertValue($id);
 			$form->add('device_name', 'Aparelho', 'text')->insertValue($device->name)->mode('readonly');
 			$form->link('/devices', 'Voltar', 'TR');
-			if ($device->assignedvehicle){
-				$vehicle = $device->Vehicle->where('remove_date', null)->first();
-				$form->add('assignedvehicle', 'Veículo', 'text')->insertValue($vehicle->plate)->mode('readonly');
-				$form->add('vehicle_id', '', 'hidden')->insertValue($vehicle->id);
-				$form->add('install_date', 'Data de Instalação', 'date')->insertValue($vehicle->pivot->install_date)->mode('readonly')->format('d/m/Y');
-				$form->add('description', 'Observações', 'textarea')->insertValue($vehicle->pivot->description)->mode('readonly');
+			if ($device->vehicle_id != ''){
+				$form->add('vehicle_name', 'Veículo', 'text')->insertValue($device->Vehicle->fullname)->mode('readonly');
+				$form->add('vehicle_id', '', 'hidden')->insertValue($device->vehicle_id);
+				$form->textarea('description', 'Observações')->insertValue($device->description)->mode('readonly');
 				$form->add('action','', 'hidden')->insertValue('remove');
-				$form->submit('Remover Aparelho');
 				$form->label('Remover Aparelho');
+				$form->submit('Confirma Retirada');
 			} else {
-				$form->add('vehicle_id', 'Veículo', 'select')->option("","")->options($vehicles);
-				$form->add('install_date', 'Data de Instalação', 'date')->format('d/m/Y')
-					->onchange('var data=$("#install_date").val();data = data.replace(/(\d{2})\/(\d{2})\/(\d{4})/, "$3/$2/$1");var dt = new Date(data),hoje=new Date();if (dt>hoje){swal("Data Inválida!", "A data de instalação não pode ser maior que hoje!", "warning");$("#install_date").val("").focus();}');
-				$form->add('description', 'Observações', 'textarea');
+				$form->add('vehicle_id', 'Veículo', 'select')->option("","Selecione")->options($vehicles)->rule('required');
+				$form->textarea('description', 'Observações')->rule('required|min:15');
 				$form->add('action','', 'hidden')->insertValue('assign');
 				$form->label('Instalar Aparelho');
 				$form->submit('Salvar');
@@ -99,50 +93,63 @@ class DevicesController extends Controller {
 
 	public function postVehicle(Request $request)
 	{
-		if (Auth::user()->isAdmin()) {
-			$device = Device::findOrFail($request->device_id);
-			if ($request->action == 'assign') {
-				$this->validate($request, ['vehicle_id' => 'required', 'install_date' => 'required', 'description' => 'required|min:15']);
-				$device->Vehicle()->attach($request->vehicle_id, array(
-					'install_date' => $request->install_date,
-					'description' => $request->description,
-				));
-			} elseif ($request->action == 'remove') {
-				$vehicle = $device->Vehicle->where("id", $request->vehicle_id)->first();
-				$vehicle->pivot->remove_date = Carbon::now()->toDateString();
-				$vehicle->pivot->save();
-			}
-			return redirect('devices');
+		$device = Device::findOrFail($request->device_id);
+		if ($request->action == 'assign') {
+			$device->Vehicle()->associate($request->vehicle_id);
+			$device->description = $request->description;
+			$device->save();
+			return redirect('devices')->with('message','Veículo associado com sucesso!'); 
 		} else {
-			return view('errors.503');
+			$device->Vehicle()->dissociate();
+			$device->description = NULL;
+			$device->save();
+			return redirect('devices')->with('message','Veículo removido com sucesso!'); 
 		}
 	}
 
 	public function edit()
 	{
+		$form = \DataEdit::source(new Device);
+		$form->link("devices","Voltar", "TR")->back();
 		if (Auth::user()->isSuperAdmin()) {
-			$form = \DataEdit::source(new Device);
-			$form->link("devices","Voltar", "TR")->back();
 			$form->text('name','Identificação')->rule('required|min:5');
 			$form->text('serial','Serial')->rule('required|min:5')->unique();
 			$form->select('model','Modelo')->options(config("dropdown.devices"));
 			$form->select('company_id', 'Empresa')->option('','')->options(Company::lists("name", "id")->all());
-			if ($form->status == 'create'){
-				$form->label('Novo Aparelho');
-			} else {
-				$form->label("Aparelho");
-			}
-			$form->saved(function () use ($form){
-				return redirect('devices')->with('message','Registro salvo com sucesso!'); 
-      });
 			if ($form->status == "show"){
 				$form->link("#", "Registro de Alterações", "TR", ['onClick'=>"MyWindow=window.open('audit/".$form->model->id."','MyWindow','width=800,height=400'); return false;"]);
 			}
-			$form->build();
-			return $form->view('devices::edit', compact('form'));
+		} elseif (Auth::user()->isAdmin()) {
+			$form->text('name','Identificação')->mode('readonly');
+			$form->text('serial','Serial')->mode('readonly');
+			$form->select('model','Modelo')->options(config("dropdown.devices"))->mode('readonly');
+			if ($form->status == "show") {
+				if ($form->model->vehicle_id == ''){
+					$form->link("/devices/vehicle/".$form->model->id, "Atribuir Veículo", "TR", ['class'=>"btn btn-primary"]);
+				} else {
+					$form->autocomplete('Vehicle.fullname', 'Veículo')->search(array('plate','model'));
+					$form->textarea('description', 'Observações');
+					$form->link("/devices/vehicle/".$form->model->id, "Remover Veículo", "TR", ['class'=>"btn btn-danger"]);
+				}
+			} else if ($form->status == "modify") {
+				if ($form->model->vehicle_id != ''){
+					$form->textarea('description', 'Observações')->rule('required|min:15');
+				} 
+			}
+
 		} else {
 			return redirect()->back()->with('error', 'Você não tem permissão para acessar esse módulo!');
 		}
+		if ($form->status == 'create'){
+			$form->label('Novo Aparelho');
+		} else {
+			$form->label($form->model->serial);
+		}
+		$form->saved(function () use ($form){
+			return redirect('devices')->with('message','Registro salvo com sucesso!'); 
+		});
+		$form->build();
+		return $form->view('devices::edit', compact('form'));
 	}
 	
 	public function test($id)
@@ -187,24 +194,36 @@ class DevicesController extends Controller {
 	{
 		$device = Device::findOrFail($id);
 		$logs = $device->logs;
+		//dd($logs);
 		$audit = array();
 		$labels = array(
 			'name' => 'Identificação',
 			'serial' => 'Número de Série',
 			'model' => 'Modelo',
-			'company_id' => 'Empresa'
+			'company_id' => 'Empresa',
+			'vehicle_id' => 'Veículo',
+			'description' => 'Observações'
 		);
 		if ($logs)
 		foreach($logs as $log)
 		{
-			foreach( $log->old_value as $key => $value)
+			foreach( $log->new_value as $key => $value)
 			{
 				switch ($key){
 					case 'model':
 						$audit[] = array(
 							'label' => $labels[$key],
-							'old' => fieldValue("devices", $value),
-							'new' => fieldValue("devices", $log->new_value[$key]),
+							'old' => testVal($log->old_value, $key) ? fieldValue("devices", $log->old_value[$key]) : '[novo]',
+							'new' => fieldValue("devices", $value),
+							'user' => $log->user->username,
+							'date' => date('d/m/Y H:i:s', strtotime($log->updated_at)),
+						);
+						break;
+					case 'vehicle_id':
+						$audit[] = array(
+							'label' => $labels[$key],
+							'old' => testVal($log->old_value, $key) ? Vehicle::find($log->old_value[$key])->plate : '[não associado]',
+							'new' => testVal($log->new_value, $key) ? Vehicle::find($log->new_value[$key])->plate : '[não associado]',
 							'user' => $log->user->username,
 							'date' => date('d/m/Y H:i:s', strtotime($log->updated_at))
 						);
@@ -212,8 +231,8 @@ class DevicesController extends Controller {
 					case 'company_id':
 						$audit[] = array(
 							'label' => $labels[$key],
-							'old' => Company::find($value)->name,
-							'new' => Company::find($log->new_value[$key])->name,
+							'old' => testVal($log->old_value, $key) ? Company::find($log->old_value[$key])->name : '[não associado]',
+							'new' => testVal($log->new_value, $key) ? Company::find($log->new_value[$key])->name : '[não associado]',
 							'user' => $log->user->username,
 							'date' => date('d/m/Y H:i:s', strtotime($log->updated_at))
 						);
@@ -221,8 +240,8 @@ class DevicesController extends Controller {
 					default:
 						$audit[] = array(
 							'label' => $labels[$key],
-							'old' => $value,
-							'new' => $log->new_value[$key],
+							'old' => testVal($log->old_value, $key) ? $log->old_value[$key] : '',
+							'new' => testVal($log->new_value, $key) ? $log->new_value[$key] : '',
 							'user' => $log->user->username,
 							'date' => date('d/m/Y H:i:s', strtotime($log->updated_at))
 						);
@@ -235,8 +254,9 @@ class DevicesController extends Controller {
 		$grid->add('label', 'Campo');
 		$grid->add('old', 'Valor Anterior');
 		$grid->add('new', 'Novo Valor');
-		$grid->add('user', 'Alterado por');
-		$grid->add('date', 'Data/Hora da Alteração');
+		$grid->add('user', 'Usuário');
+		$grid->add('date', 'Data/Hora');
+		$grid->orderBy('date','DESC');
 		$grid->paginate(10);
 		return view('layouts.audit', compact('grid'));
 	}

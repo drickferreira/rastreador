@@ -2,21 +2,19 @@
 
 namespace Modules\Devices\Entities;
    
-use Illuminate\Database\Eloquent\Model;
+use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes as SoftDeletes;
 use OwenIt\Auditing\AuditingTrait;
 
 class Device extends Model {
 
 	
-	use SoftDeletes, AuditingTrait;
-
+		use SoftDeletes, AuditingTrait;
+		
+		protected $auditableTypes = ['created', 'saved', 'deleted'];
     protected $table = 'devices';
-
-    protected $fillable = ['name', 'model', 'serial', 'company_id'];
-		
+    protected $fillable = ['name', 'model', 'serial', 'company_id', 'vehicle_id'];
 		protected $appends = array('assignedvehicle');
-		
     protected $dates = ['deleted_at'];
 
     public function Positions()
@@ -26,7 +24,7 @@ class Device extends Model {
 
     public function Vehicle()
     {
-    	return $this->belongsToMany('Modules\Vehicles\Entities\Vehicle')->withPivot('install_date', 'remove_date', 'description');
+    	return $this->belongsTo('Modules\Vehicles\Entities\Vehicle');
     }
 
     public function Company()
@@ -36,12 +34,7 @@ class Device extends Model {
 
 		public function getAssignedvehicleAttribute($value)
     {
-			$vehicle = $this->belongsToMany('Modules\Vehicles\Entities\Vehicle')->wherePivot('remove_date', null)->first();
-			if ($vehicle){ 
-	    	return $vehicle->plate;
-			} else {
-				return null;
-			}
+			return $this->Vehicle()->plate;
     }
 		
 		public function scopeHasvehicle($query, $value)
@@ -49,14 +42,9 @@ class Device extends Model {
 			if ($value == 0){
         return $query;
 			} elseif ($value == 1){
-        return $query->whereHas('Vehicle', function ($q) use ($value) {
-					$q->where('remove_date', null);
-				});
+        return $query->has('Vehicle');
 			} elseif ($value == 2){
-        return $query->whereHas('Vehicle', function ($q) use ($value) {
-					$q->where('remove_date', null);
-				}, '<');
+        return $query->doesntHave('Vehicle');
 			}
     }
-		
 }

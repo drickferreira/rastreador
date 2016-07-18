@@ -20,4 +20,12 @@ function xmlGetVal($xml, $path, $type = 'str')
 	return call_user_func($func, $temp);
 }
 
+function testVal($arr, $key){
+	if(!is_array($arr)) return false;
+	if(!isset($arr[$key])) return false;
+	if($arr[$key]==null) return false;
+	return $arr[key];
+}
+
+
 ?>

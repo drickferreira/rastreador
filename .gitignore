@@ -1,11 +1,10 @@
-/vendor
-/node_modules
 Homestead.yaml
 Homestead.json
-.env
 sftp-config.json
 composer.lock
 config/debugbar.php
-scheduler.log
-/public/packages
-/storage
+public/packages
+vendor/
+storage/
+.env
+.log
