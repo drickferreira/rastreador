@@ -30,7 +30,7 @@ class CreateDevicesTable extends Migration {
 									->onDelete('set null');
 						$table->foreign('vehicle_id')
 									->references('id')->on('vehicles')
-									->onDelete('set null')
+									->onDelete('set null');
 						$table->index('model');
 						$table->unique('serial');
 						$table->index(['model','serial']);
