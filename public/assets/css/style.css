@@ -224,3 +224,8 @@ i.fa {
 	font-size: 40px;
 	margin: 50px 20px;
 }
+
+.error {
+	background:#C00;
+	color:#FFF;
+}

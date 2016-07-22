@@ -74,12 +74,14 @@ class DevicesController extends Controller {
 			if ($device->vehicle_id != ''){
 				$form->add('vehicle_name', 'Veículo', 'text')->insertValue($device->Vehicle->fullname)->mode('readonly');
 				$form->add('vehicle_id', '', 'hidden')->insertValue($device->vehicle_id);
+				$form->add('install_date', 'Data de Instalação', 'date')->format('d/m/Y')->insertValue($device->install_date)->mode('readonly');
 				$form->textarea('description', 'Observações')->insertValue($device->description)->mode('readonly');
 				$form->add('action','', 'hidden')->insertValue('remove');
 				$form->label('Remover Aparelho');
 				$form->submit('Confirma Retirada');
 			} else {
 				$form->add('vehicle_id', 'Veículo', 'select')->option("","Selecione")->options($vehicles)->rule('required');
+				$form->add('install_date', 'Data de Instalação', 'date')->format('d/m/Y')->rule('required');
 				$form->textarea('description', 'Observações')->rule('required|min:15');
 				$form->add('action','', 'hidden')->insertValue('assign');
 				$form->label('Instalar Aparelho');
@@ -96,11 +98,13 @@ class DevicesController extends Controller {
 		$device = Device::findOrFail($request->device_id);
 		if ($request->action == 'assign') {
 			$device->Vehicle()->associate($request->vehicle_id);
+			$device->install_date = $request->install_date;
 			$device->description = $request->description;
 			$device->save();
 			return redirect('devices')->with('message','Veículo associado com sucesso!'); 
 		} else {
 			$device->Vehicle()->dissociate();
+			$device->install_date = NULL;
 			$device->description = NULL;
 			$device->save();
 			return redirect('devices')->with('message','Veículo removido com sucesso!'); 

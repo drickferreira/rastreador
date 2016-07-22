@@ -13,7 +13,7 @@ class Device extends Model {
 		
 		protected $auditableTypes = ['created', 'saved', 'deleted'];
     protected $table = 'devices';
-    protected $fillable = ['name', 'model', 'serial', 'company_id', 'vehicle_id'];
+    protected $fillable = ['name', 'model', 'serial', 'company_id', 'vehicle_id', 'install_date', 'description'];
 		protected $appends = array('assignedvehicle');
     protected $dates = ['deleted_at'];
 

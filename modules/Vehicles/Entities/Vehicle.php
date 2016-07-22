@@ -12,7 +12,7 @@ class Vehicle extends Model {
 
     protected $fillable = ['plate', 'brand', 'model', 'year', 'color', 'active', 'account_id'];
 
-		protected $appends = array('fullname', 'assigneddevice');
+		protected $appends = array('fullname');
 
     protected $dates = ['deleted_at'];
 
@@ -49,28 +49,23 @@ class Vehicle extends Model {
 			return $name;
 		}
 
-		public function getAssigneddeviceAttribute($value)
+/*		public function getAssigneddeviceAttribute($value)
     {
-			$device = $this->belongsToMany('Modules\Devices\Entities\Device')->wherePivot('remove_date', null)->first();
-			if ($device){ 
-	    	return $device->serial;
-			} else {
-				return null;
-			}
+			$device = $this->Device;
+			if ($device)
+			return $device->serial;
+			else
+			return null;
     }
-
+*/
 		public function scopeHasdevice($query, $value)
     {
 			if ($value == 0){
         return $query;
 			} elseif ($value == 1){
-        return $query->whereHas('Device', function ($q) use ($value) {
-					$q->where('remove_date', null);
-				});
+        return $query->has('Device');
 			} elseif ($value == 2){
-        return $query->whereHas('Device', function ($q) use ($value) {
-					$q->where('remove_date', null);
-				}, '<');
+        return $query->doesntHave('Device');
 			}
     }
 

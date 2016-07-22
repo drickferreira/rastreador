@@ -48,7 +48,7 @@ class GetDashBoardData extends Command
 					//Vehicles
 					$vehicles = $company->Vehicles->count();
 					$vehicles_with_device = $company->Vehicles()->has('Device')->count();
-					$vehicles_no_device = $vehicle - $vehicles_with_device;
+					$vehicles_no_device = $vehicles - $vehicles_with_device;
 					$parameter[$company->id]['Vehicles'] = array($vehicles, $vehicles_with_device, $vehicles_no_device);
 					
 					//Devices
@@ -79,7 +79,7 @@ class GetDashBoardData extends Command
 						} else {
 							$positions[] = (object) array(
 								'name' => $vehicle->Account->name,
-								'serial' => $vehicle->Device()->serial,
+								'serial' => $vehicle->Device->serial,
 								'plate' => $vehicle->plate,
 								'date' => null,
 								'obs' => 'Veículo não possui registros',

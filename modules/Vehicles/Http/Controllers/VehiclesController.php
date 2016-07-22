@@ -11,7 +11,7 @@ class VehiclesController extends Controller {
 	public function index()
 	{
 		if (Auth::user()->isAdmin() || Auth::user()->isSuperAdmin()) {
-			$filter = \DataFilter::source(Vehicle::with('Account')->whereHas('Account', function ($query) {
+			$filter = \DataFilter::source(Vehicle::with('Device','Account')->whereHas('Account', function ($query) {
 					$query->where('company_id', Auth::user()->company_id);
 			}));
 			$filter->add('plate','Placa', 'text')
@@ -38,7 +38,7 @@ class VehiclesController extends Controller {
 			$grid->add('model','Modelo', true); 
 			$grid->add('year','Ano', true); 
 			$grid->add('color','Cor', true); 
-			$grid->add('assigneddevice','Aparelho'); 
+			$grid->add('Device.serial','Aparelho'); 
 			$grid->edit('vehicles/edit', 'Ações','show|modify|delete');
 			$grid->link('vehicles/edit',"Novo Veículo", "TR");
 			$grid->paginate(10);
