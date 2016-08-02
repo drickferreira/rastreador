@@ -54,6 +54,26 @@
             </div>
         </div>
     </div>
+    <div class="form-group">
+        <label for="panic" class="col-md-2 control-label">Pânico</label>
+        <div class="col-md-3">
+        {!! Form::text('panic', $position->panic ? 'Ligado': 'Desligado', ['class' => 'form-control', 'readonly'] ) !!}
+        </div>
+        <label for="battery_charging" class="col-md-2 control-label">Bateria Carregando</label>
+        <div class="col-md-3">
+        {!! Form::text('battery_charging', $position->battery_charging ? 'Sim': 'Não', ['class' => 'form-control', 'readonly'] ) !!}
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="hodometer" class="col-md-2 control-label">Hodômetro</label>
+        <div class="col-md-3">
+        {!! Form::text('hodometer', $position->hodometer, ['class' => 'form-control', 'readonly'] ) !!}
+        </div>
+        <label for="battery_failure" class="col-md-2 control-label">Falha na Bateria</label>
+        <div class="col-md-3">
+        {!! Form::text('battery_failure', $position->battery_failure ? 'Sim': 'Não', ['class' => 'form-control', 'readonly'] ) !!}
+        </div>
+    </div>
     {!! Form::close() !!}
     </div>
 </div>

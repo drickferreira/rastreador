@@ -60,7 +60,7 @@ class VehiclesController extends Controller {
 				$form->label("Veículo");
 			}
 			$options = Account::where('company_id', Auth::user()->company_id)->orderBy('name')->lists("name", "id")->all();
-			$form->add('Account.name', 'Cliente', 'autocomplete')->options($options);
+			$form->add('Account.name', 'Cliente', 'autocomplete')->options($options)->rule('required');
 			$form->text('plate','Placa')->rule('required|min:8')->unique()->attributes(array("data-mask"=>"AAA-0000"));
 			$form->text('brand','Marca');
 			$form->text('model','Modelo'); 

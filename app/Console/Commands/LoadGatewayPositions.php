@@ -50,26 +50,21 @@ class LoadGatewayPositions extends Command
         $list = $ftp->files('data');
         $count = 0;
 				
-        //$file = $list[0];
-        foreach ($list as $file) 
+        $file = $list[0];
+        //foreach ($list as $file) 
         {
 						$filename = basename($file);
 						$this->info(Carbon::now()->toDateTimeString()." - Processando arquivo $file"); 
 						if ($content = $ftp->read($file)){
 							$xml = simplexml_load_string($content);
-							$local->put($filename, $content);
-							$ftp->delete($file);
+							//$local->put($filename, $content);
+							//$ftp->delete($file);
 						}
 
             foreach($xml->xpath('POSITION') as $pos){
                 $device = Device::where('serial', xmlGetVal($pos,'FIRMWARE/SERIAL'))
                                   ->where('model', xmlGetVal($pos,'FIRMWARE/PROTOCOL'))
                                   ->first();
-									$ip = strval($pos['ipv4']);
-									if($ip === '')
-									{
-											$ip = xmlGetVal($xml,'//MXT1XX_IP_DATA/IP');
-									}  
 									$now = Carbon::now();
 									$date = new Carbon(xmlGetVal($pos,'GPS/DATE','str'));
 									if ($now->timestamp >= $date->timestamp){
@@ -81,7 +76,6 @@ class LoadGatewayPositions extends Command
 									}
 									$memory_index = xmlGetVal($pos,'FIRMWARE/MEMORY_INDEX', 'int') + $prefix;
 									$position = array(
-											'ip' => $ip, 
 											'serial' => xmlGetVal($pos,'FIRMWARE/SERIAL'),
 											'model' => xmlGetVal($pos,'FIRMWARE/PROTOCOL'),
 											'memory_index' => $memory_index,
@@ -97,6 +91,9 @@ class LoadGatewayPositions extends Command
 											'longitude' => xmlGetVal($pos,'GPS/LONGITUDE','float'),
 											'speed' => xmlGetVal($pos,'GPS/SPEED','float'),
 											'hodometer' => xmlGetVal($pos,'GPS/HODOMETER','int'),
+											'lifetime' => xmlGetVal($pos,'FIRMWARE/LIFE_TIME','int'),
+											'gps_signal' => xmlGetVal($pos,'GPS/FLAG_STATE/GPS_SIGNAL','int'),
+											'gps_antenna_failure' => xmlGetVal($pos,'GPS/FLAG_STATE/GPS_ANTENNA_FAILURE','int'),
 									);
 									$new = new Position($position);
 									$new->save();

@@ -5,13 +5,13 @@
     <h1>{!! $device->serial !!}</h1>
     @if($position)
     <div class="form-group">
-        <label for="data" class="col-md-2 control-label">Data</label>
+        <label for="date" class="col-md-2 control-label">Data do Módulo</label>
         <div class="col-md-3">
-        {!! Form::text('data', $position->date->format('d/m/Y'), ['class' => 'form-control', 'readonly']) !!}
+        {!! Form::text('date', $position->date->format('d/m/Y H:i:s'), ['class' => 'form-control', 'readonly']) !!}
         </div>
-        <label for="hora" class="col-md-2 control-label">Hora</label>
+        <label for="created_at" class="col-md-2 control-label">Data do Report</label>
         <div class="col-md-3">
-        {!! Form::text('hora', $position->date->format('H:i:s'), ['class' => 'form-control', 'readonly']) !!}
+        {!! Form::text('created_at', $position->created_at->format('d/m/Y H:i:s'), ['class' => 'form-control', 'readonly']) !!}
         </div>
     </div>
     <div class="form-group">
@@ -21,15 +21,19 @@
         </div>
     </div>
     <div class="form-group">
-        <label for="latitude" class="col-md-2 control-label">Latitude</label>
+        <label for="coordenadas" class="col-md-2 control-label">Coordenadas</label>
         <div class="col-md-3">
-        {!! Form::text('latitude', $position->latitude, ['class' => 'form-control', 'readonly'] ) !!}
+          <div class="input-group">
+          {!! Form::text('coordenadas', $position->latitude . ',' . $position->longitude, ['class' => 'form-control', 'readonly'] ) !!}
+          <span class="input-group-btn">
+          <a class="btn btn-success" title="Ver no Mapa" href="{!! route('positions.showMap', $position->id) !!}"><i class="fa fa-lg fa-map-marker"></i></a>
+          </span>
+          </div>
         </div>
-        <label for="longitude" class="col-md-2 control-label">Longitude</label>
+        <label for="panic" class="col-md-2 control-label">Pânico</label>
         <div class="col-md-3">
-        {!! Form::text('longitude', $position->longitude, ['class' => 'form-control', 'readonly'] ) !!}
+        {!! Form::text('panic', $position->panic ? 'Ligado': 'Desligado', ['class' => 'form-control', 'readonly'] ) !!}
         </div>
-        <a class="btn btn-success" title="Ver no Mapa" href="{!! route('positions.showMap', $position->id) !!}"><i class="fa fa-lg fa-map-marker"></i></a>
     </div>
     <div class="form-group">
         <label for="ignition" class="col-md-2 control-label">Ignição</label>
@@ -55,6 +59,36 @@
                 <input readonly="readonly" aria-describedby="graus" class="form-control" name="temperature" type="text" value="{{$position->temperature}}" id="temperature">
                 <span class="input-group-addon" id="graus">&#8451;</span>
             </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="battery_charging" class="col-md-2 control-label">Bateria Carregando</label>
+        <div class="col-md-3">
+        {!! Form::text('battery_charging', $position->battery_charging ? 'Sim': 'Não', ['class' => 'form-control', 'readonly'] ) !!}
+        </div>
+        <label for="battery_failure" class="col-md-2 control-label">Falha na Bateria</label>
+        <div class="col-md-3">
+        {!! Form::text('battery_failure', $position->battery_failure ? 'Sim': 'Não', ['class' => 'form-control', 'readonly'] ) !!}
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="lifetime" class="col-md-2 control-label">Tempo Ligado</label>
+        <div class="col-md-3">
+        {!! Form::text('lifetime', secondsToTime($position->lifetime), ['aria-describedby'=> 'seconds', 'class' => 'form-control', 'readonly'] ) !!}
+        </div>
+        <label for="hodometer" class="col-md-2 control-label">Hodômetro</label>
+        <div class="col-md-3">
+        {!! Form::text('hodometer', $position->hodometer, ['class' => 'form-control', 'readonly'] ) !!}
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="gps_signal" class="col-md-2 control-label">Sinal GPS</label>
+        <div class="col-md-3">
+        {!! Form::text('gps_signal', $position->gps_signal ? 'Sim': 'Não', ['class' => 'form-control', 'readonly'] ) !!}
+        </div>
+        <label for="gps_antenna_failure" class="col-md-2 control-label">Falha da Antena GPS</label>
+        <div class="col-md-3">
+        {!! Form::text('gps_antenna_failure', $position->gps_antenna_failure ? 'Sim': 'Não', ['class' => 'form-control', 'readonly'] ) !!}
         </div>
     </div>
     {!! Form::close() !!}
