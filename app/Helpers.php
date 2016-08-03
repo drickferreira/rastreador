@@ -30,7 +30,7 @@ function testVal($arr, $key){
 function secondsToTime($seconds) {
     $dtF = new \DateTime('@0');
     $dtT = new \DateTime("@$seconds");
-    return $dtF->diff($dtT)->format('%a dias, %h:%i:%s');
+    return $dtF->diff($dtT)->format('%a dias, %H:%I:%S horas');
 }
 
 ?>

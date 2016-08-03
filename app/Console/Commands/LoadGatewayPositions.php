@@ -50,15 +50,15 @@ class LoadGatewayPositions extends Command
         $list = $ftp->files('data');
         $count = 0;
 				
-        $file = $list[0];
-        //foreach ($list as $file) 
+        //$file = $list[0];
+        foreach ($list as $file) 
         {
 						$filename = basename($file);
 						$this->info(Carbon::now()->toDateTimeString()." - Processando arquivo $file"); 
 						if ($content = $ftp->read($file)){
 							$xml = simplexml_load_string($content);
-							//$local->put($filename, $content);
-							//$ftp->delete($file);
+							$local->put($filename, $content);
+							$ftp->delete($file);
 						}
 
             foreach($xml->xpath('POSITION') as $pos){
