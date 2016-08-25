@@ -17,6 +17,7 @@ class Kernel extends ConsoleKernel
         Commands\LoadGatewayPositions::class,
 				Commands\GetDashBoardData::class,
 				Commands\DeleteOldXML::class,
+				Commands\getCommandResponses::class,
     ];
 
     /**
@@ -35,5 +36,7 @@ class Kernel extends ConsoleKernel
 					->hourly();	
 				$schedule->command('xml:delete')
 					->daily();
+        $schedule->command('commands:response')
+					->everyMinute();
     }
 }

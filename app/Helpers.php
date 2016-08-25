@@ -24,7 +24,7 @@ function testVal($arr, $key){
 	if(!is_array($arr)) return false;
 	if(!isset($arr[$key])) return false;
 	if($arr[$key]==null) return false;
-	return $arr[key];
+	return $arr[$key];
 }
 
 function secondsToTime($seconds) {

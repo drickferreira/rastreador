@@ -25,7 +25,6 @@
 	
 			Route::get('/', 'DashBoardController@index');
 			
-			
 			Route::group(['prefix' => 'user'], function()
 			{
 				Route::get('/', 'UserController@index');
@@ -45,4 +44,10 @@
 	// Password reset routes...
 	Route::get('password/reset/{token}', 'Auth\PasswordController@getReset');
 	Route::post('password/reset', 'Auth\PasswordController@postReset');
-
+	
+	
+	Route::group(array('prefix' => 'api', 'middleware' => 'auth.basic'), function()
+	{
+		Route::get('/', 'ApiController@index');
+		Route::get('position/{placa}', 'ApiController@getPosition');
+	});

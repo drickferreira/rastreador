@@ -34,6 +34,9 @@ class CreatePositionTable extends Migration {
             $table->uuid('device_id');
             $table->softDeletes();
             $table->primary('id');
+            $table->foreign('device_id')
+                  ->references('id')->on('devices')
+                  ->onDelete('cascade');
             $table->foreign('vehicle_id')
                   ->references('id')->on('vehicles')
                   ->onDelete('cascade');

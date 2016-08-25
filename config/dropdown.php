@@ -170,6 +170,17 @@ return [
 			20 => 'Admin - Empresa',
 			30 => 'Usuário Comum',
 			40 => 'Cliente',
+		),
+		
+		'commands_response_status' => array
+		(
+			'0' => '',
+			'1' => 'Comando Enviado',
+			'2' => 'Número máximo de tentativas excedido',
+			'3' => 'Comando expirou por tempo',
+			'4' => 'Comando Cancelado',
+			'5' => 'Comando Confirmado',
+			'6' => 'Arquivo XML inválido',
 		)
 
 ];

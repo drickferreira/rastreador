@@ -6,7 +6,6 @@ use Illuminate\Console\Command;
 use Modules\Devices\Entities\Device;
 use Modules\Vehicles\Entities\Vehicle;
 use Modules\Positions\Entities\Position;
-use App\Ftp;
 use Carbon\Carbon;
 use Storage;
 

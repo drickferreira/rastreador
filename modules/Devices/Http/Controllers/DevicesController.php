@@ -46,10 +46,10 @@ class DevicesController extends Controller {
 			$grid->add('Vehicle.plate','Veículo');
 			if (Auth::user()->isSuperAdmin()) {
 				$grid->add('Company.name','Empresa', 'company_id');
-				$grid->edit('devices/edit', 'Ações','show|modify|delete');
+				$grid->add('<a title="Visualizar" href="devices/edit?show={{$id}}"><span class="glyphicon glyphicon-eye-open"> </span></a> <a title="Modificar" href="devices/edit?modify={{$id}}"><span class="glyphicon glyphicon-edit"> </span></a> <a title="Última Posição" href="devices/test/{{$id}}"><span class="glyphicon glyphicon-thumbs-up"> </span></a> <a title="Enviar Comando" href="commands/send/{{$id}}"><span class="glyphicon glyphicon-share-alt"> </span></a>', 'Ações');
 				$grid->link('devices/edit',"Novo Aparelho", "TR");
 			} else {
-				$grid->add('<a title="Visualizar" href="devices/edit?show={{$id}}"><span class="glyphicon glyphicon-eye-open"> </span></a> <a title="Modificar" href="devices/edit?modify={{$id}}"><span class="glyphicon glyphicon-edit"> </span></a> <a title="Instalar/Remover" href="devices/vehicle/{{$id}}"><span class="glyphicon glyphicon-wrench"> </span></a> <a title="Última Posição" href="devices/test/{{$id}}"><span class="glyphicon glyphicon-thumbs-up"> </span></a>', 'Ações');
+				$grid->add('<a title="Visualizar" href="devices/edit?show={{$id}}"><span class="glyphicon glyphicon-eye-open"> </span></a> <a title="Modificar" href="devices/edit?modify={{$id}}"><span class="glyphicon glyphicon-edit"> </span></a>  <a title="Instalar/Remover" href="devices/vehicle/{{$id}}"><span class="glyphicon glyphicon-wrench"> </span></a>  <a title="Última Posição" href="devices/test/{{$id}}"><span class="glyphicon glyphicon-thumbs-up"> </span></a>', 'Ações');
 			}
 			$grid->link('devices/test',"Teste por Serial", "TR");
 			$grid->paginate(10);

@@ -31,6 +31,11 @@ class Device extends Model {
     {
     	return $this->belongsTo('Modules\Companies\Entities\Company');
     }
+		
+		public function Commands()
+		{
+			return $this->hasMany('Modules\Commands\Entities\Command');
+		}
 
 		public function getAssignedvehicleAttribute($value)
     {

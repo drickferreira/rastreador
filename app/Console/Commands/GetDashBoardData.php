@@ -11,7 +11,6 @@ use Storage;
 class GetDashBoardData extends Command 
 {
 
-
     protected $signature = 'dashboard:update';
 
     protected $description = 'Atualiza os dados do DashBoard';

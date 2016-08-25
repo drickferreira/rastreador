@@ -116,22 +116,54 @@ public function destroy()
 
 For a general information alert, just do: `alert('Some message');` (same as `alert()->message('Some message');`).
 
-By default, all alerts will dismiss after a sensible default number of seconds.
-
-But no fear, if you need to specify a different time you can:
-
-```php
-    // -> Remember!, the number is set in milliseconds
-    alert('Hello World!')->autoclose(3000);
-```
-
-Also, if you need the alert to be persistent on the page until the user dismiss it by pressing the alert confirmation button:
+### With Middleware 
+#### Using middleware groups
+First register the middleware in web middleware groups by simply add the middleware class `UxWeb\SweetAlert\ConvertMessagesIntoSweatAlert::class` into the $middlewareGroups of your app/Http/Kernel.php class:
 
 ```php
-    // -> The text will appear in the button
-    alert('Hello World!')->persistent("Close this");
+    protected $middlewareGroups = [
+        'web' => [
+            \App\Http\Middleware\EncryptCookies::class,
+            ...
+            \UxWeb\SweetAlert\ConvertMessagesIntoSweatAlert::class,
+        ],
+
+        'api' => [
+            'throttle:60,1',
+        ],
+    ];
+
 ```
 
+> Ensure to register the middleware within 'web' group only.
+
+#### Using route middleware
+Or if you would like to assign the middleware to specific routes only, you should add the middleware to `$routeMiddleware` in `app/Http/Kernel.php` file:
+
+```php
+protected $routeMiddleware = [
+    'auth' => \App\Http\Middleware\Authenticate::class,
+    ....
+    'sweetalert' => \UxWeb\SweetAlert\ConvertMessagesIntoSweatAlert::class,
+];
+```
+
+
+Next step, Within your controllers, set your return message (using `with()`), send the proper message  and proper type
+
+```PHP
+return redirect('dashboard')->with('success', 'Profile updated!'); 
+```
+
+or
+
+```PHP
+return redirect()->back()->with('errors', 'Profile updated!'); 
+```
+
+> **NOTE**: When using the middleware it will make an alert to display if detects any of the following keys flashed into the session: `errors`, `success`, `warning`, `info`, `message`, `basic`.
+
+### The View
 Finally, to display the alert in the browser, you may use (or modify) the view that is included with this package. Simply include it to your layout view:
 
 ```html
@@ -157,6 +189,25 @@ Finally, to display the alert in the browser, you may use (or modify) the view t
 </html>
 ```
 
+> **REMEMBER**: Always include the .css and .js files from the sweet-alert library.
+
+### Final Considerations
+By default, all alerts will dismiss after a sensible default number of seconds.
+
+But no fear, if you need to specify a different time you can:
+
+```php
+    // -> Remember!, the number is set in milliseconds
+    alert('Hello World!')->autoclose(3000);
+```
+
+Also, if you need the alert to be persistent on the page until the user dismiss it by pressing the alert confirmation button:
+
+```php
+    // -> The text will appear in the button
+    alert('Hello World!')->persistent("Close this");
+```
+
 ## Customize
 
 If you need to customize the alert message partial, run:
@@ -167,7 +218,9 @@ If you need to customize the alert message partial, run:
 
 The package view is located in the `resources/views/vendor/sweet/` directory.
 
-You can override/overwrite your sweet alert configuration to fit your needs.
+You can customize this view to fit your needs.
+
+A `sweet-alert.php` configuration file will be published to your `config` directory as well, this will allow you to set the default timer for all autoclose alerts.
 
 ### Configuration Options
 
@@ -218,6 +271,14 @@ Note that `{!! !!}` are used to output the json configuration object unescaped, 
 ```
 
 Note that you must use `""` (double quotes) to wrap the values except for the timer option.
+
+## Tests
+
+To run the included test suite:
+
+```bash
+vendor/bin/phpunit
+```
 
 ## Demo
 
