@@ -1,0 +1,15 @@
+{
+    "name": "Commands",
+    "alias": "commands",
+    "description": "",
+    "keywords": [],
+    "active": 1,
+    "order": 0,
+    "providers": [
+        "Modules\\Commands\\Providers\\CommandsServiceProvider"
+    ],
+    "aliases":{},
+    "files": [
+        "start.php"
+    ]
+}
