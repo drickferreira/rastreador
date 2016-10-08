@@ -3,6 +3,7 @@
 use Pingpong\Modules\Routing\Controller;
 use Modules\Commands\Entities\Command;
 use Modules\CommandParameters\Entities\CommandParameter;
+use Modules\CommandsResponse\Entities\CommandsResponse;
 use Modules\Devices\Entities\Device;
 use Modules\Companies\Entities\Company;
 use Illuminate\Http\Request;
@@ -15,10 +16,29 @@ class CommandsController extends Controller {
 	{
 		$filter = \DataFilter::source(Command::with('Device'));
 		$filter->add('id_command', 'Identificação', 'select')
+			->option('','')
 			->options(config('commands_names'))
 			->scope( function ($query, $value) {
 				return $query->whereRaw("id_command LIKE '".$value."%'");
 		});
+		$filter->add('dataini','Data Inicial', 'date')->format('d/m/Y')->scope(function ($query, $value)  {
+			$test = (bool)strtotime($value);
+			$data = $value." 00:00:00";
+			if ($test)
+      	return $query->whereRaw("date_trunc('day', created_at) >= ?", array($data));  
+			else
+				return $query;
+		});
+		$filter->add('datafin','Data Final', 'date')->format('d/m/Y')->scope(function ($query, $value)  {
+			$test = (bool)strtotime($value);
+			$data = $value." 00:00:00";
+			if ($test)
+	      return  $query->whereRaw("date_trunc('day', created_at) <= ?", array($data));  
+			else
+				return $query;
+		});
+
+
 		$filter->add('Device.serial','Serial', 'text')->clause('where')->operator('=');
 		$filter->submit('Buscar');
 		$filter->reset('Limpar');
@@ -194,7 +214,7 @@ class CommandsController extends Controller {
 			$devicesquery = $devicesquery->where('company_id', $company_id);
 		if ($model != '')
 			$devicesquery = $devicesquery->where('model', $model);
-		$result = $devicesquery->lists("serial", "id")->all();
+		$result = $devicesquery->orderBy('serial')->lists("serial", "id")->all();
 		return json_encode($result);
 	}
 	

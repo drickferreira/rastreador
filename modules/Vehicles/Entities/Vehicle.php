@@ -10,7 +10,7 @@ class Vehicle extends Model {
 		
     protected $table = 'vehicles';
 
-    protected $fillable = ['plate', 'brand', 'model', 'year', 'color', 'active', 'account_id'];
+    protected $fillable = ['plate', 'brand', 'model', 'year', 'color', 'active', 'panic', 'account_id'];
 
 		protected $appends = array('fullname');
 
@@ -49,15 +49,6 @@ class Vehicle extends Model {
 			return $name;
 		}
 
-/*		public function getAssigneddeviceAttribute($value)
-    {
-			$device = $this->Device;
-			if ($device)
-			return $device->serial;
-			else
-			return null;
-    }
-*/
 		public function scopeHasdevice($query, $value)
     {
 			if ($value == 0){
@@ -80,5 +71,5 @@ class Vehicle extends Model {
 						->getQuery()
 						->orderBy('memory_index', 'desc');
 		}
-
+		
 }

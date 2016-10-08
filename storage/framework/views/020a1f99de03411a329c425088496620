@@ -34,6 +34,7 @@
                           <a class="dropdown-toggle" role="button" data-toggle="dropdown" href="#"><i class="fa fa-wrench"></i> Manutenção<span class="caret"></span></a>
                           <ul id="g-config-menu" class="dropdown-menu" role="menu">
                             <li><a href="/devices"><i class="fa fa-tags"></i> Rastreadores</a></li>
+                            <li><a href="/devices/exchange"><i class="fa fa-exchange"></i> Remessa/Retorno</a></li>
                             <li><a href="/commands"><i class="fa fa-share"></i> Envio de Comandos</a></li>
                           </ul>
                       </li>
@@ -50,10 +51,25 @@
                        
                   </ul>
 								<?php elseif(Auth::user()->isAdmin()): ?>
-                  <li><a href="/user"><i class="glyphicon glyphicon-user"></i> Usuários</a></li>
-                  <li><a href="/devices"><i class="fa fa-tags"></i> Rastreadores</a></li>
-                  <li><a href="/accounts"><i class="fa fa-users"></i> Clientes</a></li>
-                  <li><a href="/vehicles"><i class="fa fa-car"></i> Veículos</a></li>
+                	<ul class="nav navbar-nav navbar-left">
+                      <li class="dropdown">
+                          <a class="dropdown-toggle" role="button" data-toggle="dropdown" href="#"><i class="fa fa-book"></i> Cadastros<span class="caret"></span></a>
+                          <ul id="g-crud-menu" class="dropdown-menu" role="menu">
+                            <li><a href="/user"><i class="glyphicon glyphicon-user"></i> Usuários</a></li>
+                            <li><a href="/accounts"><i class="fa fa-users"></i> Clientes</a></li>
+                            <li><a href="/vehicles"><i class="fa fa-car"></i> Veículos</a></li>
+                          </ul>
+                      </li>
+                  </ul>
+                	<ul class="nav navbar-nav navbar-left">
+                      <li class="dropdown">
+                          <a class="dropdown-toggle" role="button" data-toggle="dropdown" href="#"><i class="fa fa-wrench"></i> Manutenção<span class="caret"></span></a>
+                          <ul id="g-config-menu" class="dropdown-menu" role="menu">
+                            <li><a href="/devices"><i class="fa fa-tags"></i> Rastreadores</a></li>
+                            <li><a href="/devices/exchange"><i class="fa fa-exchange"></i> Remessa/Retorno</a></li>
+                          </ul>
+                      </li>
+                  </ul>
 	                <li><a href="/positions"><i class="glyphicon glyphicon-map-marker"></i> Posições</span></a></li>
                   <ul class="nav navbar-nav navbar-left">
                       <li class="dropdown">

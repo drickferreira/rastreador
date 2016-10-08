@@ -161,6 +161,9 @@ body {
 .off {
 	color: #222;
 }
+.panic {
+	color: #F00;
+}
 .icon-label {
 	margin-left: 10px;
 }
@@ -232,4 +235,7 @@ i.fa {
 
 #response{
 	margin: 0px 10px;
+}
+.status_button {
+	min-width: 80px;
 }

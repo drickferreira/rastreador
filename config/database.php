@@ -74,7 +74,29 @@ return [
             'prefix'   => '',
             'schema'   => 'public',
         ],
-
+				
+        'origem' => [
+            'driver'   => 'pgsql',
+            'host'     => '10.5.22.118',
+            'database' => 'rastreador',
+            'username' => 'rastreador',
+            'password' => 'dev2014$',
+            'charset'  => 'utf8',
+            'prefix'   => '',
+            'schema'   => 'public',
+        ],
+				
+        'destino' => [
+            'driver'   => 'pgsql',
+            'host'     => '10.5.22.242',
+            'database' => 'rastreador',
+            'username' => 'rastreador',
+            'password' => 'dev2014$',
+            'charset'  => 'utf8',
+            'prefix'   => '',
+            'schema'   => 'public',
+        ],
+				
         'sqlsrv' => [
             'driver'   => 'sqlsrv',
             'host'     => env('DB_HOST', 'localhost'),

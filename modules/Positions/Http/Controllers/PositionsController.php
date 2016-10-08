@@ -211,6 +211,7 @@ class PositionsController extends Controller {
 		$filter->add('pag', '', 'select')->options(array('' => 'Itens por Página', 10 => '10', 20 => '20', 30 => '30', 40 => '40', 50 => '50', 100 => '100', 200 => '200', 500 => '500', 1000 => '1000'));
 
 		$grid = \DataGrid::source($filter);
+		$grid->label = $vehicle->plate;
 		$grid->attributes(array("class"=>"table table-striped"));
 		$grid->add('<input type="checkbox" name="ids[]" value="{{ $id }}" onclick="checkSelected()">','<input type="checkbox" name="todos" id="todos" onclick="selectTodos()">');
 		$grid->add('date|strtotime|date[d/m/Y H:i:s]','Data', true);

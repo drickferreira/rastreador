@@ -3,8 +3,11 @@
 use Pingpong\Modules\Routing\Controller;
 use Modules\Vehicles\Entities\Vehicle;
 use Modules\Accounts\Entities\Account;
+use Modules\Commands\Entities\Command;
+use Modules\CommandParameters\Entities\CommandParameter;
 use Illuminate\Http\Request;
 use Auth;
+use Carbon\Carbon;
 
 class VehiclesController extends Controller {
 	
@@ -15,15 +18,41 @@ class VehiclesController extends Controller {
 					$query->where('company_id', Auth::user()->company_id);
 			}));
 			$filter->add('plate','Placa', 'text')
-				->scope( function ($query, $value) {
+				->scope(function ($query, $value) {
 					return $query->whereRaw("plate LIKE '%".strtoupper($value)."%'");
    		});
-			$filter->add('brand','Marca', 'text');
-			$filter->add('model','Modelo', 'text');
-			$filter->add('year','Ano', 'text');
-			$filter->add('color','Cor', 'text');
+			$filter->add('vehicle_data','Marca, Modelo, Cor', 'text')
+						 ->scope(function ($query, $value) {
+							 $args = explode(',', $value);
+							 foreach($args as $arg){
+								 $query = $query->whereRaw("(brand like '%".trim($arg)."%' OR model like '%".trim($arg)."%' OR color like '%".trim($arg)."%')");
+							 }
+							 return $query;
+						 });
+			$filter->add('active','Ativo','select')
+						 ->options([1 => 'Ativos/Inativos', 2 => 'Ativos', 3 => 'Inativos'])
+						 ->scope(function ($query, $value) {
+								if ($value == 1){
+									return $query;
+								} elseif ($value == 2){
+									return $query->where('active', 1);
+								} elseif ($value == 3){
+									return $query->where('active', '!=', 1);
+								}
+						 });
+			$filter->add('panic','Pânico','select')
+						 ->options([1 => 'Pânico Ativado/Desativado', 2 => 'Ativado', 3 => 'Desativado'])
+						 ->scope(function ($query, $value) {
+								if ($value == 1){
+									return $query;
+								} elseif ($value == 2){
+									return $query->where('panic', true);
+								} elseif ($value == 3){
+									return $query->where('panic', false);
+								}
+						 });
 			$filter->add('hasdevice', 'Atribuído', 'select')
-				->options(array(0 => 'Todos', 1 => 'Com Rastreador', 2 => 'Sem Rastreador'))
+				->options(array(0 => 'Com/Sem Rastreador', 1 => 'Com Rastreador', 2 => 'Sem Rastreador'))
 				->scope('hasdevice');
 			$filter->submit('Buscar');
 			$filter->reset('Limpar');
@@ -34,10 +63,24 @@ class VehiclesController extends Controller {
 			$grid->attributes(array("class"=>"table table-striped"));
 			$grid->add('Account.name','Cliente', 'account_id');
 			$grid->add('plate','Placa', true);
-			$grid->add('brand','Marca', true);
-			$grid->add('model','Modelo', true); 
-			$grid->add('year','Ano', true); 
-			$grid->add('color','Cor', true); 
+			$grid->add('fullname','Identificação', true);
+			$grid->add('panic','Antifurto');
+
+			$grid->row(function ($row) {
+				$value = $row->cells[3]->value;
+				$class = 'primary';
+				$title = 'Desativado';
+				$label = 'Ativar Antifurto';
+				if ($value == true){
+					$class = 'danger';
+					$title = 'Ativado';
+					$label = 'Desativar Antifurto';
+				}
+				$row->cells[3]->value = "<a class='btn btn-$class btn-xs' title='$label' href='/vehicles/antitheft/".$row->data->id."'>$title</a>";
+			});
+
+
+
 			$grid->add('Device.serial','Aparelho'); 
 			$grid->edit('vehicles/edit', 'Ações','show|modify|delete');
 			$grid->link('vehicles/edit',"Novo Veículo", "TR");
@@ -61,7 +104,7 @@ class VehiclesController extends Controller {
 			}
 			$options = Account::where('company_id', Auth::user()->company_id)->orderBy('name')->lists("name", "id")->all();
 			$form->add('Account.name', 'Cliente', 'autocomplete')->options($options)->rule('required');
-			$form->text('plate','Placa')->rule('required|min:8')->unique()->attributes(array("data-mask"=>"AAA-0000"));
+			$form->text('plate','Placa')->rule('required|min:8|unique:vehicles,plate,NULL,id,deleted_at,NULL')->attributes(array("data-mask"=>"AAA-0000"));
 			$form->text('brand','Marca');
 			$form->text('model','Modelo'); 
 			$form->text('year','Ano')->attributes(array("data-mask"=>"0000")); 
@@ -89,7 +132,7 @@ class VehiclesController extends Controller {
 	public function audit($id)
 	{
 		$vehicle = Vehicle::findOrFail($id);
-		$logs = $vehicle->logs;
+		$logs = $device->logs->sortByDesc('id');
 		$audit = array();
 		$labels = array(
 			'plate' => 'Placa',
@@ -136,6 +179,84 @@ class VehiclesController extends Controller {
 		$grid->add('date', 'Data/Hora da Alteração');
 		$grid->paginate(10);
 		return view('layouts.audit', compact('grid'));
+	}
+	
+	public function antitheft($id) {
+		$vehicle = Vehicle::findOrFail($id);
+		$time = 180; //tempo default de transmissão em movimento - 3 minutos
+		
+		if ($vehicle->panic) {
+			$vehicle->panic = false;
+			$vehicle->save();
+		} else {
+			$vehicle->panic = true;
+			$vehicle->save();
+			$time = 30; //tempo de transmissão em movimento 30 segundos
+		}
+
+		$device = $vehicle->Device;
+		$now = Carbon::now()->format('U');
+		$timeout = Carbon::now()->addMonth()->toDateTimeString();
+		$id_command = 'SET_REPORT_TIME_MOVING_'.$device->model.'_'.$device->serial.'_'.$now;
+		$type = 51;
+		
+		//Salvando o Comando na base de dados
+		$new_command = new Command;
+		$new_command->id_command = $id_command;
+		$new_command->type = $type;
+		
+		$device->Commands()->save($new_command);
+		
+		$xml = new \DOMDocument( "1.0", "iso-8859-1" );
+		$xml->formatOutput = true;
+		$commands = $xml->createElement("COMMANDS");
+		$command = $xml->createElement('COMMAND');
+		$element = $xml->createElement('PROTOCOL', $device->model);
+		$command->appendChild($element);
+		$element = $xml->createElement('SERIAL', $device->serial);
+		$command->appendChild($element);
+		$element = $xml->createElement('ID_COMMAND', $id_command);
+		$command->appendChild($element);
+		$element = $xml->createElement('TYPE', $type);
+		$command->appendChild($element);
+		$element = $xml->createElement('ATTEMPTS', 10);
+		$command->appendChild($element);
+		$element = $xml->createElement('COMMAND_TIMEOUT', $timeout);
+		$command->appendChild($element);
+		$element = $xml->createElement('PARAMETERS');
+
+		//parametro 1
+		$par1 = new CommandParameter;
+		$par1->parameter_id = 'SET_REPORT_TIME_MOVING';
+		$par1->value = 1;
+		$new_command->Parameters()->save($par1);
+		
+		$parameter = $xml->createElement('PARAMETER');
+		$parameter_id = $xml->createElement('ID', 'SET_REPORT_TIME_MOVING');
+		$parameter_value = $xml->createElement('VALUE', 1);
+		$parameter->appendChild($parameter_id);
+		$parameter->appendChild($parameter_value);
+		$element->appendChild($parameter);
+
+		//parametro 2
+		$par2 = new CommandParameter;
+		$par2->parameter_id = 'REPORT TIME MOVING';
+		$par2->value = $time;
+		$new_command->Parameters()->save($par2);
+		
+		$parameter = $xml->createElement('PARAMETER');
+		$parameter_id = $xml->createElement('ID', 'REPORT TIME MOVING');
+		$parameter_value = $xml->createElement('VALUE', $time);
+		$parameter->appendChild($parameter_id);
+		$parameter->appendChild($parameter_value);
+		$element->appendChild($parameter);
+
+		$command->appendChild($element);
+		$commands->appendChild($command);
+		$xml->appendChild($commands);
+		Storage::disk('ftp')->put("commands/$id_command.cmd", $xml->saveXML());
+		return redirect('/vehicles')->with('message','Comando Enviado!');  
+//		printf ("<pre>%s</pre>", htmlentities ($xml->saveXML()));
 	}
 
 }

@@ -181,6 +181,16 @@ return [
 			'4' => 'Comando Cancelado',
 			'5' => 'Comando Confirmado',
 			'6' => 'Arquivo XML inválido',
+		),
+		
+		'devices_status' => array
+		(
+			'0' => 'Ativo',
+			'1' => 'Indisponível',
+			'2' => 'Disponível',
+			'3' => 'Em Manutenção',
+			'4' => 'Em RMA',
+			'5' => 'Inativo',
 		)
 
 ];

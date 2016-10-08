@@ -70,7 +70,7 @@ class CompaniesController extends Controller {
 	public function audit($id)
 	{
 		$company = Company::findOrFail($id);
-		$logs = $company->logs;
+		$logs = $device->logs->sortByDesc('id');
 		$audit = array();
 		$labels = array(
 			'name' => 'Nome',

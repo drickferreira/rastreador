@@ -11,7 +11,6 @@
         "webpatser/laravel-uuid": "2.*",
         "barryvdh/laravel-debugbar": "^2.0",
         "pingpong/sky": "~2.0",
-        "uxweb/sweet-alert": "~1.1",
 	 "zofe/rapyd": "2.1.*",
 	 "caouecs/laravel-lang": "~3.0",
         "owen-it/laravel-auditing": "^2.3"

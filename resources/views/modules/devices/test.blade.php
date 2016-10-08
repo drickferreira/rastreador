@@ -2,7 +2,12 @@
 @section('main')
 <div class="editview">
     {!! Form::open(array('class' => 'form-horizontal')) !!}
-    <h1>{!! $device->serial !!}</h1>
+    @if($device->vehicle_id != '')
+	    <h1>{!! $device->serial . ' - ' . $device->Vehicle->plate !!}</h1>
+    @else
+	    <h1>{!! $device->serial !!}</h1>
+		@endif
+    <br />    
     @if($position)
     <div class="form-group">
         <label for="date" class="col-md-2 control-label">Data do Módulo</label>

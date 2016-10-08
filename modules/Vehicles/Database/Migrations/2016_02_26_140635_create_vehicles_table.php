@@ -21,6 +21,7 @@ class CreateVehiclesTable extends Migration {
             $table->tinyInteger('year');
             $table->string('color', 20);
             $table->boolean('active');
+            $table->boolean('panic');
             $table->uuid('account_id');
             $table->timestamps();
             $table->softDeletes();

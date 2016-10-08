@@ -48,6 +48,11 @@ return [
             'root'   => storage_path('app'),
         ],
 
+        'error' => [
+            'driver' => 'local',
+            'root'   => storage_path('error'),
+        ],
+
         'xml' => [
             'driver' => 'local',
             'root'   => storage_path('xml'),

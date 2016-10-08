@@ -43,6 +43,15 @@ class DevicesController extends Controller {
 			$grid->add('name','Identificação', true);
 			$grid->add('serial','Número de Série', true);
 			$grid->add('{{ fieldValue("devices", $model) }}','Modelo', 'model');
+			$grid->add('status','Status');
+			$grid->row(function ($row) {
+				$value = $row->cells[3]->value;
+				$devices_status = config('devices_status');
+				$status = $devices_status[$value];
+				$row->cells[3]->value = "<button class='btn status_button btn-".$status['class']." btn-xs' title='".$status['title']."' onclick= 'active(\"".$row->data->id."\");'>&nbsp;".$status['label']."&nbsp;</button>";
+			});
+
+
 			$grid->add('Vehicle.plate','Veículo');
 			if (Auth::user()->isSuperAdmin()) {
 				$grid->add('Company.name','Empresa', 'company_id');
@@ -98,7 +107,7 @@ class DevicesController extends Controller {
 		$device = Device::findOrFail($request->device_id);
 		if ($request->action == 'assign') {
 			$device->Vehicle()->associate($request->vehicle_id);
-			$device->install_date = $request->install_date;
+			$device->install_date = Carbon::createFromFormat('d/m/Y', $request->install_date); 
 			$device->description = $request->description;
 			$device->save();
 			return redirect('devices')->with('message','Veículo associado com sucesso!'); 
@@ -197,7 +206,7 @@ class DevicesController extends Controller {
 	public function audit($id)
 	{
 		$device = Device::findOrFail($id);
-		$logs = $device->logs;
+		$logs = $device->logs->sortByDesc('id');
 		//dd($logs);
 		$audit = array();
 		$labels = array(
@@ -206,7 +215,8 @@ class DevicesController extends Controller {
 			'model' => 'Modelo',
 			'company_id' => 'Empresa',
 			'vehicle_id' => 'Veículo',
-			'description' => 'Observações'
+			'description' => 'Observações',
+			'status' => 'Status'
 		);
 		if ($logs)
 		foreach($logs as $log)
@@ -219,6 +229,15 @@ class DevicesController extends Controller {
 							'label' => $labels[$key],
 							'old' => testVal($log->old_value, $key) ? fieldValue("devices", $log->old_value[$key]) : '[novo]',
 							'new' => fieldValue("devices", $value),
+							'user' => $log->user->username,
+							'date' => date('d/m/Y H:i:s', strtotime($log->updated_at)),
+						);
+						break;
+					case 'status':
+						$audit[] = array(
+							'label' => $labels[$key],
+							'old' => testVal($log->old_value, $key) ? fieldValue("devices_status", $log->old_value[$key]) : '[novo]',
+							'new' => fieldValue("devices_status", $value),
 							'user' => $log->user->username,
 							'date' => date('d/m/Y H:i:s', strtotime($log->updated_at)),
 						);
@@ -260,9 +279,59 @@ class DevicesController extends Controller {
 		$grid->add('new', 'Novo Valor');
 		$grid->add('user', 'Usuário');
 		$grid->add('date', 'Data/Hora');
-		$grid->orderBy('date','DESC');
 		$grid->paginate(10);
 		return view('layouts.audit', compact('grid'));
 	}
 
+	public function active($id){
+		$device = Device::findOrFail($id);
+		if ($device->status == 0) {
+			if ($device->vehicle_id !== NULL) {
+				return redirect()->back()->with('error', 'O aparelho está atrelado a um veículo!');
+			} else {
+				$device->status = 1;
+				$device->save();
+				return redirect()->back()->with('message', 'Aparelho colocado em modo Indisponível!');
+			}
+		} elseif ($device->status == 1) {
+			$device->status = 0;
+			$device->save();
+			return redirect()->back()->with('message', 'Aparelho colocado em modo Ativo!');
+		} else {
+			return redirect()->back()->with('error', 'O status do aparelho não pode ser alterado!');
+		}
+	}
+	
+	public function exchange(){
+		$companies = Company::lists("name", "id")->all();
+		return view('devices::exchange', compact('companies'));
+	}
+	
+	public function search(Request $request){
+		$company_id = $request->company_id;
+		$status = $request->status;
+		$result = Device::where('company_id', $company_id)
+											->where('status', $status)
+											->orderBy('serial')
+											->lists("serial", "id")->all();
+		return json_encode($result);
+	}
+	
+	public function postexchange(Request $request){
+		$status = $request->status_v;
+		$ids = $request->ids;
+		$devices = Device::whereIn('id', $ids);
+		$devicelist = $devices->get();
+		foreach ($devicelist as $device){
+			$device->status = $status;
+			$device->save();
+		}
+		$grid = \DataGrid::source($devices);
+		$grid->label('Aparelhos Enviados/Recebidos');
+		$grid->attributes(array("class"=>"table table-striped"));
+		$grid->add('serial','Número de Série');
+		$grid->add('{{ fieldValue("devices", $model) }}','Modelo');
+		$grid->add('{{ fieldValue("devices_status", $status) }}','Status');
+		return view('devices::report', compact('grid'));
+	}
 }

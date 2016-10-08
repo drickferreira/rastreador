@@ -18,7 +18,23 @@ class UserController extends Controller {
     {
 			if (Auth::user()->isSuperAdmin() || Auth::user()->isAdmin() ) {
 				if (Auth::user()->isSuperAdmin()) {
-					$grid = \DataGrid::source(User::with('Company'));
+					$filter = \DataFilter::source(User::with('Company'));
+					$filter->add('username', 'Nome de Usuário', 'text')
+								 ->scope( function ($query, $value) {
+									 return $query->whereRaw("upper(username) LIKE '%".strtoupper($value)."%'");
+					});
+					$filter->add('name', 'Nome', 'text')
+								 ->scope( function ($query, $value) {
+									 return $query->whereRaw("upper(name) LIKE '%".strtoupper($value)."%'");
+					});
+					$filter->add('company_id','Empresa', 'select')
+						->option('','Empresa')
+						->options(Company::lists("name", "id")->all());
+					$filter->submit('Buscar');
+					$filter->reset('Limpar');
+					$filter->build();
+
+					$grid = \DataGrid::source($filter);
 					$grid->label('Usuários');
 					$grid->attributes(array("class"=>"table table-striped"));
 					$grid->add('username','Usuário', true);
@@ -28,7 +44,20 @@ class UserController extends Controller {
 					$grid->edit('user/edit', 'Ações','show|modify|delete');
 					$grid->link('user/edit',"Novo Usuário", "TR");
 				} else {
-					$grid = \DataGrid::source(User::with('Company')->where('company_id', Auth::user()->company_id));
+					$filter = \DataFilter::source(User::with('Company')->where('company_id', Auth::user()->company_id));
+					$filter->add('username', 'Nome de Usuário', 'text')
+								 ->scope( function ($query, $value) {
+									 return $query->whereRaw("upper(username) LIKE '%".strtoupper($value)."%'");
+					});
+					$filter->add('name', 'Nome', 'text')
+								 ->scope( function ($query, $value) {
+									 return $query->whereRaw("upper(name) LIKE '%".strtoupper($value)."%'");
+					});
+					$filter->submit('Buscar');
+					$filter->reset('Limpar');
+					$filter->build();
+
+					$grid = \DataGrid::source($filter);
 					$grid->label('Usuários');
 					$grid->attributes(array("class"=>"table table-striped"));
 					$grid->add('username','Usuário', true);
@@ -47,7 +76,7 @@ class UserController extends Controller {
 					$grid->link('user/edit',"Novo Usuário", "TR");
 				}
 				$grid->orderBy('name','asc');
-				return view('user.index', compact('grid'));
+				return view('user.index', compact('filter', 'grid'));
 			} else {
 				return redirect()->back()->with('error', 'Você não tem permissão para acessar esse módulo!');
 			}

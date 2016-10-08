@@ -39,14 +39,16 @@ class GetDashBoardData extends Command
 					$parameter[$company->id] = array();
 					
 					//Accounts
-					$accounts = $company->Accounts->count();
-					$accounts_no_vehicle = $company->Accounts()->doesntHave('Vehicles')->count();
+					$accounts = $company->Accounts->where('active',true)->count();
+					$accounts_no_vehicle = $company->Accounts()->doesntHave('Vehicles', 'and', function($q){
+						$q->where('vehicles.active',true);
+					})->count();
 					$accounts_with_vehicle = $accounts - $accounts_no_vehicle;
 					$parameter[$company->id]['Accounts'] = array($accounts, $accounts_with_vehicle, $accounts_no_vehicle);
 					
 					//Vehicles
-					$vehicles = $company->Vehicles->count();
-					$vehicles_with_device = $company->Vehicles()->has('Device')->count();
+					$vehicles = $company->Vehicles->where('active',true)->count();
+					$vehicles_with_device = $company->Vehicles()->where('vehicles.active', true)->has('Device')->count();
 					$vehicles_no_device = $vehicles - $vehicles_with_device;
 					$parameter[$company->id]['Vehicles'] = array($vehicles, $vehicles_with_device, $vehicles_no_device);
 					

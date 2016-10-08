@@ -22,6 +22,7 @@ class CreateDevicesTable extends Migration {
 						$table->uuid('vehicle_id')->nullable();
 						$table->text('description');
 						$table->date('install_date');
+						$table->smallInteger('status');
             $table->softDeletes();
             $table->timestamps();
 					  $table->primary('id');

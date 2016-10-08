@@ -44,9 +44,10 @@ class AccountsController extends Controller {
 			$form->set('company_id', Auth::user()->company_id);
 			$form->text('name','Nome')->rule('required|min:5');
 			$form->text('cpf_cnpj','CPF / CNPJ')->rule('required|min:14')->unique(null, null ,'company_id,'.Auth::user()->company_id);
-			$form->text('phone1','Telefone');
-			$form->text('phone2','Telefone');
+			$form->text('phone1','Telefone')->rule('max:15');
+			$form->text('phone2','Telefone')->rule('max:15');
 			$form->textarea('description','Observações');
+			$form->checkbox('active','Ativo');
 			if ($form->status == 'create'){
 				$form->label('Novo Cliente');
 			} else {
@@ -68,7 +69,7 @@ class AccountsController extends Controller {
 	public function audit($id)
 	{
 		$account = Account::findOrFail($id);
-		$logs = $account->logs;
+		$logs = $device->logs->sortByDesc('id');
 		$audit = array();
 		$labels = array(
 			'name' => 'Nome',

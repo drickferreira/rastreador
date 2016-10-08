@@ -6,6 +6,8 @@ return array
 	'SET_TIME_ZONE' => 'Alterar Fuso Horário',
 	'SET_REPORT_TIME_MOVING' => 'Ajustar Tempo de Transmissão em Movimento',
 	'SET_REPORT_TIME_IGNITION_OFF' => 'Ajustar Tempo de Transmissão Parado',
+	'SET_REPORT_TIME_PANIC' => 'Ajustar Tempo de Transmissão em Pânico',
+	'SET_PANIC_MODE' => 'Ativar Modo Pânico',
 );
 
 ?>

@@ -2,6 +2,7 @@
 @section('main')
 <div class="editview">
     {!! Form::open(array('class' => 'form-horizontal')) !!}
+    <h2>Veículo: {!! $position->Vehicle->plate !!} - Aparelho: {!! $position->serial !!}</h2><br />
     <div class="form-group">
         <label for="data" class="col-md-2 control-label">Data</label>
         <div class="col-md-3">

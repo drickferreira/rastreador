@@ -11,3 +11,21 @@
 {!! $grid !!} 
 </div>
 @endsection
+@section('custom-js')
+@parent
+<script type="text/javascript" defer="defer">
+function active(id){
+	swal(
+	{   
+			title: "Atenção!",
+			text: "Confirma a Mudança de Status?",   
+			type: "warning",   
+			showCancelButton: true,   
+			closeOnConfirm: false,
+			confirmButtonText: "Confirmar!",   
+	}, function()	{
+		window.location.assign('http://' + window.location.hostname + '/devices/active/' + id);
+	});
+}
+</script>
+@endsection

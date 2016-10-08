@@ -18,6 +18,7 @@ class Kernel extends ConsoleKernel
 				Commands\GetDashBoardData::class,
 				Commands\DeleteOldXML::class,
 				Commands\getCommandResponses::class,
+				Commands\transferData::class,
     ];
 
     /**
@@ -29,14 +30,17 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         //$schedule->command('inspire')->hourly();
-        $schedule->command('positions:load')
-					->everyMinute()
-					->appendOutputTo('scheduler.log');
-				$schedule->command('dashboard:update')
-					->hourly();	
-				$schedule->command('xml:delete')
-					->daily();
-        $schedule->command('commands:response')
-					->everyMinute();
+//        $schedule->command('positions:load')
+//					->everyMinute()
+//					->appendOutputTo('scheduler.log');
+//				$schedule->command('dashboard:update')
+//					->hourly();	
+//				$schedule->command('xml:delete')
+//					->daily();
+//        $schedule->command('commands:response')
+//					->everyMinute();
+        $schedule->command('positions:move')
+						->everyTenMinutes()
+						->appendOutputTo('positions_move.log');
     }
 }

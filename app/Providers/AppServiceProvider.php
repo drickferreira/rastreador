@@ -4,8 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Blade;
-use Validador;
-use Modules\Accounts\Entities\Account;
+use Modules\Vehicles\Entities\Vehicle;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +18,7 @@ class AppServiceProvider extends ServiceProvider
         Blade::extend(function($value) {
             return preg_replace('/\@define(.+)/', '<?php ${1}; ?>', $value);
         });
+				
     }
 
     /**

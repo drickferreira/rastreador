@@ -25,7 +25,7 @@
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 </head>
-<body>
+<body class=".hidden-print">
 	@yield('navbar')
 	<div class="container-fluid">
     @yield('content')
