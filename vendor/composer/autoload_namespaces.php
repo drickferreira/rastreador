@@ -7,7 +7,6 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Webpatser\\Uuid' => array($vendorDir . '/webpatser/laravel-uuid/src'),
-    'Psr\\Log\\' => array($vendorDir . '/psr/log'),
     'Prophecy\\' => array($vendorDir . '/phpspec/prophecy/src'),
     'PhpSpec' => array($vendorDir . '/phpspec/phpspec/src'),
     'Mockery' => array($vendorDir . '/mockery/mockery/library'),

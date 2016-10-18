@@ -8,7 +8,7 @@ class Account extends Model {
 	use AuditingTrait;
 
 	protected $table = 'accounts';
-  protected $fillable = ['name', 'cpf_cnpj', 'phone1', 'phone2', 'description'];
+  protected $fillable = ['name', 'cpf_cnpj', 'phone1', 'phone2', 'description', 'active'];
 	protected $dates = ['deleted_at'];
 
 	public function Vehicles()

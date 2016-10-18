@@ -32,7 +32,6 @@
         "Barryvdh\\Debugbar\\ServiceProvider",
         "Pingpong\\Modules\\ModulesServiceProvider",
         "Pingpong\\Generators\\GeneratorsServiceProvider",
-        "UxWeb\\SweetAlert\\SweetAlertServiceProvider",
         "Zofe\\Rapyd\\RapydServiceProvider",
         "OwenIt\\Auditing\\AuditingServiceProvider"
     ],
@@ -57,7 +56,6 @@
         "Barryvdh\\Debugbar\\ServiceProvider",
         "Pingpong\\Modules\\ModulesServiceProvider",
         "Pingpong\\Generators\\GeneratorsServiceProvider",
-        "UxWeb\\SweetAlert\\SweetAlertServiceProvider",
         "Zofe\\Rapyd\\RapydServiceProvider",
         "OwenIt\\Auditing\\AuditingServiceProvider"
     ],

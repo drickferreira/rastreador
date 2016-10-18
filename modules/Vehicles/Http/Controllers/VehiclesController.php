@@ -14,8 +14,9 @@ class VehiclesController extends Controller {
 	public function index()
 	{
 		if (Auth::user()->isAdmin() || Auth::user()->isSuperAdmin()) {
-			$filter = \DataFilter::source(Vehicle::with('Device','Account')->whereHas('Account', function ($query) {
-					$query->where('company_id', Auth::user()->company_id);
+			$filter = \DataFilter::source(Vehicle::with('Device','Account')->where('vehicles.active',true)->whereHas('Account', function ($query) {
+					$query->where('accounts.active',true)
+								->where('company_id', Auth::user()->company_id);
 			}));
 			$filter->add('plate','Placa', 'text')
 				->scope(function ($query, $value) {
@@ -30,24 +31,24 @@ class VehiclesController extends Controller {
 							 return $query;
 						 });
 			$filter->add('active','Ativo','select')
-						 ->options([1 => 'Ativos/Inativos', 2 => 'Ativos', 3 => 'Inativos'])
+						 ->options(['' => 'Ativos/Inativos', 'A' => 'Ativos', 'I' => 'Inativos'])
 						 ->scope(function ($query, $value) {
-								if ($value == 1){
+								if ($value == ''){
 									return $query;
-								} elseif ($value == 2){
+								} elseif ($value == 'A'){
 									return $query->where('active', 1);
-								} elseif ($value == 3){
+								} elseif ($value == 'I'){
 									return $query->where('active', '!=', 1);
 								}
 						 });
 			$filter->add('panic','Pânico','select')
-						 ->options([1 => 'Pânico Ativado/Desativado', 2 => 'Ativado', 3 => 'Desativado'])
+						 ->options(['' => 'Pânico Ativado/Desativado', 'A' => 'Ativado', 'I' => 'Desativado'])
 						 ->scope(function ($query, $value) {
-								if ($value == 1){
+								if ($value == ''){
 									return $query;
-								} elseif ($value == 2){
+								} elseif ($value == 'A'){
 									return $query->where('panic', true);
-								} elseif ($value == 3){
+								} elseif ($value == 'I'){
 									return $query->where('panic', false);
 								}
 						 });
@@ -132,7 +133,7 @@ class VehiclesController extends Controller {
 	public function audit($id)
 	{
 		$vehicle = Vehicle::findOrFail($id);
-		$logs = $device->logs->sortByDesc('id');
+		$logs = $vehicle->logs->sortByDesc('id');
 		$audit = array();
 		$labels = array(
 			'plate' => 'Placa',

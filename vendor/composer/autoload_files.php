@@ -6,9 +6,9 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    '1d1b89d124cc9cb8219922c9d5569199' => $vendorDir . '/hamcrest/hamcrest-php/hamcrest/Hamcrest.php',
     '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => $vendorDir . '/symfony/polyfill-mbstring/bootstrap.php',
     '667aeda72477189d0494fecd327c3641' => $vendorDir . '/symfony/var-dumper/Resources/functions/dump.php',
+    '1d1b89d124cc9cb8219922c9d5569199' => $vendorDir . '/hamcrest/hamcrest-php/hamcrest/Hamcrest.php',
     '2c102faa651ef8ea5874edb585946bce' => $vendorDir . '/swiftmailer/swiftmailer/lib/swift_required.php',
     '5255c38a0faeba867671b61dfda6d864' => $vendorDir . '/paragonie/random_compat/lib/random.php',
     'bd9634f2d41831496de0d3dfe4c94881' => $vendorDir . '/symfony/polyfill-php56/bootstrap.php',
@@ -21,6 +21,5 @@ return array(
     '14812156da62770d06ccc3ede5af6de1' => $vendorDir . '/zofe/burp/src/helpers.php',
     '5f3ca63ea8aba922efe241ff14864653' => $vendorDir . '/pingpong/sky/src/Pingpong/Support/helpers.php',
     '4a1f389d6ce373bda9e57857d3b61c84' => $vendorDir . '/barryvdh/laravel-debugbar/src/helpers.php',
-    'a806c12c6e24e7e4e900847766218dba' => $vendorDir . '/uxweb/sweet-alert/src/SweetAlert/functions.php',
     'be2dabd89e6571c763d3c521b1c3701e' => $baseDir . '/app/Helpers.php',
 );

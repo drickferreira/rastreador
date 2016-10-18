@@ -60,7 +60,7 @@ class GetDashBoardData extends Command
 					//Positions
 					$now = new Carbon();
 					$now->subDays(5);
-					$vehicles = $company->Vehicles()->has('Device')->get();
+					$vehicles = $company->Vehicles()->where('vehicles.active', true)->has('Device')->get();
 					
 					$positions = array();
 					foreach($vehicles as $vehicle){
