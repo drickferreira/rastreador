@@ -155,6 +155,7 @@ class DevicesController extends Controller {
 		}
 		if ($form->status == 'create'){
 			$form->label('Novo Aparelho');
+			$form->set('status',2);
 		} else {
 			$form->label($form->model->serial);
 		}

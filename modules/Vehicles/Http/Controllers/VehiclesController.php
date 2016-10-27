@@ -14,10 +14,15 @@ class VehiclesController extends Controller {
 	public function index()
 	{
 		if (Auth::user()->isAdmin() || Auth::user()->isSuperAdmin()) {
-			$filter = \DataFilter::source(Vehicle::with('Device','Account')->where('vehicles.active',true)->whereHas('Account', function ($query) {
+			$filter = \DataFilter::source(Vehicle::with('Device','Account')->whereHas('Account', function ($query) {
 					$query->where('accounts.active',true)
 								->where('company_id', Auth::user()->company_id);
 			}));
+			$filter->add('Account.name', 'Cliente', 'text')
+				->scope(function ($query, $value) {
+					return $query->join('accounts', 'accounts.id', '=', 'vehicles.account_id')
+											 ->whereRaw("accounts.name LIKE '%".strtoupper($value)."%'");
+   		});
 			$filter->add('plate','Placa', 'text')
 				->scope(function ($query, $value) {
 					return $query->whereRaw("plate LIKE '%".strtoupper($value)."%'");
@@ -105,12 +110,17 @@ class VehiclesController extends Controller {
 			}
 			$options = Account::where('company_id', Auth::user()->company_id)->orderBy('name')->lists("name", "id")->all();
 			$form->add('Account.name', 'Cliente', 'autocomplete')->options($options)->rule('required');
-			$form->text('plate','Placa')->rule('required|min:8|unique:vehicles,plate,NULL,id,deleted_at,NULL')->attributes(array("data-mask"=>"AAA-0000"));
+			$form->text('plate','Placa')->rule('required|min:8|unique:vehicles,plate,'.$form->model->id.',id,deleted_at,NULL')->attributes(array("data-mask"=>"AAA-0000"));
 			$form->text('brand','Marca');
 			$form->text('model','Modelo'); 
 			$form->text('year','Ano')->attributes(array("data-mask"=>"0000")); 
 			$form->text('color','Cor');
-			$form->checkbox('active','Ativo');
+			$device = $form->model->Device()->get();
+			if ($device){
+				$form->checkbox('active','Ativo')->mode('readonly');
+			} else {
+				$form->checkbox('active','Ativo')->insertValue(1);
+			}
 			$form->saved(function () use ($form){
 				return redirect('vehicles')->with('message','Registro salvo com sucesso!'); 
       });
@@ -126,7 +136,7 @@ class VehiclesController extends Controller {
 	
 	public function getAccountlist()
 	{
-		return Account::where("name","like", \Input::get("q")."%")->take(10)->get();
+		return Account::where('active', true)->where("name","like", \Input::get("q")."%")->take(10)->get();
 	}
 
 		
@@ -142,7 +152,8 @@ class VehiclesController extends Controller {
 			'year' => 'Ano',
 			'color' => 'Cor',
 			'active' => 'Ativo',
-			'account_id' => 'Cliente'
+			'account_id' => 'Cliente',
+			'panic' => 'Anti-furto',
 		);
 		if ($logs)
 		foreach($logs as $log)
@@ -151,6 +162,15 @@ class VehiclesController extends Controller {
 			{
 					switch ($key){
 						case 'active':
+							$audit[] = array(
+								'label' => $labels[$key],
+								'old' => testVal($log->old_value, $key) ? "Ativo" : "Inativo",
+								'new' => testVal($log->new_value, $key) ? "Ativo" : "Inativo",
+								'user' => $log->user->username,
+								'date' => date('d/m/Y H:i:s', strtotime($log->updated_at))
+							);
+							break;
+						case 'panic':
 							$audit[] = array(
 								'label' => $labels[$key],
 								'old' => testVal($log->old_value, $key) ? "Ativo" : "Inativo",

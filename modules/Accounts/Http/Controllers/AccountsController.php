@@ -69,7 +69,7 @@ class AccountsController extends Controller {
 	public function audit($id)
 	{
 		$account = Account::findOrFail($id);
-		$logs = $device->logs->sortByDesc('id');
+		$logs = $account->logs->sortByDesc('id');
 		$audit = array();
 		$labels = array(
 			'name' => 'Nome',
