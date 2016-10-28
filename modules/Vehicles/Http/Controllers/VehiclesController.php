@@ -88,7 +88,7 @@ class VehiclesController extends Controller {
 
 
 			$grid->add('Device.serial','Aparelho'); 
-			$grid->edit('vehicles/edit', 'Ações','show|modify|delete');
+			$grid->edit('vehicles/edit', 'Ações','show|modify');
 			$grid->link('vehicles/edit',"Novo Veículo", "TR");
 			$grid->paginate(10);
 

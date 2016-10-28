@@ -41,7 +41,7 @@ class UserController extends Controller {
 					$grid->add('name','Nome', true);
 					$grid->add('Company.name','Empresa', 'company_id');
 					$grid->add('{{ fieldValue("all_roles", $role) }}','Perfil', 'role');
-					$grid->edit('user/edit', 'Ações','show|modify|delete');
+					$grid->edit('user/edit', 'Ações','show|modify');
 					$grid->link('user/edit',"Novo Usuário", "TR");
 				} else {
 					$filter = \DataFilter::source(User::with('Company')->where('company_id', Auth::user()->company_id));
@@ -67,12 +67,12 @@ class UserController extends Controller {
 						$role = $row->cells[2]->value;
 						$classes = array( 10 => 'primary', 20 => 'success', 30 => 'default');
 						if ($role == 40) {
-							$row->cells[2]->value = '<a class="btn btn-danger btn-xs" title="Veículos" href="/user/vehicles/'.$row->data->id.'">'.fieldValue('all_roles', $row->cells[2]->value).' <i class="fa fa-car"></i></a>';
+							$row->cells[2]->value = '<div class="btn-group"><a class="btn btn-danger status_button btn-xs">'.fieldValue('all_roles', $row->cells[2]->value).'</a><a class="btn btn-danger btn-xs" title="Veículos" href="/user/vehicles/'.$row->data->id.'"><i class="fa fa-car"></i></a></div>';
 						} else {
-							$row->cells[2]->value = '<button class="btn btn-'.$classes[$role].' btn-xs">'.fieldValue('all_roles', $row->cells[2]->value).'</button>';
+							$row->cells[2]->value = '<button class="btn btn-'.$classes[$role].' status_button btn-xs">'.fieldValue('all_roles', $row->cells[2]->value).'</button>';
 						}
 					});
-					$grid->edit('user/edit', 'Ações','show|modify|delete');
+					$grid->edit('user/edit', 'Ações','show|modify');
 					$grid->link('user/edit',"Novo Usuário", "TR");
 				}
 				$grid->orderBy('name','asc');
