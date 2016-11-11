@@ -3,6 +3,7 @@
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\AuditingTrait;
+use Modules\Accounts\Entities\Account;
 
 class Vehicle extends Model {
 
@@ -59,6 +60,12 @@ class Vehicle extends Model {
         return $query->doesntHave('Device');
 			}
     }
+		
+		public function scopeHasaccountname($query, $value)
+		{
+			$accounts = Account::whereRaw("name LIKE '%".strtoupper($value)."%'")->lists('id');
+			return $query->whereIn('account_id', $accounts);
+		}
 
 		public function Users()
     {

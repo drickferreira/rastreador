@@ -18,7 +18,7 @@ class Kernel extends ConsoleKernel
 				Commands\GetDashBoardData::class,
 				Commands\DeleteOldXML::class,
 				Commands\getCommandResponses::class,
-				//Commands\transferData::class,
+				Commands\transferData::class,
     ];
 
     /**
@@ -39,8 +39,8 @@ class Kernel extends ConsoleKernel
 					->daily();
         $schedule->command('commands:response')
 					->everyMinute();
-//        $schedule->command('positions:move')
-//						->everyTenMinutes()
-//						->appendOutputTo('positions_move.log');
-    }
+/*        $schedule->command('positions:move')
+						->everyMinute()
+						->appendOutputTo('positions_move.log');
+*/    }
 }

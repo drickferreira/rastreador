@@ -19,10 +19,7 @@ class VehiclesController extends Controller {
 								->where('company_id', Auth::user()->company_id);
 			}));
 			$filter->add('Account.name', 'Cliente', 'text')
-				->scope(function ($query, $value) {
-					return $query->join('accounts', 'accounts.id', '=', 'vehicles.account_id')
-											 ->whereRaw("accounts.name LIKE '%".strtoupper($value)."%'");
-   		});
+				->scope('hasaccountname');
 			$filter->add('plate','Placa', 'text')
 				->scope(function ($query, $value) {
 					return $query->whereRaw("plate LIKE '%".strtoupper($value)."%'");
@@ -41,9 +38,9 @@ class VehiclesController extends Controller {
 								if ($value == ''){
 									return $query;
 								} elseif ($value == 'A'){
-									return $query->where('active', 1);
+									return $query->where('vehicles.active', true);
 								} elseif ($value == 'I'){
-									return $query->where('active', '!=', 1);
+									return $query->where('vehicles.active', false);
 								}
 						 });
 			$filter->add('panic','Pânico','select')
@@ -110,16 +107,26 @@ class VehiclesController extends Controller {
 			}
 			$options = Account::where('company_id', Auth::user()->company_id)->orderBy('name')->lists("name", "id")->all();
 			$form->add('Account.name', 'Cliente', 'autocomplete')->options($options)->rule('required');
-			$form->text('plate','Placa')->rule('required|min:8|unique:vehicles,plate,'.$form->model->id.',id,deleted_at,NULL')->attributes(array("data-mask"=>"AAA-0000"));
+			$id = '00000000-0000-0000-0000-000000000000';
+			if ($form->status != "create"){
+				$id = $form->model->id;
+			}
+			$form->text('plate','Placa')->rule('required|min:8|unique:vehicles,plate,'.$id.',id,deleted_at,NULL')->attributes(array("data-mask"=>"AAA-0000"));
 			$form->text('brand','Marca');
 			$form->text('model','Modelo'); 
 			$form->text('year','Ano')->attributes(array("data-mask"=>"0000")); 
 			$form->text('color','Cor');
-			$device = $form->model->Device()->get();
-			if ($device){
-				$form->checkbox('active','Ativo')->mode('readonly');
-			} else {
+			if ($form->status == "create"){
 				$form->checkbox('active','Ativo')->insertValue(1);
+			} elseif ($form->status == "modify"){
+				$device = $form->model->Device()->get();
+				if ($device){
+					$form->checkbox('active','Ativo')->mode('readonly');
+				} else {
+					$form->checkbox('active','Ativo');
+				}
+			} else {
+				$form->checkbox('active','Ativo');
 			}
 			$form->saved(function () use ($form){
 				return redirect('vehicles')->with('message','Registro salvo com sucesso!'); 
