@@ -28,8 +28,11 @@ class DevicesController extends Controller {
 			$filter->add('serial','Serial', 'text')->clause('where')->operator('=');
 			$filter->add('model','Modelo', 'select')->option('','Modelo')->options(config("dropdown.devices"));
 			$filter->add('hasvehicle', 'Atribuído', 'select')
-				->options(array(0 => 'Todos', 1 => 'Com veículo', 2 => 'Sem Veículo'))
+				->options(array(0 => 'Atribuído', 1 => 'Com veículo', 2 => 'Sem Veículo'))
 				->scope('hasvehicle');
+			$filter->add('status', 'Status', 'select')
+				->option('','Status')
+				->options(config('dropdown.devices_status'));
 			if (Auth::user()->isSuperAdmin()) {
 				$filter->add('company_id', '', 'select')->option('','Empresa')->options(Company::lists("name", "id")->all());
 			} 
@@ -53,13 +56,16 @@ class DevicesController extends Controller {
 
 
 			$grid->add('Vehicle.plate','Veículo');
+			$acoes  = '<a title="Visualizar" href="devices/edit?show={{$id}}"><span class="glyphicon glyphicon-eye-open"> </span></a> ';
+			$acoes .= '<a title="Modificar" href="devices/edit?modify={{$id}}"><span class="glyphicon glyphicon-edit"> </span></a> ';
 			if (Auth::user()->isSuperAdmin()) {
 				$grid->add('Company.name','Empresa', 'company_id');
-				$grid->add('<a title="Visualizar" href="devices/edit?show={{$id}}"><span class="glyphicon glyphicon-eye-open"> </span></a> <a title="Modificar" href="devices/edit?modify={{$id}}"><span class="glyphicon glyphicon-edit"> </span></a> <a title="Última Posição" href="devices/test/{{$id}}"><span class="glyphicon glyphicon-thumbs-up"> </span></a> <a title="Enviar Comando" href="commands/send/{{$id}}"><span class="glyphicon glyphicon-share-alt"> </span></a>', 'Ações');
+				$acoes .= '<a title="Enviar Comando" href="commands/send/{{$id}}"><span class="glyphicon glyphicon-share-alt"> </span></a>';
 				$grid->link('devices/edit',"Novo Aparelho", "TR");
 			} else {
-				$grid->add('<a title="Visualizar" href="devices/edit?show={{$id}}"><span class="glyphicon glyphicon-eye-open"> </span></a> <a title="Modificar" href="devices/edit?modify={{$id}}"><span class="glyphicon glyphicon-edit"> </span></a>  <a title="Instalar/Remover" href="devices/vehicle/{{$id}}"><span class="glyphicon glyphicon-wrench"> </span></a>  <a title="Última Posição" href="devices/test/{{$id}}"><span class="glyphicon glyphicon-thumbs-up"> </span></a>', 'Ações');
+				$acoes .= '<a title="Instalar/Remover" href="devices/vehicle/{{$id}}"><span class="glyphicon glyphicon-wrench"> </span></a>  <a title="Última Posição" href="devices/test/{{$id}}"><span class="glyphicon glyphicon-thumbs-up"> </span></a>';
 			}
+			$grid->add($acoes, 'Acoes');
 			$grid->link('devices/test',"Teste por Serial", "TR");
 			$grid->paginate(10);
 			return view('devices::index', compact('filter', 'grid'));
@@ -72,6 +78,9 @@ class DevicesController extends Controller {
 	{
 		if (Auth::user()->isAdmin()) {
 			$device = Device::find($id);
+			if ($device->status != 0){
+				return redirect()->back()->with('error', 'O Aparelho não está ativo!');
+			}
 			$vehicles = Vehicle::whereHas('Account', function ($query) {
 				$query->where('company_id', Auth::user()->company_id);			
 			})->doesntHave('Device')
