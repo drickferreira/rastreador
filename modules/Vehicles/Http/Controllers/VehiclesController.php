@@ -120,10 +120,10 @@ class VehiclesController extends Controller {
 				$form->checkbox('active','Ativo')->insertValue(1);
 			} elseif ($form->status == "modify"){
 				$device = $form->model->Device()->get();
-				if ($device){
-					$form->checkbox('active','Ativo')->mode('readonly');
-				} else {
+				if ($device->isEmpty()){
 					$form->checkbox('active','Ativo');
+				} else {
+					$form->checkbox('active','Ativo')->mode('readonly');
 				}
 			} else {
 				$form->checkbox('active','Ativo');
