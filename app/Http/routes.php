@@ -46,7 +46,7 @@
 	Route::post('password/reset', 'Auth\PasswordController@postReset');
 	
 	
-	Route::group(array('prefix' => 'api', 'middleware' => 'auth.basic'), function()
+	Route::group(array('prefix' => 'api'), function()
 	{
 		Route::get('/', 'ApiController@index');
 		Route::get('position/{placa}', 'ApiController@getPosition');
