@@ -30,7 +30,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         //$schedule->command('inspire')->hourly();
-        $schedule->command('positions:maxtrack')
+/*        $schedule->command('positions:maxtrack')
 					->everyMinute()
 					->appendOutputTo('scheduler.log');
 				$schedule->command('dashboard:update')
@@ -38,7 +38,7 @@ class Kernel extends ConsoleKernel
 				$schedule->command('xml:delete')
 					->daily();
         $schedule->command('commands:response')
-					->everyMinute();
+					->everyMinute();*/
 /*        $schedule->command('positions:move')
 						->everyMinute()
 						->appendOutputTo('positions_move.log');
