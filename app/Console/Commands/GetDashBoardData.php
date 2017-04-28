@@ -65,7 +65,7 @@ class GetDashBoardData extends Command
 					$positions = array();
 					foreach($vehicles as $vehicle){
 						$position = $vehicle->Positions()
-									->orderBy('memory_index', 'desc')
+									->orderBy('date', 'desc')
 									->first();
 						if ($position){
 							if ($position->date < $now) {

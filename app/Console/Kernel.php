@@ -14,7 +14,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         Commands\Inspire::class,
-        Commands\LoadGatewayPositions::class,
+        Commands\LoadMaxtrackPositions::class,
 				Commands\GetDashBoardData::class,
 				Commands\DeleteOldXML::class,
 				Commands\getCommandResponses::class,
@@ -30,7 +30,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         //$schedule->command('inspire')->hourly();
-        $schedule->command('positions:load')
+/*        $schedule->command('positions:maxtrack')
 					->everyMinute()
 					->appendOutputTo('scheduler.log');
 				$schedule->command('dashboard:update')
@@ -38,9 +38,9 @@ class Kernel extends ConsoleKernel
 				$schedule->command('xml:delete')
 					->daily();
         $schedule->command('commands:response')
-					->everyMinute();
-/*        $schedule->command('positions:move')
+					->everyMinute();*/
+        $schedule->command('positions:move')
 						->everyMinute()
 						->appendOutputTo('positions_move.log');
-*/    }
+    }
 }

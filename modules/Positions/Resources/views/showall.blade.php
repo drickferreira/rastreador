@@ -14,6 +14,7 @@
 	var markers = [];
 	var markerGroup = L.layerGroup();	
 	var map;
+	var time_reload = 0;
 	$(document).ready(function(e) {
 		map = L.map('map');
 		L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -61,6 +62,8 @@
 		});
 
 function recriaPosicoes(){
+	time_reload++;
+	if (time_reload >= 180) window.location.reload();
 	var ids = [];
 	for (i in markers){
 		ids.push(i);

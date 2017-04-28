@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Modules\Positions\Entities\Position;
+use Webpatser\Uuid\Uuid;
 use Carbon\Carbon;
 use DB;
 
@@ -32,25 +32,54 @@ class transferData extends Command
      */
     public function handle()
     {
-				$positions = DB::connection('origem')
+				$positions_old = DB::connection('origem')
 										 ->table('positions')
-										 ->whereRaw("deleted_at is null")
+										 ->whereRaw("copied is null")
+										 ->whereRaw("date > '2017-04-20 00:00:00'")
+										 ->orderBy("date", "asc")
 										 ->limit(1000)
 										 ->get();
-				foreach ($positions as $position){
-					$this->info("Id: ". $position->id. " - Data: ". $position->date." - Serial: " . $position->serial);
+				//dd($positions_old);
+				foreach ($positions_old as $old){
+					$this->info("Id: ". $old->id. " - Data: ". $old->date." - Serial: " . $old->serial);
 					$pos = DB::connection('destino')
 								 ->table('positions')
-								 ->where('id', $position->id)
+								 ->where('id', $old->id)
 								 ->get();
 					if (count($pos)==0) {
-						$new = array();
-						foreach($position as $key => $value){
-							$new[$key] = $value;
-						}
-						$insert = DB::connection('destino')
+						$position = array();
+						$position['id'] = $old->id;
+						$position['model'] = $old->model;
+						$position['serial'] = $old->serial;
+						$position['date'] = $old->date;
+						$position['latitude'] = $old->latitude;
+						$position['longitude'] = $old->longitude;
+						$position['speed'] = $old->speed;
+						$position['ignition'] = $old->ignition;
+						$position['device_id'] = $old->device_id;
+						$position['vehicle_id'] = $old->vehicle_id;
+						$insert1 = false;
+						$insert1 = DB::connection('destino')
 								->table('positions')
-								->insert($new);
+								->insert($position);
+						$information = array();
+						$information['id'] = Uuid::generate(4);
+						$information['transmission_reason'] = $old->transmission_reason;
+						$information['hodometer'] = $old->hodometer;
+						$information['power_supply'] = $old->power_supply;
+						$information['temperature'] = $old->temperature;
+						$information['panic'] = $old->panic;
+						$information['battery_charging'] = $old->battery_charging;
+						$information['battery_failure'] = $old->battery_failure;
+						$information['gps_signal'] = $old->gps_signal;
+						$information['gps_antenna_failure'] = $old->gps_antenna_failure;
+						$information['position_id'] = $old->id;
+						$information['lifetime'] = $old->lifetime;
+						$insert2 = false;
+						$insert2 = DB::connection('destino')
+								->table('informations')
+								->insert($information);
+						if ($insert1 && $insert2) $insert = true;
 					} else {
 						$insert = true;
 					}
@@ -58,8 +87,8 @@ class transferData extends Command
 						$this->info("Salvo com sucesso!");
 						DB::connection('origem')
 								->table('positions')
-								->where('id', $position->id)
-								->update(['deleted_at' => Carbon::now()]);
+								->where('id', $old->id)
+								->update(['copied' => true]);
 					} else {
 						$this->error("Ocorreu um erro!");
 					}

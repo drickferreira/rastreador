@@ -81,8 +81,10 @@ class DevicesController extends Controller {
 			if ($device->status != 0){
 				return redirect()->back()->with('error', 'O Aparelho não está ativo!');
 			}
-			$vehicles = Vehicle::whereHas('Account', function ($query) {
-				$query->where('company_id', Auth::user()->company_id);			
+			$vehicles = Vehicle::where('vehicles.active', true)
+				->whereHas('Account', function ($query) {
+				$query->where('company_id', Auth::user()->company_id)
+					->where('accounts.active', true);
 			})->doesntHave('Device')
 				->get()->lists("fullname", "id")->all();
 			$form = \DataForm::create();
@@ -178,9 +180,10 @@ class DevicesController extends Controller {
 	public function test($id)
 	{
 		$device = Device::findOrFail($id);
-		$position = $device->Positions()
-						->orderBy('memory_index', 'desc')
+		$position = $device->Positions()->with('Info')
+						->orderBy('date', 'desc')
 						->first();
+		//dd($position);
 		return view('devices::test', compact('position', 'device'));
 	}
 
@@ -196,8 +199,9 @@ class DevicesController extends Controller {
 		$serial = $data['serial'];
 		$index = $data['index'];
 		$position = Position::where('serial', '=', $serial)
-												->where('memory_index', '>', $index)
-												->orderBy('memory_index', 'asc')
+												->where('model', '=', $model)
+												->where('date', '>', $index)
+												->orderBy('date', 'asc')
 												->get();
 		return json_encode($position);
 	}
@@ -208,7 +212,8 @@ class DevicesController extends Controller {
 		$model = $data['model'];
 		$serial = $data['serial'];
 		$position = Position::where('serial', $serial)
-												->orderBy('memory_index', 'desc')
+												->where('model', '=', $model)
+												->orderBy('date', 'desc')
 												->first();
 		return json_encode($position);
 	}
@@ -226,7 +231,8 @@ class DevicesController extends Controller {
 			'company_id' => 'Empresa',
 			'vehicle_id' => 'Veículo',
 			'description' => 'Observações',
-			'status' => 'Status'
+			'status' => 'Status',
+			'install_date' => 'Data de Instalação',
 		);
 		if ($logs)
 		foreach($logs as $log)

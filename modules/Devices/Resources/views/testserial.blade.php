@@ -57,7 +57,7 @@ function getLast(){
 				"serial": serial.val(),
 		}, function(position){
 			if (position){
-				index = position.memory_index;
+				index = position.date;
 				var text = textlog.val();
 				text += 'Última posição no sistema: ' + position.date + "\r\n";
 				textlog.val(text);
@@ -83,7 +83,7 @@ function getLast(){
 
 function atualiza(){
 	$.post(
-		"/devices/search", 
+		"/devices/searchserial", 
 		{
 				"_token": _token,
 				"model": model.find("option:selected").val(),
@@ -92,7 +92,7 @@ function atualiza(){
 		}, function(positions){
 			for (p in positions){
 				position = positions[p];
-				index = position.memory_index;
+				index = position.date;
 				var text = textlog.val();
 				text += "Nova Posição: " + position.date + "\r\n";
 				textlog.val(text);

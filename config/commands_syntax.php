@@ -21,12 +21,12 @@ return array (
 		'PARAMETERS' => array (
 			0 => array(
 				'ID' => 'SET_TIME_ZONE',
-				'LABEL' => 'Alterar Fuso HorÃ¡rio',
+				'LABEL' => 'Alterar Fuso Horário',
 				'VALUE' => 1,
 			),
 			1 => array(
 				'ID' => 'TIME ZONE',
-				'LABEL' => 'Fuso horÃ¡rio',
+				'LABEL' => 'Fuso horário',
 				'VALUE' => array(
 					'0' => '-12',
 					'1' => '-11',
@@ -63,12 +63,12 @@ return array (
 		'PARAMETERS' => array (
 			0 => array(
 				'ID' => 'SET_REPORT_TIME_MOVING',
-				'LABEL' => 'Ajustar Tempo de TransmissÃ£o em Movimento',
+				'LABEL' => 'Ajustar Tempo de Transmissão em Movimento',
 				'VALUE' => 1,
 			),
 			1 => array(
 				'ID' => 'REPORT TIME MOVING',
-				'LABEL' => 'Tempo de TransmissÃ£o em Movimento',
+				'LABEL' => 'Tempo de Transmissão em Movimento',
 				'VALUE' => '',
 			),
 		),
@@ -78,12 +78,12 @@ return array (
 		'PARAMETERS' => array (
 			0 => array(
 				'ID' => 'SET_REPORT_TIME_IGNITION_OFF',
-				'LABEL' => 'Ajustar Tempo de TransmissÃ£o Parado',
+				'LABEL' => 'Ajustar Tempo de Transmissão Parado',
 				'VALUE' => 1,
 			),
 			1 => array(
 				'ID' => 'REPORT TIME IGNITION OFF',
-				'LABEL' => 'Tempo de TransmissÃ£o Parado',
+				'LABEL' => 'Tempo de Transmissão Parado',
 				'VALUE' => '',
 			),
 		),
@@ -93,12 +93,12 @@ return array (
 		'PARAMETERS' => array (
 			0 => array(
 				'ID' => 'SET_REPORT_TIME_PANIC',
-				'LABEL' => 'Ajustar Tempo de TransmissÃ£o em PÃ¢nico',
+				'LABEL' => 'Ajustar Tempo de Transmissão em Pânico',
 				'VALUE' => 1,
 			),
 			1 => array(
 				'ID' => 'REPORT TIME PANIC',
-				'LABEL' => 'Tempo de TransmissÃ£o em PÃ¢nico',
+				'LABEL' => 'Tempo de Transmissão em Pânico',
 				'VALUE' => '',
 			),
 		),
@@ -108,13 +108,46 @@ return array (
 		'PARAMETERS' => array (
 			0 => array(
 				'ID' => 'SET_PANIC_MODE',
-				'LABEL' => 'Ativar Modo PÃ¢nico',
+				'LABEL' => 'Ativar Modo Pânico',
 				'VALUE' => 1,
 			),
 			1 => array(
 				'ID' => 'PANIC MODE',
-				'LABEL' => 'Modo PÃ¢nico',
+				'LABEL' => 'Modo Pânico',
 				'VALUE' => '',
+			),
+		),
+	),
+	'SET_OUTPUT' => array( 
+		'TYPE' => 51,
+		'PARAMETERS' => array (
+			0 => array(
+				'ID' => 'SET_OUTPUT',
+				'LABEL' => 'Ativar Bloqueio Progressivo',
+				'VALUE' => 1,
+			),
+			1 => array(
+				'ID' => 'SET OUTPUT 1',
+				'LABEL' => 'Ativar Saída 1',
+				'VALUE' => array(
+					'0' => 'Desligado',
+					'1' => 'Ligado',
+				),
+			),
+			2 => array(
+				'ID' => 'SET OUTPUT 2',
+				'LABEL' => 'Ativar Saída 2',
+				'VALUE' => 0,
+			),
+			3 => array(
+				'ID' => 'SET OUTPUT 3',
+				'LABEL' => 'Ativar Saída 3',
+				'VALUE' => 0,
+			),
+			4 => array(
+				'ID' => 'SET OUTPUT 4',
+				'LABEL' => 'Ativar Saída 4',
+				'VALUE' => 0,
 			),
 		),
 	),

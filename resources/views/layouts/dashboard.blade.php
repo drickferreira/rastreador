@@ -43,7 +43,8 @@
 		var latlngBounds = [];
 		@foreach($locations as $loc)
 			var latlng = new L.LatLng({{ $loc['lat'] }}, {{ $loc['lon'] }});
-			var marker = L.marker([{{ $loc['lat'] }}, {{ $loc['lon'] }}]).bindPopup('{!! $loc['html'] !!}');
+			var marker = L.marker([{{ $loc['lat'] }}, {{ $loc['lon'] }}]);
+			marker.bindPopup('{!! $loc['html'] !!}', {maxWidth : 500}).openPopup();
 			markers['{{ $loc["vehicle_id"] }}'] = marker;
 			markerGroup.addLayer(marker);
 			latlngBounds.push(latlng);

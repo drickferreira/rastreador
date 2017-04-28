@@ -77,7 +77,7 @@ return [
 				
         'origem' => [
             'driver'   => 'pgsql',
-            'host'     => '10.5.22.254',
+            'host'     => '10.5.23.38',
             'database' => 'rastreador',
             'username' => 'rastreador',
             'password' => 'dev2014$',
@@ -88,7 +88,7 @@ return [
 				
         'destino' => [
             'driver'   => 'pgsql',
-            'host'     => '10.5.23.14',
+            'host'     => '10.5.23.66',
             'database' => 'rastreador',
             'username' => 'rastreador',
             'password' => 'dev2014$',

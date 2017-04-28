@@ -9,7 +9,7 @@ Route::group(['prefix'=> 'devices', 'namespace' => 'Modules\Devices\Http\Control
 	Route::get('test/{id}', 'DevicesController@test');
 	Route::get('test', 'DevicesController@testSerial');
 	Route::post('lastPosition', 'DevicesController@searchLastBySerial');
-	Route::post('search', 'DevicesController@searchBySerial');
+	Route::post('searchserial', 'DevicesController@searchBySerial');
 	Route::get('audit/{id}', 'DevicesController@audit');
 	Route::get('active/{id}', 'DevicesController@active');
 	Route::get('exchange', 'DevicesController@exchange');

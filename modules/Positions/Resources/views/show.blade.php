@@ -16,7 +16,7 @@
          }).addTo(map);
 		var latlng = new L.LatLng({{ $loc['lat'] }}, {{ $loc['lon'] }});
 		var marker = L.marker(latlng).addTo(map);
-		marker.bindPopup('{!! $loc['html'] !!}').openPopup();
+		marker.bindPopup('{!! $loc['html'] !!}', {maxWidth : 500}).openPopup();
 		map.setView(latlng, 15);
 	});
 </script>

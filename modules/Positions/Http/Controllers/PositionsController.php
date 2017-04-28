@@ -38,7 +38,7 @@ class PositionsController extends Controller {
 		$positions = array();
 		foreach($vehicles as $vehicle){
 			$position = $vehicle->Positions()
-						->orderBy('memory_index', 'desc')
+						->orderBy('date', 'desc')
 						->first();
 			if ($position){
 					$positions[] = (object) array(
@@ -70,9 +70,10 @@ class PositionsController extends Controller {
 		
 		return view('positions::index1', compact('grid'));
 
-		usort($positions, function($a, $b) {
+/*		usort($positions, function($a, $b) {
    		return $a->date < $b->date;
 		});
+*/
 		return view('positions::index', array('positions' => $positions));
 	}
 
@@ -91,7 +92,7 @@ class PositionsController extends Controller {
 		foreach ($ids as $id) {
 			$vehicle = Vehicle::find($id);
 			$position = $vehicle->Positions()
-						->orderBy('memory_index', 'desc')
+						->orderBy('date', 'desc')
 						->first();
 			if ($position){
 				$locations[] = $this->getLocations($position);
@@ -108,7 +109,7 @@ class PositionsController extends Controller {
 		$locations = array();
 		foreach ($vehicles as $vehicle) {
 			$position = $vehicle->Positions()
-						->orderBy('memory_index', 'desc')
+						->orderBy('date', 'desc')
 						->first();
 			if ($position){
 				$locations[] = $this->getLocations($position);
@@ -121,6 +122,7 @@ class PositionsController extends Controller {
 	function getLocations(Position $position)
 	{
 		if ($position->vehicle_id){
+			$dt = Carbon::parse($position->date);
 			$locations = array
 			(
 				'lat' => $position->latitude,
@@ -128,9 +130,15 @@ class PositionsController extends Controller {
 				'title' => $position->Vehicle->plate,
 				'vehicle_id' => $position->vehicle_id,
 				'position_id' => $position->id,
-				'html' => '<h5>'.$position->Vehicle->plate.'</h5>'.
-							'<p>Data: '.$position->date.'</p>'.
-							'<p>Velocidade: '.$position->speed.' km/h</p>',
+				'html' => '<div class="text-right clearfix"><a target="_blank" class="btn btn-default btn-sm" title="Visualizar no Google Street View" href="http://maps.google.com/maps?q=&layer=c&cbll='.$position->latitude.','.$position->longitude.'&cbp=11,0,0,0,0"><i class="fa fa-lg fa-street-view"></i></a><a target="_blank" class="btn btn-default btn-sm" title="Visualizar no Google Maps" href="https://www.google.com/maps?q='.$position->latitude.','.$position->longitude.'"><i class="fa fa-lg fa-google"></i></a></div>'
+									.'<table class="table table-condensed table-responsive">'
+//									.'<tr><td class="text-right" colspan="4"><a target="_blank" class="btn btn-default btn-sm" title="Visualizar no Google Street View" href="http://maps.google.com/maps?q=&layer=c&cbll='.$position->latitude.','.$position->longitude.'&cbp=11,0,0,0,0"><i class="fa fa-lg fa-street-view"></i></a><a target="_blank" class="btn btn-default btn-sm" title="Visualizar no Google Maps" href="https://www.google.com/maps?q='.$position->latitude.','.$position->longitude.'"><i class="fa fa-lg fa-google"></i></a></td></tr>'
+									.'<tr><th>Cliente</th><td colspan="3">'.$position->Vehicle->Account->name.'</td></tr>'
+									.'<tr><th>Veículo</th><td><span class="text-nowrap">'.$position->Vehicle->brand.' '.$position->Vehicle->model.' '.$position->Vehicle->color.'</span></td>'
+									.'<th>Placa</th><td><span class="text-nowrap">'.$position->Vehicle->plate.'</span></td></tr>'
+									.'<tr><th>Data</th><td><span class="text-nowrap">'.$dt->format('d/m/Y H:i:s').'</span></td>'
+									.'<th>Velocidade</th><td><span class="text-nowrap">'.$position->speed.' Km/h</span></td></tr>'
+									.'</table>',
 			);	
 		} else {
 			$locations = array
@@ -155,7 +163,7 @@ class PositionsController extends Controller {
 		foreach ($ids as $id) {
 			$vehicle = Vehicle::find($id);
 			$position = $vehicle->Positions()
-						->orderBy('memory_index', 'desc')
+						->orderBy('date', 'desc')
 						->first();
 			if ($position){
 				$new_positions[] = $this->getLocations($position);
@@ -166,7 +174,7 @@ class PositionsController extends Controller {
 
 	public function showInfo($id)
 	{
-		$position = Position::find($id);
+		$position = Position::with('Info')->find($id);
 		return view('positions::info', array('position' => $position));
 	}
 	
@@ -219,7 +227,7 @@ class PositionsController extends Controller {
 		$grid->add('<i class="fa fa-lg fa-circle {{ $ignition == 1 ? \'on\' : \'off\' }}">','Ignição');
 		$grid->add('speed','Velocidade');
 		$grid->add('<a class="btn btn-success btn-xs" title="Ver no Mapa" href="/positions/showMap/{{$id}}"><i class="fa fa-lg fa-map-marker"></i></a><a class="btn btn-danger btn-xs" title="Informações" href="/positions/showInfo/{{$id}}"><i class="fa fa-lg fa-info"></i></a><button type="button" class="btn btn-info btn-xs" title="Buscar Endereço" onclick="searchAddr(\'{{$id}}\')"><i class="fa fa-lg fa-search"></i></button>','Ações', true); 
-		$grid->orderBy('memory_index','desc');
+		$grid->orderBy('date','desc');
 
 		if ($pag) {
 			$grid->paginate($pag);
