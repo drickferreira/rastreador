@@ -183,7 +183,6 @@ class DevicesController extends Controller {
 		$position = $device->Positions()->with('Info')
 						->orderBy('date', 'desc')
 						->first();
-		//dd($position);
 		return view('devices::test', compact('position', 'device'));
 	}
 
@@ -245,6 +244,25 @@ class DevicesController extends Controller {
 							'label' => $labels[$key],
 							'old' => testVal($log->old_value, $key) ? fieldValue("devices", $log->old_value[$key]) : '[novo]',
 							'new' => fieldValue("devices", $value),
+							'user' => $log->user->username,
+							'date' => date('d/m/Y H:i:s', strtotime($log->updated_at)),
+						);
+						break;
+					case 'install_date':
+						if (is_array($log->old_value[$key])){
+							$old_date = $log->old_value[$key]['date'];
+						} else {
+							$old_date = $log->old_value[$key];
+						}
+						if (is_array($value)){
+							$new_date = $value['date'];
+						} else {
+							$new_date = $value;
+						}
+						$audit[] = array(
+							'label' => $labels[$key],
+							'old' => testVal($log->old_value, $key) ? date('d/m/Y', strtotime($old_date)) : '',
+							'new' => testVal($log->new_value, $key) ? date('d/m/Y', strtotime($new_date)) : '',
 							'user' => $log->user->username,
 							'date' => date('d/m/Y H:i:s', strtotime($log->updated_at)),
 						);

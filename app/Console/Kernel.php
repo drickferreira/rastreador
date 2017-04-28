@@ -38,7 +38,7 @@ class Kernel extends ConsoleKernel
 				$schedule->command('xml:delete')
 					->daily();
         $schedule->command('commands:response')
-					->everyMinute();*/
+					->everyMinute();
 /*        $schedule->command('positions:move')
 						->everyMinute()
 						->appendOutputTo('positions_move.log');
