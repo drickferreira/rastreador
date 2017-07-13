@@ -67,7 +67,6 @@ return [
             'passive'  => false,
             'ssl'      => false,
             'timeout'  => 30,
-
             // 'root'     => '',
         ],
 

@@ -32,7 +32,7 @@ class DeleteOldXML extends Command
     public function handle()
     {
 			$local = Storage::disk('xml');
-			$files = $local->files();
+			$files = $local->allFiles();
 			$now = Carbon::now();
 			$now->subDay(5);
 			foreach ($files as $file){

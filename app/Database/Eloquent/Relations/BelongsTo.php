@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-
 namespace App\Database\Eloquent\Relations;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo as EloquentBelongsTo;

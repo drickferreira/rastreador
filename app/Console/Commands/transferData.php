@@ -35,8 +35,8 @@ class transferData extends Command
 				$positions_old = DB::connection('origem')
 										 ->table('positions')
 										 ->whereRaw("copied is null")
-										 ->whereRaw("date > '2017-04-20 00:00:00'")
-										 ->orderBy("date", "asc")
+										 ->whereRaw("date < '2017-04-20 00:00:00'")
+										 ->orderBy("date", "desc")
 										 ->limit(1000)
 										 ->get();
 				//dd($positions_old);

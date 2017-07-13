@@ -211,5 +211,14 @@ return [
 				'Role'			=> Pingpong\Trusty\Role::class,
 				'Permission'=> Pingpong\Trusty\Permission::class,
     ],
+	
+	  'schedulers' => [
+				'maxtrack' => env('LOAD_MAXTRACK', false),
+				'e3' => env('LOAD_E3', false),
+				'crx' => env('LOAD_CRX', false),
+				'dashboard' => env('DASHBOARD', false),
+				'positions_move' => env('POSITIONS_MOVE', false),
+	  ],
+		
 
 ];

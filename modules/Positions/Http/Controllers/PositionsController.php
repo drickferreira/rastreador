@@ -64,7 +64,7 @@ class PositionsController extends Controller {
 			 return $value ? '<i class="fa fa-lg fa-circle on"></i>' : '<i class="fa fa-lg fa-circle off"></i>';
 		});
 		$grid->add('{{$speed}} km/h', 'Velocidade');
-		$grid->add('<div class="btn-group btn-group-xs"><a class="btn btn-success" title="Ver no Mapa" href="{!! route("positions.showMap", $id) !!}"><i class="fa fa-lg fa-map-marker"></i></a><a target="_blank" class="btn btn-danger" title="Visualizar no Google Maps" href="https://www.google.com/maps?q={{ $latitude }},{{ $longitude }}"><i class="fa fa-lg fa-google"></i></a><a class="btn btn-primary" title="Últimas Posições" href="{!! route("positions.showLast", $vehicle_id) !!}"> <i class="fa fa-lg fa-list-ol"></i></a><button type="button" class="btn btn-info" title="Buscar Endereço" onclick="searchAddr(\'{{ $id }}\')"><i class="fa fa-lg fa-search"></i></button></div>', 'Ações');
+		$grid->add('<div class="btn-group btn-group-xs"><a class="btn btn-success" title="Ver no Mapa" href="{!! route("positions.showMap", $id) !!}"><i class="fa fa-lg fa-map-marker"></i></a><a target="_blank" class="btn btn-danger" title="Visualizar no Google Maps" href="https://www.google.com/maps?q={{ $latitude }},{{ $longitude }}"><i class="fa fa-lg fa-google"></i></a><a class="btn btn-primary" title="Pesquisar Posições" href="{!! route("positions.history", $vehicle_id) !!}"> <i class="fa fa-lg fa-list-ol"></i></a><button type="button" class="btn btn-info" title="Buscar Endereço" onclick="searchAddr(\'{{ $id }}\')"><i class="fa fa-lg fa-search"></i></button></div>', 'Ações');
 		$grid->orderBy('date','desc');
 		$grid->paginate(10);
 		
@@ -245,5 +245,55 @@ class PositionsController extends Controller {
 			$locations[] = $this->getLocations($position);
     }
     return view('positions::route', array('locations' => $locations));		
+	}
+	
+	public function searchHistory($id, Request $request)
+	{
+//		dd($request);
+		$new = array(
+			'dataini' => $request->input('dataini'),
+			'datafin' => $request->input('datafin'),
+			'search' => $request->input('search'),
+		);
+		$request->replace($new);		
+
+		$vehicle = Vehicle::find($id);
+		$now = new Carbon();
+		$now->subDays(5);
+		
+		if ($request->input('search')){
+			$filter = \DataFilter::source($vehicle->Positions());
+		} else {
+			$filter = \DataFilter::source($vehicle->Positions()->limit(10));
+		}
+//		$filter = \DataFilter::source($vehicle->Positions());
+		$filter->add('dataini','Data Inicial', 'datetime')->format('d/m/Y H:i:s')->scope(function ($query, $value)  {
+			$test = (bool)strtotime($value);
+			if ($test)
+      	return $query->whereRaw("date >= ?", array($value));  
+			else
+				return $query;
+		});
+		$filter->add('datafin','Data Final', 'datetime')->format('d/m/Y H:i:s')->scope(function ($query, $value)  {
+			$test = (bool)strtotime($value);
+			if ($test)
+	      return  $query->whereRaw("date <= ?", array($value));  
+			else
+				return $query;
+		});
+		$filter->submit('Buscar');
+		$filter->reset('Limpar');
+
+		$grid = \DataGrid::source($filter);
+		$grid->label = $vehicle->plate;
+		$grid->attributes(array("class"=>"table table-striped table-condensed", "id" => "tabelaPosicoes"));
+		$grid->add('date|strtotime|date[d/m/Y H:i:s]','Data');
+		$grid->add('<span id="{{$id}}" class="address" geo-lat="{{ $latitude }}" geo-lng="{{ $longitude }}"></span>','Endereço');
+		$grid->add('{{$ignition == 1 ? \'Ligada\' : \'Desligada\'}}','Ignição');
+		$grid->add('speed','Velocidade');
+		$grid->link("#", "Exportar", "TR", ['onClick'=>"toExcel(); return false;"]);
+		$grid->orderBy('date','desc');
+
+		return view('positions::history', compact('filter', 'grid', 'vehicle'));
 	}
 }

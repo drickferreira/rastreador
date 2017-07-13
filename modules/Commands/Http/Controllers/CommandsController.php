@@ -165,7 +165,7 @@ class CommandsController extends Controller {
 		$command->appendChild($element);
 		$commands->appendChild($command);
 		$xml->appendChild($commands);
-		Storage::disk('ftp')->put("commands/$id_command.cmd", $xml->saveXML());
+		Storage::disk('ftp')->put("Maxtrack/commands/$id_command.cmd", $xml->saveXML());
 		return redirect('/devices')->with('message','Comando Enviado!');  
 		//printf ("<pre>%s</pre>", htmlentities ($xml->saveXML()));
 	}	
@@ -278,7 +278,7 @@ class CommandsController extends Controller {
 			$command->appendChild($element);
 			$commands->appendChild($command);
 			$xml->appendChild($commands);
-			Storage::disk('ftp')->put("commands/$id_command.cmd", $xml->saveXML());
+			Storage::disk('ftp')->put("Maxtrack/commands/$id_command.cmd", $xml->saveXML());
 			//printf ("<pre>%s</pre>", htmlentities ($xml->saveXML()));
 		}
 		return redirect('/commands')->with('message','Comandos Enviados!');  

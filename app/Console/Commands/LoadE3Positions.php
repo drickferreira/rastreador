@@ -11,21 +11,21 @@ use Carbon\Carbon;
 use Storage;
 
 
-class LoadMaxtrackPositions extends Command
+class LoadE3Positions extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'positions:maxtrack';
+    protected $signature = 'positions:e3';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Acessa o Gateway Maxtrack e atualiza as posicoes transmitidas';
+    protected $description = 'Acessa o Gateway E3 e atualiza as posicoes transmitidas';
 
     /**
      * Create a new command instance.
@@ -48,8 +48,9 @@ class LoadMaxtrackPositions extends Command
 				$local = Storage::disk('xml');
 				$error = Storage::disk('error');
 				
-        $list = $ftp->files('Maxtrack/data');
+        $list = $ftp->files('E3/data');
         $count = 0;
+				$model = 200;
 				
         //$file = $list[0];
         foreach ($list as $file) 
@@ -62,31 +63,28 @@ class LoadMaxtrackPositions extends Command
 								$xml = simplexml_load_string($content);
 								foreach($xml->xpath('POSITION') as $pos){
 										$device = Device::where('serial', xmlGetVal($pos,'FIRMWARE/SERIAL'))
-																			->where('model', xmlGetVal($pos,'FIRMWARE/PROTOCOL'))
+																			->where('model', $model)
 																			->first();
 											$date = new Carbon(xmlGetVal($pos,'GPS/DATE','str'));
 											$generated_date = new Carbon((string) $pos->attributes()->generation_date);
 											if ($date > $generated_date) $date = $generated_date;
 											$position = array(
 													'serial' => xmlGetVal($pos,'FIRMWARE/SERIAL'),
-													'model' => xmlGetVal($pos,'FIRMWARE/PROTOCOL'),
+													'model' => $model,
 													'date' => $date, 
 													'ignition' => xmlGetVal($pos,'HARDWARE_MONITOR/INPUTS/IGNITION','int'), 
 													'latitude' => xmlGetVal($pos,'GPS/LATITUDE','float'),
 													'longitude' => xmlGetVal($pos,'GPS/LONGITUDE','float'),
 													'speed' => xmlGetVal($pos,'GPS/SPEED','float'),
 											);
+											$gps_signal = xmlGetVal($pos,'GPS/FLAG_STATE/GPS_SIGNAL','int');
+											$av = xmlGetVal($pos,'FIRMWARE/AV');
+											$gps = 0;
+											if ($gps_signal > 0 && $av = 'A') $gps = 1;
 											$info = array(
 													'transmission_reason' => xmlGetVal($pos,'FIRMWARE/TRANSMISSION_REASON','int'), 
 													'power_supply' => xmlGetVal($pos,'HARDWARE_MONITOR/POWER_SUPPLY','float'), 
-													'temperature' => xmlGetVal($pos,'HARDWARE_MONITOR/TEMPERATURE','int'), 
-													'panic' => xmlGetVal($pos,'HARDWARE_MONITOR/INPUTS/PANIC','int'), 
-													'battery_charging' => xmlGetVal($pos,'HARDWARE_MONITOR/FLAG_STATE/BATTERY_CHARGING','int'),
-													'battery_failure' => xmlGetVal($pos,'HARDWARE_MONITOR/FLAG_STATE/BATTERY_FAILURE','int'),
-													'hodometer' => xmlGetVal($pos,'GPS/HODOMETER','int'),
-													'lifetime' => xmlGetVal($pos,'FIRMWARE/LIFE_TIME','int'),
-													'gps_signal' => xmlGetVal($pos,'GPS/FLAG_STATE/GPS_SIGNAL','int'),
-													'gps_antenna_failure' => xmlGetVal($pos,'GPS/FLAG_STATE/GPS_ANTENNA_FAILURE','int'),
+													'gps_signal' => $gps,
 											);
 											$new = new Position($position);
 											$new->save();
@@ -109,11 +107,11 @@ class LoadMaxtrackPositions extends Command
 								$this->info($e->getMessage());
 							} finally {
 								if ($err) {
-									$error->put($filename, $content);
+									$error->put("e3/".$filename, $content);
 								} else {
-									$local->put($filename, $content);
+									$local->put("e3/".$filename, $content);
 								}
-								//$ftp->delete($file);
+								$ftp->delete($file);
 							}
 						}
 

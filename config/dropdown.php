@@ -15,9 +15,11 @@ return [
 
     'devices' => array
     (
-        166   =>  'Maxtrack MXT140',
+        166   =>  'MXT140',
         163   =>  'MXT151 / MXT151+',
-        162   =>  'Maxtrack MXT150 / MXT150+',
+        162   =>  'MXT150 / MXT150+',
+				200		=>	'E3',
+				300		=>	'CRX1',
     ),
 
     'directions-class' => array
