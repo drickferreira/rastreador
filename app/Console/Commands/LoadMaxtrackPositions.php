@@ -109,9 +109,9 @@ class LoadMaxtrackPositions extends Command
 								$this->info($e->getMessage());
 							} finally {
 								if ($err) {
-									$error->put($filename, $content);
+									$error->put("maxtrack/".$filename, $content);
 								} else {
-									$local->put($filename, $content);
+									$local->put("maxtrack/".$filename, $content);
 								}
 								//$ftp->delete($file);
 							}
