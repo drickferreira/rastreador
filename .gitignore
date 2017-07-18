@@ -7,4 +7,6 @@ public/packages
 vendor/
 storage/
 .env
+.env.bck
+resources/views/modules/
 .log

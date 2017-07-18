@@ -116,13 +116,11 @@ class LoadMaxtrackPositions extends Command
 								//$ftp->delete($file);
 							}
 						}
-
-
         }
         if ($count>0){
             $this->info("$count Posicoes encontradas!");
         } else {
             $this->error("Nenhuma Posicao encontrada!");
-		}
+				}
     }
 }

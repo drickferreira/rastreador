@@ -18,10 +18,12 @@ class Kernel extends ConsoleKernel
         Commands\LoadMaxtrackPositions::class,
         Commands\LoadE3Positions::class,
         Commands\LoadCRXPositions::class,
+        Commands\LoadOldPositions::class,
 				Commands\GetDashBoardData::class,
 				Commands\DeleteOldXML::class,
 				Commands\getCommandResponses::class,
 				Commands\transferData::class,
+				Commands\fechamento::class,
     ];
 
     /**
@@ -38,7 +40,6 @@ class Kernel extends ConsoleKernel
 				if ($schedule_config['maxtrack']){
 					$schedule->command('positions:maxtrack')
 						->everyMinute()
-						->withoutOverlapping()
 						->appendOutputTo('storage/logs/maxtrack_'.$prefix.'.log');
 					$schedule->command('commands:response')
 						->everyMinute();
@@ -46,13 +47,11 @@ class Kernel extends ConsoleKernel
 				if ($schedule_config['e3']){
 					$schedule->command('positions:e3')
 						->everyMinute()
-						->withoutOverlapping()
 						->appendOutputTo('storage/logs/e3_'.$prefix.'.log');
 				}
 				if ($schedule_config['crx']){
-					$schedule->command('positions:crx')
+					$schedule->command('positions:CRX')
 						->everyMinute()
-						->withoutOverlapping()
 						->appendOutputTo('storage/logs/crx_'.$prefix.'.log');
 				}
 				if ($schedule_config['dashboard']){
@@ -65,8 +64,12 @@ class Kernel extends ConsoleKernel
 				if ($schedule_config['positions_move']){
 					$schedule->command('positions:move')
 							->everyMinute()
-							->withoutOverlapping()
 							->appendOutputTo('positions_move.log');
+				}
+				if ($schedule_config['positions_old']){
+					$schedule->command('positions:old')
+							->everyMinute()
+							->appendOutputTo('storage/logs/maxtrack_'.$prefix.'.log');
 				}
     }
 }

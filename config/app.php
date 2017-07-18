@@ -218,6 +218,7 @@ return [
 				'crx' => env('LOAD_CRX', false),
 				'dashboard' => env('DASHBOARD', false),
 				'positions_move' => env('POSITIONS_MOVE', false),
+				'positions_old' => env('POSITIONS_OLD', false),
 	  ],
 		
 
