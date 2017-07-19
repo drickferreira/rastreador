@@ -58,9 +58,6 @@ class Kernel extends ConsoleKernel
 					$schedule->command('dashboard:update')
 						->hourly();
 				}
-				$schedule->command('xml:delete')
-					->daily();
-
 				if ($schedule_config['positions_move']){
 					$schedule->command('positions:move')
 							->everyMinute()
@@ -71,5 +68,11 @@ class Kernel extends ConsoleKernel
 							->everyMinute()
 							->appendOutputTo('storage/logs/maxtrack_'.$prefix.'.log');
 				}
+				if ($schedule_config['fechamento']){
+					$schedule->command('fechamento')
+							->cron('0 6 1 * *');
+				}
+				$schedule->command('xml:delete')
+					->daily();
     }
 }
