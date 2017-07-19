@@ -113,7 +113,7 @@ class LoadMaxtrackPositions extends Command
 								} else {
 									$local->put("maxtrack/".$filename, $content);
 								}
-								//$ftp->delete($file);
+								$ftp->delete($file);
 							}
 						}
         }
