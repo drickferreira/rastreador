@@ -6,6 +6,7 @@ class CommandParameter extends Model {
 
     protected $fillable = ['parameter_id', 'value', 'command_id'];
 		public $timestamps = false;
+		public $incrementing = false;
 
     public function Command()
     {

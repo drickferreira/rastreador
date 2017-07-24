@@ -44,6 +44,8 @@ class User extends Model implements AuthenticatableContract,
      * @var array
      */
     protected $dates = ['deleted_at'];
+		public $incrementing = false;
+
 		
     public function Company()
     {
@@ -73,6 +75,11 @@ class User extends Model implements AuthenticatableContract,
 		public function Vehicles()
 		{
 			return $this->belongsToMany('Modules\Vehicles\Entities\Vehicle');
+		}
+		
+		public function Access()
+		{
+			return $this->hasMany('App\Access');
 		}
 		
 }

@@ -8,6 +8,7 @@ class Command extends Model {
     protected $fillable = ['id_command', 'type', 'device_id'];
 		protected $dates = ['created_at'];
 		protected $appends = array('laststatus');
+		public $incrementing = false;
 
     public function Device()
     {

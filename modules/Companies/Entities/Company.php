@@ -12,6 +12,7 @@ class Company extends Model {
 	protected $table = 'companies';
 	protected $fillable = ['name', 'cnpj', 'insc', 'phone1', 'phone2', 'email', 'address', 'number', 'comp', 'quarter', 'city', 'state',	'country', 'postalcode'];
 	protected $dates = ['deleted_at'];
+	public $incrementing = false;
 	
 	public function Users()
 	{

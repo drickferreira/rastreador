@@ -10,6 +10,7 @@ class Position extends Model {
 
     protected $dates = ['date'];
 		public $timestamps = false;
+		public $incrementing = false;
 
     public function Vehicle()
     {

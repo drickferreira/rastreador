@@ -10,12 +10,10 @@ class Vehicle extends Model {
 		use SoftDeletes, AuditingTrait;
 		
     protected $table = 'vehicles';
-
     protected $fillable = ['plate', 'brand', 'model', 'year', 'color', 'active', 'panic', 'account_id'];
-
 		protected $appends = array('fullname');
-
     protected $dates = ['deleted_at'];
+		public $incrementing = false;
 
     public function Device()
     {

@@ -35,6 +35,7 @@
 				Route::post('password', 'UserController@setpassword');
 				Route::get('audit/{id}', 'UserController@audit');
 				Route::get('autocomplete', 'UserController@getAutocomplete');
+				Route::get('access/{id}', 'UserController@access');
 			});
 			
 			Route::get('notReporting', 'ReportsController@NotReporting');

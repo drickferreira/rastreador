@@ -10,6 +10,7 @@ class Account extends Model {
 	protected $table = 'accounts';
   protected $fillable = ['name', 'cpf_cnpj', 'phone1', 'phone2', 'description', 'active'];
 	protected $dates = ['deleted_at'];
+	public $incrementing = false;
 
 	public function Vehicles()
 	{

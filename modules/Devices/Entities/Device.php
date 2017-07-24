@@ -16,6 +16,7 @@ class Device extends Model {
     protected $fillable = ['name', 'model', 'serial', 'status', 'company_id', 'vehicle_id', 'install_date', 'description'];
 		protected $appends = array('assignedvehicle');
     protected $dates = ['deleted_at'];
+		public $incrementing = false;
 
     public function Positions()
     {

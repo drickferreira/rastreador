@@ -7,7 +7,8 @@ class InstanceEventHandler {
 
 	public function setUuid($instance)
 	{
-		$instance->{$instance->getKeyName()} = Uuid::generate(4);
+		if (isset($instance->incrementing) && $instance->incrementing == false)
+			$instance->{$instance->getKeyName()} = Uuid::generate(4);
 
 		return true;
 	}

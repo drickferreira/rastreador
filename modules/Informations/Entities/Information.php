@@ -10,6 +10,7 @@ class Information extends Model {
     	'panic', 'battery_charging', 'battery_failure', 'lifetime', 'gps_signal', 'gps_antenna_failure',
 			'position_id'];
 		public $timestamps = false;
+		public $incrementing = false;
 
     public function Position()
     {

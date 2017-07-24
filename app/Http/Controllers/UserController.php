@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Password;
 use Modules\Companies\Entities\Company;
 use Modules\Vehicles\Entities\Vehicle;
 use Illuminate\Http\Request;
+use App\Access;
 
 class UserController extends Controller {
 	
@@ -114,6 +115,7 @@ class UserController extends Controller {
         });
 				if ($form->status == "show"){
 					$form->link("#", "Registro de Alterações", "TR", ['onClick'=>"MyWindow=window.open('audit/".$form->model->id."','MyWindow','width=800,height=400'); return false;"]);
+					$form->link("#", "Log de Acesso", "TR", ['onClick'=>"MyWindow=window.open('access/".$form->model->id."','MyWindow','width=800,height=400'); return false;"]);
 				}
 				$form->build();
 				return $form->view('user.edit', compact('form'));
@@ -241,6 +243,20 @@ class UserController extends Controller {
 			$grid->add('new', 'Novo Valor');
 			$grid->add('user', 'Alterado por');
 			$grid->add('date', 'Data/Hora da Alteração');
+			$grid->paginate(10);
+			return view('layouts.audit', compact('grid'));
+		}
+		
+		public function access($id)
+		{
+			$user = User::findOrFail($id);
+			
+			$access = Access::where('user_id', $id)->with('User')->orderBy('accessed_at', 'desc');
+			$grid = \DataGrid::source($access);
+			$grid->attributes(array("class"=>"table table-striped .table-condensed"));
+			$grid->add('User.name', 'Usuário');
+			$grid->add('accessed_at|strtotime|date[d/m/Y H:i:s]', 'Data e Hora de Acesso');
+			$grid->add('ip', 'IP');
 			$grid->paginate(10);
 			return view('layouts.audit', compact('grid'));
 		}
