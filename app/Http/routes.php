@@ -40,6 +40,7 @@
 			
 			Route::get('notReporting', 'ReportsController@NotReporting');
 			Route::get('installByDay', 'ReportsController@installByDay');
+			Route::get('locked', 'ReportsController@travados');
 	});
 	
 	// Password reset routes...

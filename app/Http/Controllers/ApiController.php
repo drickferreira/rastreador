@@ -19,7 +19,7 @@ class ApiController extends Controller
     {
 			$vehicle = Vehicle::where('plate', $placa)->first();
 			$position = $vehicle->Positions()
-						->orderBy('memory_index', 'desc')
+						->orderBy('date', 'desc')
 						->first();
 			$retorno = array(
 				'latitude' => $position->latitude,

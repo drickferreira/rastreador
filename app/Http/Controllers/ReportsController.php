@@ -66,7 +66,25 @@ class ReportsController extends Controller
 		$grid->paginate(10);
 
 		return view('reports.index', compact('filter', 'grid'));
-		
-		
 	}
+
+	public function travados()
+	{
+		$contents = unserialize(Storage::get('travados.dat'));
+		$positions = $contents[Auth::user()->company_id];
+
+		//dd($positions);
+		$grid = \DataGrid::source($positions);
+		$grid->label = "Veículos com Posições Inconsistentes";
+		$grid->attributes(array("class"=>"table table-striped"));
+		$grid->add('name', 'Cliente');
+		$grid->add('<a href="{!! route("positions.showLast", $vehicle_id) !!}" target="_blank">{{$plate}}</a>', 'Veículo');
+		$grid->add('<a href="/devices/test/{{$device_id}}" target="_blank">{{$serial}}</a>', 'Aparelho', 'serial');
+		$grid->add('<div class="btn-group btn-group-xs"><a target="_blank" class="btn btn-danger" title="Visualizar no Google Maps" href="https://www.google.com/maps?q={{ $latitude }},{{ $longitude }}"><i class="fa fa-lg fa-google"></i></a><a class="btn btn-primary" title="Pesquisar Posições" href="{!! route("positions.history", $vehicle_id) !!}"> <i class="fa fa-lg fa-list-ol"></i></a></div>', 'Ações');
+		$grid->paginate(20);
+
+		return view('reports.index', compact('grid'));
+
+	}
+
 }

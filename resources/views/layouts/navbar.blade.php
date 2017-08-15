@@ -75,6 +75,7 @@
                           <a class="dropdown-toggle" role="button" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-file"></i> Relatórios<span class="caret"></span></a>
                           <ul id="g-account-menu" class="dropdown-menu" role="menu">
                               <li><a href="{!! action('ReportsController@NotReporting') !!}"><i class="glyphicon glyphicon-remove-circle"></i> Veículos não Reportando</a></li>
+                              <li><a href="{!! action('ReportsController@travados') !!}"><i class="glyphicon glyphicon-alert"></i> Veículos com Inconsistências</a></li>
                           </ul>
                       </li>
                        

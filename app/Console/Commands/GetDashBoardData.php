@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Modules\Companies\Entities\Company;
 use Modules\Vehicles\Entities\Vehicle;
+use Modules\Positions\Entities\Position;
 use Carbon\Carbon;
 use Storage;
 
@@ -94,8 +95,27 @@ class GetDashBoardData extends Command
 					$no_positions = count($positions);					
 					$positions_last_week = $vehicles_with_device - $no_positions;
 					$parameter[$company->id]['Positions'] = array($vehicles_with_device, $positions_last_week, $no_positions);
+					
 				}
 				Storage::put('notreporting.dat', serialize($report_positions));
 				Storage::put('dashboard.dat', serialize($parameter));
+
+				//Veículos com posição travada
+				$end = new Carbon();
+				$start = new Carbon();
+				$start->subHours(3);
+				$positions = Position::select('devices.company_id', 'devices.serial', 'device_id', 'accounts.name', 'vehicles.plate', 'positions.vehicle_id', 'latitude', 'longitude')
+															->join('devices','device_id', '=','devices.id')
+															->join('vehicles','positions.vehicle_id', '=','vehicles.id')
+															->join('accounts','vehicles.account_id', '=','accounts.id')
+															->whereBetween('date', array($start, $end))
+															->where('ignition',true)
+															->groupBy('devices.company_id', 'devices.serial', 'device_id', 'accounts.name', 'vehicles.plate', 'positions.vehicle_id', 'latitude', 'longitude')
+															->havingRaw('COUNT(*) > 50')
+															//->toSql();
+															->get();
+				$grouped = $positions->groupBy('company_id');
+				//dd($grouped);
+				Storage::put('travados.dat', serialize($grouped->toArray()));
     }
 }
