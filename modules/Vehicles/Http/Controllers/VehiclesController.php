@@ -118,14 +118,14 @@ class VehiclesController extends Controller {
 			$form->text('color','Cor');
 			if ($form->status == "create"){
 				$form->checkbox('active','Ativo')->insertValue(1);
-			} elseif ($form->status == "modify"){
+/*			} elseif ($form->status == "modify"){
 				$device = $form->model->Device()->get();
 				if ($device->isEmpty()){
 					$form->checkbox('active','Ativo');
 				} else {
 					$form->checkbox('active','Ativo')->mode('readonly');
 				}
-			} else {
+*/			} else {
 				$form->checkbox('active','Ativo');
 			}
 			$form->saved(function () use ($form){

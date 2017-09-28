@@ -321,7 +321,14 @@ class DevicesController extends Controller {
 		$device = Device::findOrFail($id);
 		if ($device->status == 0) {
 			if ($device->vehicle_id !== NULL) {
-				return redirect()->back()->with('error', 'O aparelho está atrelado a um veículo!');
+				if ($device->Vehicle->active == 1) {
+					return redirect()->back()->with('error', 'O aparelho está atrelado a um veículo!');	
+				} else {
+					$device->status = 1;
+					$device->save();
+					return redirect()->back()->with('message', 'Aparelho colocado em modo Indisponível!');
+				}
+				
 			} else {
 				$device->status = 1;
 				$device->save();
