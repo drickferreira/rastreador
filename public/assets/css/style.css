@@ -239,3 +239,29 @@ i.fa {
 .status_button {
 	min-width: 80px;
 }
+
+
+.inc-form {
+	margin-top: 15px !important;
+}
+
+.inc-header {
+	width: 960px;
+	height: 180px;
+	margin: 0 auto;
+	display:block;
+	text-align: center;
+}
+
+.inc-logo {
+	background: url(../images/logo-inclusiva1.png) 0 0 no-repeat;
+	width: 412px;
+	height: 100px;
+	margin: 20px auto;
+}
+.inc-title {
+	color: #000;
+	font-family: Verdana, Geneva, sans-serif;
+	font-size: 40px;
+	font-weight: bold;
+}

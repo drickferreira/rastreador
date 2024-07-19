@@ -11,6 +11,16 @@
         <div class="clear"></div>
       </div>
       <div class="form-signin form-login adm-form">
+  @elseif($_SERVER['HTTP_HOST'] == 'rastreador.inclusivabeneficios.com.br')
+        <div class="inc-bar">
+          <div class="inc-header">
+            <div class="inc-logo"></div>
+            <span class="inc-title">Sistema de Rastreamento</span>
+          </div>
+        </div>
+        <div class="clear"></div>
+      </div>
+      <div class="form-signin form-login inc-form">
   @else
       <div class="form-signin form-login">
   @endif

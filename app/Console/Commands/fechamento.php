@@ -43,7 +43,7 @@ class Fechamento extends Command
 			$subject = "Fechamento ADM Assistência Ref: ".$start->format("m/Y");
 			
 			Mail::send('emails.fechamento', ['devices' => $devices, 'install' => $install, 'start' => $start, 'end' => $end, 'total' => $total], function ($m) use ($subject) {
-				$m->from('drickferreira@afinet.com.br', 'Rastreamento Afinet');
+				$m->from(env('MAIL_USERNAME','rastreador@afinet.com.br'), 'Rastreamento Afinet');
 				$m->to('financeiro@afinet.com.br');
 				$m->cc('tasrj@afinet.com.br');
 				$m->subject($subject);

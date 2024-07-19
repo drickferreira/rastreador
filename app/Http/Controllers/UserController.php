@@ -42,7 +42,7 @@ class UserController extends Controller {
 					$grid->add('name','Nome', true);
 					$grid->add('Company.name','Empresa', 'company_id');
 					$grid->add('{{ fieldValue("all_roles", $role) }}','Perfil', 'role');
-					$grid->edit('user/edit', 'Ações','show|modify');
+					$grid->edit('user/edit', 'Ações','show|modify|delete');
 					$grid->link('user/edit',"Novo Usuário", "TR");
 				} else {
 					$filter = \DataFilter::source(User::with('Company')->where('company_id', Auth::user()->company_id));
@@ -73,7 +73,7 @@ class UserController extends Controller {
 							$row->cells[2]->value = '<button class="btn btn-'.$classes[$role].' status_button btn-xs">'.fieldValue('all_roles', $row->cells[2]->value).'</button>';
 						}
 					});
-					$grid->edit('user/edit', 'Ações','show|modify');
+					$grid->edit('user/edit', 'Ações','show|modify|delete');
 					$grid->link('user/edit',"Novo Usuário", "TR");
 				}
 				$grid->orderBy('name','asc');
@@ -153,7 +153,7 @@ class UserController extends Controller {
           $view->with(['old_user'  => true]);
        });
 			$result = $control->postEmail($request);
-			return redirect('user')->with('message','A mensagem para troca de senha foi enviada!'); 
+		return redirect('user')->with('message','A mensagem para troca de senha foi enviada!'); 
 		}
 		
 		public function getpassword()
